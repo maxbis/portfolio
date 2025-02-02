@@ -42,4 +42,12 @@ class Transaction {
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
+
+    public function delete($id) {
+        $stmt = $this->conn->prepare("DELETE FROM transaction WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $success = $stmt->execute(); // Execute returns TRUE on success, FALSE on failure
+        return $success;
+    }
+    
 }

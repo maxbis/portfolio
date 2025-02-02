@@ -59,4 +59,12 @@ class TransactionController extends Controller {
             exit;
         }
     }
+
+      // Delete a transaction by ID
+      public function delete($id) {
+        $this->transactionModel->delete($id);
+        header("Location: " . $GLOBALS['BASE'] . "/transaction/list");
+        exit;
+    }
+
 }
