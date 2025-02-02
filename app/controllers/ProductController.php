@@ -1,0 +1,10 @@
+<?php
+require_once '../core/Controller.php';
+
+class ProductController extends Controller {
+    public function list() {
+        $productModel = $this->loadModel('Product');
+        $products = $productModel->getAll();
+        $this->renderView('product', ['products' => $products]);
+    }
+}
