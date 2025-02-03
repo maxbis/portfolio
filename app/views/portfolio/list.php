@@ -24,7 +24,8 @@
             <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(3)">Quote Date</th>
             <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(4)">Total Value</th>
             <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(5)">Profit/Loss</th>
-            <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(6)">% of Portfolio</th>
+            <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(6)">YTD Profit/Loss</th>
+            <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(7)">% of Portfolio</th>
           </tr>
           <!-- Filter Input Fields -->
           <tr class="bg-gray-100">
@@ -47,7 +48,10 @@
               <input type="text" class="filter-input w-full" data-column="5" placeholder="Filter Profit/Loss">
             </td>
             <td class="border border-gray-300 px-3 py-2">
-              <input type="text" class="filter-input w-full" data-column="6" placeholder="Filter %">
+              <input type="text" class="filter-input w-full" data-column="6" placeholder="Filter YTD Profit/Loss">
+            </td>
+            <td class="border border-gray-300 px-3 py-2">
+              <input type="text" class="filter-input w-full" data-column="7" placeholder="Filter %">
             </td>
           </tr>
         </thead>
@@ -55,11 +59,13 @@
         <!-- Table Body -->
         <tbody>
           <?php 
-          $grandTotalValue = 0;
-          $grandProfitLoss = 0;
+          $grandTotalValue    = 0;
+          $grandProfitLoss    = 0;
+          $grandYTDProfitLoss = 0;
           foreach ($portfolio as $item): 
-              $grandTotalValue += $item['total_value'];
-              $grandProfitLoss += $item['profit_loss'];
+              $grandTotalValue    += $item['total_value'];
+              $grandProfitLoss    += $item['profit_loss'];
+              $grandYTDProfitLoss += $item['ytd_profit_loss'];
           ?>
           <tr class="border border-gray-300 <?= (isset($item['symbol']) && strtoupper($item['symbol']) === 'EUR') ? 'bg-green-100' : '' ?>">
             <td class="px-3 py-2"><?= htmlspecialchars($item['symbol']) ?></td>
@@ -77,6 +83,7 @@
             </td>
             <td class="px-3 py-2 text-right"><?= number_format($item['total_value'], 2, '.', ' ') ?></td>
             <td class="px-3 py-2 text-right"><?= number_format($item['profit_loss'], 2, '.', ' ') ?></td>
+            <td class="px-3 py-2 text-right"><?= number_format($item['ytd_profit_loss'], 2, '.', ' ') ?></td>
             <td class="px-3 py-2 text-right"><?= htmlspecialchars($item['percent_of_portfolio']) ?>%</td>
           </tr>
           <?php endforeach; ?>
@@ -86,12 +93,13 @@
         <tfoot class="bg-gray-200 font-bold">
           <tr>
             <td class="border border-gray-300 px-3 py-2">Total</td>
-            <!-- Leave empty for Number, Avg. Price and Quote Date -->
+            <!-- Leave empty for Symbol, Number, Avg. Price and Quote Date -->
             <td class="border border-gray-300 px-3 py-2"></td>
             <td class="border border-gray-300 px-3 py-2"></td>
-            <td class="border border-gray-300 px-3 py-2 text-right"></td>
-            <td class="border border-gray-300 px-3 py-2 text-right"><?= number_format($grandTotalValue, 2, '.',' ') ?></td>
+            <td class="border border-gray-300 px-3 py-2"></td>
+            <td class="border border-gray-300 px-3 py-2 text-right"><?= number_format($grandTotalValue, 2, '.', ' ') ?></td>
             <td class="border border-gray-300 px-3 py-2 text-right"><?= number_format($grandProfitLoss, 2, '.', ' ') ?></td>
+            <td class="border border-gray-300 px-3 py-2 text-right"><?= number_format($grandYTDProfitLoss, 2, '.', ' ') ?></td>
             <td class="border border-gray-300 px-3 py-2 text-right">100%</td>
           </tr>
         </tfoot>
@@ -108,7 +116,6 @@
       const sortedRows = rows.sort((rowA, rowB) => {
         const cellA = rowA.cells[columnIndex].innerText.trim();
         const cellB = rowB.cells[columnIndex].innerText.trim();
-
         // For numbers, remove non-numeric characters (like % or currency symbols)
         const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ""));
         const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ""));

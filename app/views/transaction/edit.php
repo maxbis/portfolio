@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- <?php
+echo "<pre>";
+print_r($transaction);
+echo "</pre><br>";
+?> -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,18 +22,12 @@
             class="space-y-4">
 
             <!-- Grid Layout for First Four Fields -->
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-gray-700 text-sm">Amount:</label>
-                    <input type="text" name="amount" value="<?= $transaction['amount'] ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                    <label for="timestamp">Date:</label>
+                    <input type="date" name="date" id="date" value="<?= $transaction['date'] ?>">
                 </div>
 
-                <div>
-                    <label class="block text-gray-700 text-sm">Number:</label>
-                    <input type="text" name="number" value="<?= $transaction['number'] ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-                </div>
 
                 <div>
                     <label class="block text-gray-700 text-sm">Symbol:</label>
@@ -40,6 +40,19 @@
                     <input type="text" name="exchange" value="<?= $transaction['exchange'] ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md">
                 </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm">Number:</label>
+                    <input type="text" name="number" value="<?= $transaction['number'] ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm">Price:</label>
+                    <input type="text" name="amount" value="<?= $transaction['amount'] ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                </div>
+
             </div>
 
             <!-- Description Field (Full Width) -->

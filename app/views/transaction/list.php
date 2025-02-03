@@ -20,7 +20,8 @@
             </a>
         </div>
 
-        <?php  $activeTab = 'transaction'; include_once __DIR__ . "/../common/nav.php"; ?>
+        <?php $activeTab = 'transaction';
+        include_once __DIR__ . "/../common/nav.php"; ?>
 
         <!-- Responsive Table Container -->
         <div class="overflow-x-auto">
@@ -31,11 +32,11 @@
                         <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(0)">ID
                         </th>
                         <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(1)">
-                            Timestamp</th>
+                            Date</th>
                         <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(2)">
-                            Amount</th>
-                        <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(3)">
                             Number</th>
+                        <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(3)">
+                            Amount</th>
                         <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(4)">
                             Symbol</th>
                         <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(5)">
@@ -52,9 +53,10 @@
                         <td class="border border-gray-300 px-3 py-2"><input type="text" class="filter-input w-full"
                                 data-column="1" placeholder="Filter Date"></td>
                         <td class="border border-gray-300 px-3 py-2"><input type="text" class="filter-input w-full"
-                                data-column="2" placeholder="Filter Amount"></td>
+                                data-column="2" placeholder="Filter Number"></td>
                         <td class="border border-gray-300 px-3 py-2"><input type="text" class="filter-input w-full"
-                                data-column="3" placeholder="Filter Number"></td>
+                                data-column="3" placeholder="Filter Amount"></td>
+
                         <td class="border border-gray-300 px-3 py-2"><input type="text" class="filter-input w-full"
                                 data-column="4" placeholder="Filter Symbol"></td>
                         <td class="border border-gray-300 px-3 py-2"><input type="text" class="filter-input w-full"
@@ -70,9 +72,9 @@
                     <?php foreach ($transactions as $transaction): ?>
                         <tr class="border border-gray-300 <?= $transaction['id'] % 2 == 0 ? 'bg-gray-100' : '' ?>">
                             <td class="px-3 py-2"><?= $transaction['id'] ?></td>
-                            <td class="px-3 py-2"><?= date('Y-m-d', strtotime($transaction['timestamp'])) ?></td>
-                            <td class="px-3 py-2"><?= $transaction['amount'] ?></td>
+                            <td class="px-3 py-2"><?= $transaction['date'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['number'] ?></td>
+                            <td class="px-3 py-2"><?= $transaction['amount'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['symbol'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['exchange'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['description'] ?></td>

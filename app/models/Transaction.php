@@ -19,13 +19,13 @@ class Transaction {
     }
 
     // Update an existing transaction
-    public function update($id, $amount, $number, $symbol, $exchange, $description) {
+    public function update($id, $date, $amount, $number, $symbol, $exchange, $description) {
         $stmt = $this->conn->prepare("
             UPDATE transaction 
-            SET amount = ?, number = ?, symbol = ?, exchange = ?, description = ?
+            SET date = ?, amount = ?, number = ?, symbol = ?, exchange = ?, description = ?
             WHERE id = ?
         ");
-        $stmt->bind_param("disssi", $amount, $number, $symbol, $exchange, $description, $id);
+        $stmt->bind_param("sdisssi", $date, $amount, $number, $symbol, $exchange, $description, $id);
         return $stmt->execute();
     }
 

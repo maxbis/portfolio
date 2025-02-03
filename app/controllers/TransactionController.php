@@ -48,18 +48,19 @@ class TransactionController extends Controller {
     // Handle update transaction form submission
     public function update($id) {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $amount = $_POST['amount'];
-            $number = $_POST['number'];
-            $symbol = $_POST['symbol'];
-            $exchange = $_POST['exchange'];
+            $date        = $_POST['date'];  
+            $amount      = $_POST['amount'];
+            $number      = $_POST['number'];
+            $symbol      = $_POST['symbol'];
+            $exchange    = $_POST['exchange'];
             $description = $_POST['description'];
-
-            $this->transactionModel->update($id, $amount, $number, $symbol, $exchange, $description);
+    
+            $this->transactionModel->update($id, $date, $amount, $number, $symbol, $exchange, $description);
             header("Location: " . $GLOBALS['BASE'] . "/transaction/list");
             exit;
         }
     }
-
+    
       // Delete a transaction by ID
       public function delete($id) {
         $this->transactionModel->delete($id);
