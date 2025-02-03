@@ -53,6 +53,12 @@ echo "</pre><br>";
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
 
+                <div>
+                    <label class="block text-gray-700 text-sm">Currency:</label>
+                    <input type="text" name="currency" value="<?= $transaction['currency'] ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                </div>
+
             </div>
 
             <!-- Description Field (Full Width) -->

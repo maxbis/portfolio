@@ -70,7 +70,7 @@
           <tr class="border border-gray-300 <?= (isset($item['symbol']) && strtoupper($item['symbol']) === 'EUR') ? 'bg-green-100' : '' ?>">
             <td class="px-3 py-2"><?= htmlspecialchars($item['symbol']) ?></td>
             <td class="px-3 py-2"><?= htmlspecialchars($item['number']) ?></td>
-            <td class="px-3 py-2"><?= htmlspecialchars($item['avg_buy_price']) ?></td>
+            <td class="px-3 py-2"><?= $item['avg_buy_price'] ?></td>
             <td class="px-3 py-2">
               <?php 
                 // Display only day and month if quote_date is available; otherwise, show a dash.
