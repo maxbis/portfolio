@@ -3,11 +3,11 @@ class Router
 {
     public function dispatch($url)
     {
-        $url = trim($url, '/');
+        $url = '/' . trim($url, '/');
+        $base = $GLOBALS['BASE'] . '/';
+        $url = preg_replace('#^' . preg_quote($base, '#') . '#i', '', $url);
         $parts = explode('/', $url);
-        $parts = array_values(array_filter($parts, function ($part) {
-            return $part !== substr($GLOBALS['BASE'], 1);
-        }));
+
 
         $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) . 'Controller' : 'HomeController';
         $methodName = $parts[1] ?? 'index';
@@ -29,7 +29,7 @@ class Router
                 echo "Method $methodName not found in $controllerName";
             }
         } else {
-            echo "Controller $controllerName not found";
+            echo "Controller $controllerName ($controllerFile) not found";
         }
     }
 }

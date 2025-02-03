@@ -20,6 +20,8 @@
             </a>
         </div>
 
+        <?php  $activeTab = 'transaction'; include_once __DIR__ . "/../common/nav.php"; ?>
+
         <!-- Responsive Table Container -->
         <div class="overflow-x-auto">
             <table id="transactionTable" class="w-full border-collapse border border-gray-300">
