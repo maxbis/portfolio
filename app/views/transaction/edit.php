@@ -24,8 +24,8 @@ echo "</pre><br>";
             <!-- Grid Layout for First Four Fields -->
             <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label for="timestamp">Date:</label>
-                    <input type="date" name="date" id="date" value="<?= $transaction['date'] ?>">
+                    <label for="date">Date:</label>
+                    <input type="date" id="transaction_date" name="date" id="date" value="<?= $transaction['date'] ?>">
                 </div>
 
 
@@ -49,14 +49,29 @@ echo "</pre><br>";
 
                 <div>
                     <label class="block text-gray-700 text-sm">Price:</label>
-                    <input type="text" name="amount" value="<?= $transaction['amount'] ?>"
+                    <input type="text" id='amount' name="amount" value="<?= $transaction['amount'] ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
 
                 <div>
                     <label class="block text-gray-700 text-sm">Currency:</label>
-                    <input type="text" name="currency" value="<?= $transaction['currency'] ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                    <select  id="currencySelect" name="currency" class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                        <option value="EURO" <?= $transaction['currency'] === 'EURO' ? 'selected' : '' ?>>EUR</option>
+                        <option value="EURUSDX" <?= $transaction['currency'] === 'EURUSDX' ? 'selected' : '' ?>>USD
+                        </option>
+                    </select>
+                </div>
+
+ 
+
+                <div>
+                    <label class="block text-gray-700 text-sm"></label>&nbsp;
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm">Price EU:</label>
+                    <input type="text" id='amount_home' name="amount_home" value="<?= $transaction['amount_home'] ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" readonly>
                 </div>
 
             </div>
@@ -93,3 +108,49 @@ echo "</pre><br>";
 </body>
 
 </html>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const currencySelect = document.getElementById('currencySelect');
+  const dateInput = document.getElementById('transaction_date');
+  const homeAmount = document.getElementById('amount_home');
+  const foreignPriceField = document.getElementById('amount');
+
+  console.log(foreignPriceField);
+
+  // Function to fetch the close price from the server using GET parameters
+  function fetchClosePrice() {
+    const symbol = currencySelect.value;
+    const date = dateInput.value;
+
+    console.log('AJAX fetchClosePrice:', symbol, date);
+
+    // Only proceed if both symbol and date are provided
+    if (symbol && date) {
+      // Build the URL with query string parameters
+      const url = `/portfolio/Quote/getApiClosePrice/${encodeURIComponent(symbol)}/${encodeURIComponent(date)}`;
+      console.log(url);
+
+      fetch(url, { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Data returnd: "+data.close);
+          if (data.close !== null) {
+            homeAmount.value = (foreignPriceField.value / data.close).toFixed(2);
+          } else {
+            homeAmount.value = foreignPriceField.value;
+          }
+        })
+        .catch(error => {
+          console.error('Fetch error:', error);
+          homeAmount.value =foreignPriceField.value;
+        });
+    }
+  }
+
+  // Fire the get curency update when date or currency is changed
+  currencySelect.addEventListener('change', fetchClosePrice);
+  dateInput.addEventListener('change', fetchClosePrice);
+});
+
+</script>

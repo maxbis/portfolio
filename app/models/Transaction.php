@@ -7,7 +7,9 @@ class Transaction
 
     public $allowedFields = [
         'date' => 's',
+        'currency' => 's',
         'amount' => 'd',
+        'amount_home' => 'd',
         'number' => 'i',
         'symbol' => 's',
         'exchange' => 's',
@@ -17,17 +19,6 @@ class Transaction
     public function __construct()
     {
         $this->conn = dbConnect();
-    }
-
-    // Insert a new transaction
-    public function _insert($amount, $number, $symbol, $exchange, $description)
-    {
-        $stmt = $this->conn->prepare("
-            INSERT INTO transaction (amount, number, symbol, exchange, description)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        $stmt->bind_param("disss", $amount, $number, $symbol, $exchange, $description);
-        return $stmt->execute();
     }
 
     public function insert()

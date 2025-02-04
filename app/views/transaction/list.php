@@ -71,10 +71,15 @@
                 <tbody>
                     <?php foreach ($transactions as $transaction): ?>
                         <tr class="border border-gray-300 <?= $transaction['id'] % 2 == 0 ? 'bg-gray-100' : '' ?>">
+                            <?php
+                                $prefix = '';
+                                if ( $transaction['currency'] == 'EURUSDX') $prefix="$ ";
+                                if ( $transaction['currency'] == 'EURO') $prefix="Є ";
+                            ?>
                             <td class="px-3 py-2"><?= $transaction['id'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['date'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['number'] ?></td>
-                            <td class="px-3 py-2"><?= $transaction['amount'] ?></td>
+                            <td class="px-3 py-2"><?= $prefix.$transaction['amount'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['symbol'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['exchange'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['description'] ?></td>

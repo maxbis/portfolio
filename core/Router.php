@@ -11,17 +11,23 @@ class Router
 
         $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) . 'Controller' : 'HomeController';
         $methodName = $parts[1] ?? 'index';
-        $param = $parts[2] ?? null; // Handle extra parameters (like ID)
+        //$param = $parts[2] ?? null; // Handle extra parameters (like ID)    
+        $paramList = array_slice($parts, 2);
 
         $controllerFile = "../app/controllers/$controllerName.php";
+
+        // echo "controllerFile: $controllerFile <br>";
+        // echo "methodName: $methodName <br>";
+        // echo "param: "; print_r($paramList); echo "<br>";
+        // exit;
 
         if (file_exists($controllerFile)) {
             require_once $controllerFile;
             $controller = new $controllerName();
 
             if (method_exists($controller, $methodName)) {
-                if ($param) {
-                    $controller->$methodName($param);
+                if ($paramList) {
+                    $controller->$methodName(...$paramList);
                 } else {
                     $controller->$methodName();
                 }

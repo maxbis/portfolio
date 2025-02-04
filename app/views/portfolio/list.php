@@ -22,6 +22,7 @@
             <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(1)">Number</th>
             <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(2)">Average Buy Price</th>
             <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(3)">Quote Date</th>
+            <th class="border border-gray-300 px-3 py-2 text-left cursor-pointer" onclick="sortTable(3)">Quote</th>
             <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(4)">Total Value</th>
             <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(5)">Profit/Loss</th>
             <th class="border border-gray-300 px-3 py-2 text-right cursor-pointer" onclick="sortTable(6)">YTD Profit/Loss</th>
@@ -40,6 +41,9 @@
             </td>
             <td class="border border-gray-300 px-3 py-2">
               <input type="text" class="filter-input w-full" data-column="3" placeholder="Filter Quote Date">
+            </td>
+            <td class="border border-gray-300 px-3 py-2">
+              <input type="text" class="filter-input w-full" data-column="3" placeholder="Filter Latest Price">
             </td>
             <td class="border border-gray-300 px-3 py-2">
               <input type="text" class="filter-input w-full" data-column="4" placeholder="Filter Total Value">
@@ -81,6 +85,7 @@
                 }
               ?>
             </td>
+            <td class="px-3 py-2"><?= $item['latest_price'] ?></td>
             <td class="px-3 py-2 text-right"><?= number_format($item['total_value'], 2, '.', ' ') ?></td>
             <td class="px-3 py-2 text-right"><?= number_format($item['profit_loss'], 2, '.', ' ') ?></td>
             <td class="px-3 py-2 text-right"><?= number_format($item['ytd_profit_loss'], 2, '.', ' ') ?></td>
@@ -94,6 +99,7 @@
           <tr>
             <td class="border border-gray-300 px-3 py-2">Total</td>
             <!-- Leave empty for Symbol, Number, Avg. Price and Quote Date -->
+            <td class="border border-gray-300 px-3 py-2"></td>
             <td class="border border-gray-300 px-3 py-2"></td>
             <td class="border border-gray-300 px-3 py-2"></td>
             <td class="border border-gray-300 px-3 py-2"></td>

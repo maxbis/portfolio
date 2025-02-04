@@ -20,11 +20,11 @@ class Portfolio {
         $sql = "SELECT 
                     symbol,
                     SUM(number) AS total_shares,
-                    SUM(amount * number) AS total_cost,
+                    SUM(amount_home * number) AS total_cost,
                     SUM(CASE WHEN date <= ? THEN number ELSE 0 END) AS pre_shares,
-                    SUM(CASE WHEN date <= ? THEN amount * number ELSE 0 END) AS pre_cost,
+                    SUM(CASE WHEN date <= ? THEN amount_home * number ELSE 0 END) AS pre_cost,
                     SUM(CASE WHEN date > ? THEN number ELSE 0 END) AS post_shares,
-                    SUM(CASE WHEN date > ? THEN amount * number ELSE 0 END) AS post_cost
+                    SUM(CASE WHEN date > ? THEN amount_home * number ELSE 0 END) AS post_cost
                 FROM transaction
                 GROUP BY symbol";
         $stmt = $this->conn->prepare($sql);
