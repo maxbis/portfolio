@@ -66,6 +66,7 @@ $columns = [
     ],
     [
         'name'      => 'YTD P/L',
+        
         'width'     => '100px',
         'data'      => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
         'aggregate' => 'sum',  // Sum YTD profit/loss.
