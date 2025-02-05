@@ -8,149 +8,151 @@
 //   - sortable  : (1/0) If the column header should be clickable for sorting.
 //   - filter    : "text", "select", or "none" to control the filtering UI.
 $columns = [
-    [
-        'name'      => 'Symbol',
-        'width'     => '80px',
-        'data'      => 'htmlspecialchars($item["symbol"])',
-        'aggregate' => null,
-        'sortable'  => 1,
-        'filter'    => 'select',  // Dropdown filter.
-    ],
-    [
-        'name'      => 'Number',
-        'width'     => '80px',
-        'data'      => 'htmlspecialchars($item["number"])',
-        'aggregate' => null,
-        'sortable'  => 1,
-        'filter'    => 'text',  // Text input filter.
-    ],
-    [
-        'name'      => 'Avg Price',
-        'width'     => '80px',
-        'data'      => 'number_format($item["avg_buy_price"], 2, ".", " ")',
-        'aggregate' => null,
-        'sortable'  => 1,
-        'filter'    => 'text',
-    ],
-    [
-        'name'      => 'QDate',
-        'width'     => '80px',
-        'data'      => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
-        'aggregate' => null,
-        'sortable'  => 1,
-        'filter'    => 'text',
-    ],
-    [
-        'name'      => 'Quote',
-        'width'     => '80px',
-        'data'      => 'number_format($item["latest_price"], 2, ".", " ")',
-        'aggregate' => null,
-        'sortable'  => 1,
-        'filter'    => 'none',  // No filter.
-    ],
-    [
-        'name'      => 'Value',
-        'width'     => '100px',
-        'data'      => 'number_format($item["total_value"], 2, ".", " ")',
-        'aggregate' => 'sum',  // Sum the values.
-        'sortable'  => 1,
-        'filter'    => 'none',
-    ],
-    [
-        'name'      => 'Profit/Loss',
-        'width'     => '100px',
-        'data'      => 'number_format($item["profit_loss"], 2, ".", " ")',
-        'aggregate' => 'sum',  // Sum profit/loss.
-        'sortable'  => 1,
-        'filter'    => 'none',
-    ],
-    [
-        'name'      => 'YTD P/L',
-        
-        'width'     => '100px',
-        'data'      => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
-        'aggregate' => 'sum',  // Sum YTD profit/loss.
-        'sortable'  => 1,
-        'filter'    => 'none',
-    ],
-    [
-        'name'      => '% of Portfolio',
-        'width'     => '',
-        'data'      => 'htmlspecialchars($item["percent_of_portfolio"])."%"',
-        'aggregate' => null,  // Or "average" if desired.
-        'sortable'  => 1,
-        'filter'    => 'text',
-    ],
+  [
+    'name' => 'Symbol',
+    'width' => '80px',
+    'data' => 'htmlspecialchars($item["symbol"])',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',  // Dropdown filter.
+  ],
+  [
+    'name' => 'Number',
+    'width' => '80px',
+    'data' => 'htmlspecialchars($item["number"])',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',  // Text input filter.
+  ],
+  [
+    'name' => 'Avg Price',
+    'width' => '80px',
+    'data' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'QDate',
+    'width' => '80px',
+    'data' => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'Quote',
+    'width' => '80px',
+    'data' => 'number_format($item["latest_price"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'Value',
+    'width' => '120px',
+    'data' => 'number_format($item["total_value"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum the values.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'Profit/Loss',
+    'width' => '120px',
+    'data' => 'number_format($item["profit_loss"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum profit/loss.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'YTD P/L',
+
+    'width' => '120px',
+    'data' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum YTD profit/loss.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => '% of Portfolio',
+    'width' => '',
+    'data' => 'htmlspecialchars($item["percent_of_portfolio"])."%"',
+    'aggregate' => 'average',  // Or "average" if desired.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
 ];
 
 // --- Sample data (for example, portfolio items) ---
 $_data = [
-    [
-        "symbol"            => "AAPL",
-        "number"            => 10,
-        "avg_buy_price"     => 145.67,
-        "quote_date"        => "2025-01-15",
-        "latest_price"      => 150.12,
-        "total_value"       => 1501.20,
-        "profit_loss"       => 46.50,
-        "ytd_profit_loss"   => 30.20,
-        "percent_of_portfolio" => 25.5,
-    ],
-    [
-        "symbol"            => "EUR",
-        "number"            => 5,
-        "avg_buy_price"     => 1.10,
-        "quote_date"        => "",
-        "latest_price"      => 1.09,
-        "total_value"       => 5.45,
-        "profit_loss"       => -0.05,
-        "ytd_profit_loss"   => 0.00,
-        "percent_of_portfolio" => 5.0,
-    ],
-    [
-        "symbol"            => "GOOG",
-        "number"            => 2,
-        "avg_buy_price"     => 2500.00,
-        "quote_date"        => "2025-01-20",
-        "latest_price"      => 2550.00,
-        "total_value"       => 5100.00,
-        "profit_loss"       => 100.00,
-        "ytd_profit_loss"   => 80.00,
-        "percent_of_portfolio" => 69.5,
-    ],
+  [
+    "symbol" => "AAPL",
+    "number" => 10,
+    "avg_buy_price" => 145.67,
+    "quote_date" => "2025-01-15",
+    "latest_price" => 150.12,
+    "total_value" => 1501.20,
+    "profit_loss" => 46.50,
+    "ytd_profit_loss" => 30.20,
+    "percent_of_portfolio" => 25.5,
+  ],
+  [
+    "symbol" => "EUR",
+    "number" => 5,
+    "avg_buy_price" => 1.10,
+    "quote_date" => "",
+    "latest_price" => 1.09,
+    "total_value" => 5.45,
+    "profit_loss" => -0.05,
+    "ytd_profit_loss" => 0.00,
+    "percent_of_portfolio" => 5.0,
+  ],
+  [
+    "symbol" => "GOOG",
+    "number" => 2,
+    "avg_buy_price" => 2500.00,
+    "quote_date" => "2025-01-20",
+    "latest_price" => 2550.00,
+    "total_value" => 5100.00,
+    "profit_loss" => 100.00,
+    "ytd_profit_loss" => 80.00,
+    "percent_of_portfolio" => 69.5,
+  ],
 ];
 
-if (!isset($title)) $title = 'Generic view (specify titel in controller)';
+if (!isset($title))
+  $title = 'Generic view (specify titel in controller)';
 
 // --- Prepare Aggregates ---
 // Initialize accumulators for columns with aggregation rules.
 $aggregates = [];
 foreach ($columns as $colIndex => $col) {
-    if (!empty($col['aggregate'])) {
-        $aggregates[$colIndex] = [
-            'value' => 0,
-            'count' => 0,
-            'type'  => $col['aggregate']  // "sum" or "average"
-        ];
-    }
+  if (!empty($col['aggregate'])) {
+    $aggregates[$colIndex] = [
+      'value' => 0,
+      'count' => 0,
+      'type' => $col['aggregate']  // "sum" or "average"
+    ];
+  }
 }
 
 // --- Precompute unique values for dropdown filters ---
 // Loop only for columns where filter type is 'select'
 $uniqueValues = [];
 foreach ($columns as $colIndex => $col) {
-    if (isset($col['filter']) && $col['filter'] === 'select') {
-        $uniqueValues[$colIndex] = [];
-        foreach ($data as $item) {
-            // Evaluate the column's data code.
-            $value = eval('return ' . $col['data'] . ';');
-            $uniqueValues[$colIndex][$value] = $value;
-        }
+  if (isset($col['filter']) && $col['filter'] === 'select') {
+    $uniqueValues[$colIndex] = [];
+    foreach ($data as $item) {
+      // Evaluate the column's data code.
+      $value = eval ('return ' . $col['data'] . ';');
+      $uniqueValues[$colIndex][$value] = $value;
     }
+  }
 }
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -158,9 +160,13 @@ foreach ($columns as $colIndex => $col) {
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Optional: custom style for filter inputs */
-    .filter-input { width: 100%; box-sizing: border-box; }
+    .filter-input {
+      width: 100%;
+      box-sizing: border-box;
+    }
   </style>
 </head>
+
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
   <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
     <h1 class="text-2xl font-semibold mb-4"><?= $title ?></h1>
@@ -170,13 +176,12 @@ foreach ($columns as $colIndex => $col) {
         <thead class="bg-gray-200">
           <!-- Header Row -->
           <tr>
-            <?php foreach ($columns as $colIndex => $col): 
+            <?php foreach ($columns as $colIndex => $col):
               $widthStyle = !empty($col['width']) ? " style=\"width:{$col['width']}\"" : "";
               $sortable = !empty($col['sortable']);
               ?>
-              <th class="border border-gray-300 px-3 py-2 text-left  text-center <?= $sortable ? 'cursor-pointer' : '' ?>" 
-                  <?= $widthStyle ?>
-                  <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
+              <th class="border border-gray-300 px-3 py-2 text-left  text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
+                <?= $widthStyle ?>   <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
                 <?= htmlspecialchars($col['name']) ?>
               </th>
             <?php endforeach; ?>
@@ -185,7 +190,7 @@ foreach ($columns as $colIndex => $col) {
           <tr class="bg-gray-100">
             <?php foreach ($columns as $colIndex => $col): ?>
               <td class="border border-gray-300 px-3 py-2">
-                <?php if (isset($col['filter'])): 
+                <?php if (isset($col['filter'])):
                   if ($col['filter'] === 'select') { ?>
                     <select class="filter-input" data-column="<?= $colIndex ?>">
                       <option value="">All</option>
@@ -194,8 +199,9 @@ foreach ($columns as $colIndex => $col) {
                       <?php endforeach; ?>
                     </select>
                   <?php } elseif ($col['filter'] === 'text') { ?>
-                    <input type="text" class="filter-input" data-column="<?= $colIndex ?>" placeholder="Filter <?= htmlspecialchars($col['name']) ?>">
-                  <?php } 
+                    <input type="text" class="filter-input" data-column="<?= $colIndex ?>"
+                      placeholder="Filter <?= htmlspecialchars($col['name']) ?>">
+                  <?php }
                   // If filter is 'none', output nothing.
                 endif; ?>
               </td>
@@ -209,15 +215,15 @@ foreach ($columns as $colIndex => $col) {
                 <td class="px-3 py-2 <?= ($colIndex >= 5) ? 'text-right' : 'text-left' ?>">
                   <?php
                   // Evaluate the code snippet to get the cell value.
-                  $cellValue = eval('return ' . $col['data'] . ';');
+                  $cellValue = eval ('return ' . $col['data'] . ';');
                   echo $cellValue;
-                  
+
                   // If aggregation is required, update the accumulator.
                   if (isset($aggregates[$colIndex])) {
-                      // Remove formatting to allow numeric addition.
-                      $numeric = floatval(str_replace([',', ' '], '', $cellValue));
-                      $aggregates[$colIndex]['value'] += $numeric;
-                      $aggregates[$colIndex]['count']++;
+                    // Remove formatting to allow numeric addition.
+                    $numeric = floatval(str_replace([',', ' '], '', $cellValue));
+                    $aggregates[$colIndex]['value'] += $numeric;
+                    $aggregates[$colIndex]['count']++;
                   }
                   ?>
                 </td>
@@ -232,15 +238,18 @@ foreach ($columns as $colIndex => $col) {
               <td class="border border-gray-300 px-3 py-2 text-right">
                 <?php
                 if (isset($aggregates[$colIndex])) {
-                    $agg = $aggregates[$colIndex];
-                    if ($agg['type'] === 'average' && $agg['count'] > 0) {
-                        echo number_format($agg['value'] / $agg['count'], 2, '.', ' ');
-                    } else {
-                        echo number_format($agg['value'], 2, '.', ' ');
-                    }
+                  $agg = $aggregates[$colIndex];
+                  if ($agg['type'] === 'average' && $agg['count'] > 0) {
+                    //echo number_format($agg['value'] / $agg['count'], 2, '.', ' ');
+                    $average = number_format($agg['value'] / $agg['count'], 2, '.', ' ');
+                    echo '<span style="text-decoration: overline; font-weight: bold;color:grey;">avg ' . $average . '%</span>';
+                  } else {
+                    $total = number_format($agg['value'], 2, '.', ' ');
+                    echo '<span style="text-decoration: overline; font-weight: bold;color:black;">' . $total . '</span>';
+                  }
                 } else {
-                    // For the first column, you might label it as "Total"
-                    echo ($colIndex === 0) ? "Total" : "";
+                  // For the first column, you might label it as "Total"
+                  echo ($colIndex === 0) ? "" : "";
                 }
                 ?>
               </td>
@@ -279,7 +288,7 @@ foreach ($columns as $colIndex => $col) {
         // Attempt numeric comparison first.
         const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ""));
         const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ""));
-        
+
         let comparison = 0;
         if (!isNaN(numA) && !isNaN(numB)) {
           comparison = numA - numB;
@@ -325,4 +334,5 @@ foreach ($columns as $colIndex => $col) {
     }
   </script>
 </body>
+
 </html>
