@@ -16,10 +16,10 @@ if (!isset($activeTab)) {
        class="px-4 py-2 border-b-2 <?= $activeTab === 'transaction' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
         Transactions
     </a>
-    <!-- Future Tab 1 -->
-    <a href="#"
-       class="px-4 py-2 border-b-2 <?= $activeTab === 'future1' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
-        Future Tab 1
+    <!-- Exchangese Tab 1 -->
+    <a href="<?= $GLOBALS['BASE'] ?>/exchange/list"
+       class="px-4 py-2 border-b-2 <?= $activeTab === 'exchanges' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
+        Exchanges
     </a>
     <!-- Future Tab 2 -->
     <a href="#"

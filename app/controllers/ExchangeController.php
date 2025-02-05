@@ -15,4 +15,10 @@ class ExchangeController extends Controller
         $exchanges = $this->exchangeModel->get();
         $this->renderView('exchange/listd', ['data' => $exchanges]);
     }
+
+    public function list()
+    {
+        $exchanges = $this->exchangeModel->get();
+        $this->renderView('exchange/listd', ['data' => $exchanges]);
+    }
 }
