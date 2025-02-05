@@ -81,7 +81,7 @@
                             <td class="px-3 py-2"><?= $transaction['number'] ?></td>
                             <td class="px-3 py-2"><?= $prefix.$transaction['amount'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['symbol'] ?></td>
-                            <td class="px-3 py-2"><?= $transaction['exchange'] ?></td>
+                            <td class="px-3 py-2"><?= $transaction['exchange_name'] ?></td>
                             <td class="px-3 py-2"><?= $transaction['description'] ?></td>
                             <td class="px-3 py-2">
                                 <a href="<?= $GLOBALS['BASE'] ?>/transaction/edit/<?= $transaction['id'] ?>"

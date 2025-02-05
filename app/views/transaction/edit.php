@@ -3,7 +3,7 @@
 
 <!-- <?php
 echo "<pre>";
-print_r($transaction);
+print_r($exchanges);
 echo "</pre><br>";
 ?> -->
 
@@ -37,8 +37,14 @@ echo "</pre><br>";
 
                 <div>
                     <label class="block text-gray-700 text-sm">Exchange:</label>
-                    <input type="text" name="exchange" value="<?= $transaction['exchange'] ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                    <select name="exchange_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                        <?php foreach ($exchanges as $exchange): ?>
+                            <option value="<?= $exchange['id'] ?>"
+                                <?= ($exchange['id'] == $transaction['exchange_id']) ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($exchange['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div>
@@ -55,14 +61,15 @@ echo "</pre><br>";
 
                 <div>
                     <label class="block text-gray-700 text-sm">Currency:</label>
-                    <select  id="currencySelect" name="currency" class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                    <select id="currencySelect" name="currency"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                         <option value="EURO" <?= $transaction['currency'] === 'EURO' ? 'selected' : '' ?>>EUR</option>
                         <option value="EURUSDX" <?= $transaction['currency'] === 'EURUSDX' ? 'selected' : '' ?>>USD
                         </option>
                     </select>
                 </div>
 
- 
+
 
                 <div>
                     <label class="block text-gray-700 text-sm"></label>&nbsp;
@@ -110,47 +117,47 @@ echo "</pre><br>";
 </html>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  const currencySelect = document.getElementById('currencySelect');
-  const dateInput = document.getElementById('transaction_date');
-  const homeAmount = document.getElementById('amount_home');
-  const foreignPriceField = document.getElementById('amount');
+    document.addEventListener("DOMContentLoaded", function () {
+        const currencySelect = document.getElementById('currencySelect');
+        const dateInput = document.getElementById('transaction_date');
+        const homeAmount = document.getElementById('amount_home');
+        const foreignPriceField = document.getElementById('amount');
 
-  console.log(foreignPriceField);
+        console.log(foreignPriceField);
 
-  // Function to fetch the close price from the server using GET parameters
-  function fetchClosePrice() {
-    const symbol = currencySelect.value;
-    const date = dateInput.value;
+        // Function to fetch the close price from the server using GET parameters
+        function fetchClosePrice() {
+            const symbol = currencySelect.value;
+            const date = dateInput.value;
 
-    console.log('AJAX fetchClosePrice:', symbol, date);
+            console.log('AJAX fetchClosePrice:', symbol, date);
 
-    // Only proceed if both symbol and date are provided
-    if (symbol && date) {
-      // Build the URL with query string parameters
-      const url = `/portfolio/Quote/getApiClosePrice/${encodeURIComponent(symbol)}/${encodeURIComponent(date)}`;
-      console.log(url);
+            // Only proceed if both symbol and date are provided
+            if (symbol && date) {
+                // Build the URL with query string parameters
+                const url = `/portfolio/Quote/getApiClosePrice/${encodeURIComponent(symbol)}/${encodeURIComponent(date)}`;
+                console.log(url);
 
-      fetch(url, { method: 'GET' })
-        .then(response => response.json())
-        .then(data => {
-          console.log("Data returnd: "+data.close);
-          if (data.close !== null) {
-            homeAmount.value = (foreignPriceField.value / data.close).toFixed(2);
-          } else {
-            homeAmount.value = foreignPriceField.value;
-          }
-        })
-        .catch(error => {
-          console.error('Fetch error:', error);
-          homeAmount.value =foreignPriceField.value;
-        });
-    }
-  }
+                fetch(url, { method: 'GET' })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Data returnd: " + data.close);
+                        if (data.close !== null) {
+                            homeAmount.value = (foreignPriceField.value / data.close).toFixed(2);
+                        } else {
+                            homeAmount.value = foreignPriceField.value;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        homeAmount.value = foreignPriceField.value;
+                    });
+            }
+        }
 
-  // Fire the get curency update when date or currency is changed
-  currencySelect.addEventListener('change', fetchClosePrice);
-  dateInput.addEventListener('change', fetchClosePrice);
-});
+        // Fire the get curency update when date or currency is changed
+        currencySelect.addEventListener('change', fetchClosePrice);
+        dateInput.addEventListener('change', fetchClosePrice);
+    });
 
 </script>

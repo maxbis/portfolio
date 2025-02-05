@@ -1,20 +1,29 @@
 <?php
 require_once '../core/Controller.php';
 require_once '../app/models/Transaction.php';
+require_once '../app/models/Exchange.php';
 
 class TransactionController extends Controller
 {
     private $transactionModel;
+    private $exchangeModel;
 
     public function __construct()
     {
         $this->transactionModel = new Transaction();
+        $this->exchangeModel = new Exchange();
+    }
+
+    public function listd()
+    {
+        $transactions = $this->transactionModel->get();
+        $this->renderView('transaction/listd', ['data' => $transactions]);
     }
 
     // List all transactions
     public function list()
     {
-        $transactions = $this->transactionModel->getAll();
+        $transactions = $this->transactionModel->get();
         $this->renderView('transaction/list', ['transactions' => $transactions]);
     }
 
@@ -38,9 +47,11 @@ class TransactionController extends Controller
     // Show form to edit an existing transaction
     public function edit($id)
     {
-        $transaction = $this->transactionModel->getById($id);
+        $transaction = $this->transactionModel->get($id);
+        $exchanges = $this->exchangeModel->get();
+
         if ($transaction) {
-            $this->renderView('transaction/edit', ['transaction' => $transaction]);
+            $this->renderView('transaction/edit', ['transaction' => $transaction, 'exchanges' => $exchanges]);
         } else {
             echo "Transaction not found.";
         }
