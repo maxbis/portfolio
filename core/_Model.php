@@ -13,44 +13,28 @@ abstract class GenericModel
     // - table: the table to join, possibly with an alias
     // - on: the ON condition for the join
     // - select (optional): extra fields to select from the join
-    protected $joins = [];
+    protected $joins = []; 
 
     public function __construct()
     {
-        // Assumes that dbConnect() now returns a PDO instance.
-        $this->conn = $this->dbConnectPDO();
+        $this->conn = dbConnect();
     }
-
-    function dbConnectPDO()
-    {
-        $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
-        try {
-            $pdo = new PDO($dsn, DB_USER, DB_PASS, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-            ]);
-        } catch (PDOException $e) {
-            die("Database connection failed: " . $e->getMessage());
-        }
-        return $pdo;
-    }
-
 
     /**
      * Insert a new record.
-     *
-     * @return mixed The last inserted ID on success, or false on failure.
      */
     public function insert()
     {
         $columns = [];
         $placeholders = [];
+        $types = '';
         $values = [];
 
         foreach ($this->tableFields as $field => $type) {
             if (isset($_POST[$field])) {
                 $columns[] = $field;
                 $placeholders[] = '?';
+                $types .= $type;
                 $values[] = $_POST[$field];
             }
         }
@@ -62,12 +46,12 @@ abstract class GenericModel
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
-            $errorInfo = $this->conn->errorInfo();
-            throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
+            throw new Exception("Failed to prepare statement: " . $this->conn->error);
         }
+        $stmt->bind_param($types, ...$values);
 
-        if ($stmt->execute($values)) {
-            return $this->conn->lastInsertId();
+        if ($stmt->execute()) {
+            return $stmt->insert_id;
         } else {
             return false;
         }
@@ -75,18 +59,17 @@ abstract class GenericModel
 
     /**
      * Update an existing record.
-     *
-     * @param int $id The record's ID.
-     * @return bool True on success, false on failure.
      */
     public function update($id)
     {
         $fields = [];
+        $types = '';
         $values = [];
 
         foreach ($this->tableFields as $field => $type) {
             if (isset($_POST[$field])) {
                 $fields[] = "$field = ?";
+                $types .= $type;
                 $values[] = $_POST[$field];
             }
         }
@@ -96,22 +79,20 @@ abstract class GenericModel
         }
 
         // Append the id parameter.
+        $types .= 'i';
         $values[] = $id;
 
         $sql = "UPDATE {$this->table} SET " . implode(', ', $fields) . " WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
-            $errorInfo = $this->conn->errorInfo();
-            throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
+            throw new Exception("Failed to prepare statement: " . $this->conn->error);
         }
-
-        return $stmt->execute($values);
+        $stmt->bind_param($types, ...$values);
+        return $stmt->execute();
     }
 
     /**
      * Build the JOIN clause and extra select fields.
-     *
-     * @return array An array with the JOIN clause and extra SELECT fields.
      */
     protected function buildJoins()
     {
@@ -136,7 +117,7 @@ abstract class GenericModel
      * Retrieve record(s) with optional join data.
      *
      * @param int|null $id If provided, fetch a single record.
-     * @return mixed A single record (associative array) or an array of records.
+     * @return mixed Single record (associative array) or an array of records.
      */
     public function get($id = null)
     {
@@ -148,35 +129,24 @@ abstract class GenericModel
             $sql .= " WHERE {$this->table}.id = ?";
             $stmt = $this->conn->prepare($sql);
             if (!$stmt) {
-                $errorInfo = $this->conn->errorInfo();
-                throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
+                throw new Exception("Failed to prepare statement: " . $this->conn->error);
             }
-            $stmt->execute([$id]);
-            return $stmt->fetch(PDO::FETCH_ASSOC);
-        } else {
-            $stmt = $this->conn->prepare($sql);
-            if (!$stmt) {
-                $errorInfo = $this->conn->errorInfo();
-                throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
-            }
+            $stmt->bind_param("i", $id);
             $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->get_result()->fetch_assoc();
+        } else {
+            $result = $this->conn->query($sql);
+            return $result->fetch_all(MYSQLI_ASSOC);
         }
     }
 
     /**
      * Delete a record.
-     *
-     * @param int $id The record's ID.
-     * @return bool True on success, false on failure.
      */
     public function delete($id)
     {
         $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = ?");
-        if (!$stmt) {
-            $errorInfo = $this->conn->errorInfo();
-            throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
-        }
-        return $stmt->execute([$id]);
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
     }
 }
