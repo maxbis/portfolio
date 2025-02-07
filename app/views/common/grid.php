@@ -79,7 +79,7 @@ foreach ($columns as $colIndex => $col) {
   </style>
 </head>
 
-<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+<body class="bg-gray-100 flex">
   <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
     <h1 class="text-2xl font-semibold mb-4"><?= htmlspecialchars($title) ?></h1>
     <?php $activeTab = $model; ?>

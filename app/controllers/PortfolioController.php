@@ -9,14 +9,8 @@ class PortfolioController extends Controller {
         $this->portfolioModel = new Portfolio();
     }
 
-    // Display the portfolio overview
     public function list() {
-        $portfolio = $this->portfolioModel->getPortfolio();
-        $this->renderView('portfolio/list', ['portfolio' => $portfolio]);
-    }
-
-    public function listd() {
-        $portfolio = $this->portfolioModel->getPortfolio();
-        $this->renderView('portfolio/listd', ['title' => 'Portfolio', 'data' => $portfolio]);
+        $records = $this->portfolioModel->getPortfolio();
+        $this->renderView('portfolio/list', ['title' => 'Portfolio', 'data' => $records]);
     }
 }
