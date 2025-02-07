@@ -1,5 +1,6 @@
 <?php
 class Controller {
+    private $model;
     public function loadModel($model) {
         require_once "../app/models/$model.php";
         return new $model();
@@ -9,4 +10,5 @@ class Controller {
         extract($data);
         require_once "../app/views/$view.php";
     }
+    
 }

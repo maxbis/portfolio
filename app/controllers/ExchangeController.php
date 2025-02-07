@@ -9,7 +9,7 @@ class ExchangeController extends Controller
     {
         $this->exchangeModel = new Exchange();
     }
-    
+
     public function listd()
     {
         $exchanges = $this->exchangeModel->get();
@@ -20,5 +20,15 @@ class ExchangeController extends Controller
     {
         $exchanges = $this->exchangeModel->get();
         $this->renderView('exchange/listd', ['data' => $exchanges]);
+    }
+
+    public function edit($id)
+    {
+        $exchange = $this->exchangeModel->get($id);
+        if ($exchange) {
+            $this->renderView('exchange/edit', [ 'exchange' => $exchange]);
+        } else {
+            echo "Transaction not found.";
+        }
     }
 }

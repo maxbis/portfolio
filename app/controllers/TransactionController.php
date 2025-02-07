@@ -1,44 +1,43 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Transaction.php';
 require_once '../app/models/Exchange.php';
 
 class TransactionController extends Controller
 {
-    private $transactionModel;
     private $exchangeModel;
+    private $controllerName;
 
     public function __construct()
     {
-        $this->transactionModel = new Transaction();
-        $this->exchangeModel = new Exchange();
+        $fileName = strtolower(pathinfo(__FILE__, PATHINFO_FILENAME));
+        $search = 'controller';
+        if (substr($fileName, -strlen($search)) === $search) {
+            $fileName = substr($fileName, 0, -strlen($search));
+        }
+        $this->controllerName = $fileName;
+        $this->loadModel($this->controllerName);
+        $this->model = new Transaction();
     }
 
-    public function listd()
-    {
-        $transactions = $this->transactionModel->get();
-        $this->renderView('transaction/listd', ['data' => $transactions]);
-    }
-
-    // List all transactions
     public function list()
     {
-        $transactions = $this->transactionModel->get();
-        $this->renderView('transaction/list', ['transactions' => $transactions]);
+        $transactions = $this->model->get();
+        $this->renderView($this->controllerName.'/listd', ['data' => $transactions]);
     }
+
 
     // Show form to add a new transaction
     public function create()
     {
-        $this->renderView('transaction/create');
+        $this->renderView($this->controllerName.'/create');
     }
 
     // Handle form submission for adding a transaction
     public function store()
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->transactionModel->insert();
-            header("Location: " . $GLOBALS['BASE'] . "/transaction/list");
+            $this->model->insert();
+            header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
             exit;
         }
     }
@@ -47,7 +46,9 @@ class TransactionController extends Controller
     // Show form to edit an existing transaction
     public function edit($id)
     {
-        $transaction = $this->transactionModel->get($id);
+        $transaction = $this->model->get($id);
+
+        $this->exchangeModel = new Exchange();
         $exchanges = $this->exchangeModel->get();
 
         if ($transaction) {
@@ -61,8 +62,8 @@ class TransactionController extends Controller
     public function update($id)
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->transactionModel->update($id);
-            header("Location: " . $GLOBALS['BASE'] . "/transaction/list");
+            $this->model->update($id);
+            header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
             exit;
         }
     }
@@ -71,8 +72,8 @@ class TransactionController extends Controller
     // Delete a transaction by ID
     public function delete($id)
     {
-        $this->transactionModel->delete($id);
-        header("Location: " . $GLOBALS['BASE'] . "/transaction/list");
+        $this->model->delete($id);
+        header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
         exit;
     }
 
