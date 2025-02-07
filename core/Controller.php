@@ -9,6 +9,7 @@ class Controller {
             $fileName = substr($fileName, 0, -strlen($search));
         }
         $this->controllerName = $fileName;
+        return $fileName;
     }
 
     public function loadModel($model) {
@@ -24,7 +25,7 @@ class Controller {
     public function list()
     {
         $records = $this->model->get();
-        $this->renderView($this->controllerName.'/listd', ['data' => $records]);
+        $this->renderView($this->controllerName.'/list', ['data' => $records]);
     }
 
     // Show form to add a new transaction
@@ -34,7 +35,7 @@ class Controller {
     }
 
     // Handle form submission for adding a transaction
-    public function store()
+    public function insert()
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->model->insert();

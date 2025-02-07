@@ -7,6 +7,7 @@ class PortfolioController extends Controller {
 
     public function __construct() {
         $this->portfolioModel = new Portfolio();
+        // $this->controllerName = $this->childFileName(__FILE__);
     }
 
     public function list() {

@@ -20,7 +20,25 @@ if (!isset($model)) {
 
 // echo "<pre>";
 $data = array_values($data);
+?>
+<?php if (empty($data)): ?>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <div class="container mx-auto mt-4">
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <strong class="font-bold">Warning!</strong>
+      <span class="block sm:inline">No data to display, empty table?</span>
+    </div>
+    <br>
+    <div class="mb-4">
+      <a href="<?= htmlspecialchars($GLOBALS['BASE'].'/'.$model.'/create') ?>"
+         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        New
+      </a>
+    </div>
+  </div>
+<?php exit; endif; ?>
 
+<?php
 //check if all defined colums exists
 foreach ($columns as $col) {
   if (substr($col['data'], 0, 1) !== '#' && !array_key_exists($col['data'], $data[0])) {
@@ -84,6 +102,16 @@ foreach ($columns as $colIndex => $col) {
     <h1 class="text-2xl font-semibold mb-4"><?= htmlspecialchars($title) ?></h1>
     <?php $activeTab = $model; ?>
     <?php include_once __DIR__ . "/../common/nav.php"; ?>
+
+    <?php if (! isset($noCreate)) : ?>
+      <div class="mb-4">
+        <a href="<?= $GLOBALS['BASE'].'/'.$model ?>/create"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          New
+        </a>
+      </div>
+      <?php endif; ?>
+
     <!-- The grid table -->
     <div class="overflow-x-auto">
       <table id="gridView" class="w-full border-collapse border border-gray-300" data-sorted-col="" data-sort-dir="asc">

@@ -97,6 +97,8 @@ if (!isset($title)) {
 if (!isset($model)) {
   $model = 'portfolio';
 }
+
+$noCreate = true;
 // Include the generic grid view.
 include __DIR__ . '/../common/grid.php';
 ?>

@@ -68,6 +68,7 @@ abstract class GenericModel
         }
 
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
+ 
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
             $errorInfo = $this->conn->errorInfo();
