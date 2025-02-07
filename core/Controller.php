@@ -1,6 +1,16 @@
 <?php
 class Controller {
-    private $model;
+    public $controllerName;
+
+    public function childFileName($childFileName) {
+        $fileName = strtolower(pathinfo($childFileName, PATHINFO_FILENAME));
+        $search = 'controller';
+        if (substr($fileName, -strlen($search)) === $search) {
+            $fileName = substr($fileName, 0, -strlen($search));
+        }
+        $this->controllerName = $fileName;
+    }
+
     public function loadModel($model) {
         require_once "../app/models/$model.php";
         return new $model();
@@ -10,5 +20,59 @@ class Controller {
         extract($data);
         require_once "../app/views/$view.php";
     }
-    
+
+    public function list()
+    {
+        $records = $this->model->get();
+        $this->renderView($this->controllerName.'/listd', ['data' => $records]);
+    }
+
+    // Show form to add a new transaction
+    public function create()
+    {
+        $this->renderView($this->controllerName.'/create');
+    }
+
+    // Handle form submission for adding a transaction
+    public function store()
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->model->insert();
+            header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
+            exit;
+        }
+    }
+
+
+    // Show form to edit an existing transaction
+    public function edit($id)
+    {
+        $record = $this->model->get($id);
+
+        if ($record) {
+            $this->renderView('/'.$this->controllerName.'/edit', ['record' => $record]);
+        } else {
+            echo "Transaction not found.";
+        }
+    }
+
+    // Handle update transaction form submission
+    public function update($id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->model->update($id);
+            header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
+            exit;
+        }
+    }
+
+
+    // Delete a transaction by ID
+    public function delete($id)
+    {
+        $this->model->delete($id);
+        header("Location: " . $GLOBALS['BASE'] . "/".$this->controllerName."/list");
+        exit;
+    }
+
 }

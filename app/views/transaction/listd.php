@@ -62,6 +62,5 @@ if (!isset($title)) {
 if (!isset($model)) {
   $model = 'transaction';
 }
-
 // Include the generic grid view.
 include __DIR__ . '/../common/grid.php';

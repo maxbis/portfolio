@@ -1,38 +1,92 @@
 <?php
-// grid.php
+// --- Define the grid columns ---
+// Properties:
+//   - name      : Column header label.
+//   - width     : CSS width (e.g. "60px") if needed, otherwise leave empty.
+//   - data      : PHP code snippet that outputs the cell value. (Be careful with eval!)
+//   - aggregate : "sum" or "average" to aggregate data in the footer (or null for no aggregation).
+//   - sortable  : (1/0) If the column header should be clickable for sorting.
+//   - filter    : "text", "select", or "none" to control the filtering UI.
+$columns = [
+  [
+    'name' => 'Symbol',
+    'width' => '80px',
+    'data' => 'htmlspecialchars($item["symbol"])',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',  // Dropdown filter.
+  ],
+  [
+    'name' => 'Number',
+    'width' => '80px',
+    'data' => 'htmlspecialchars($item["number"])',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',  // Text input filter.
+  ],
+  [
+    'name' => 'Avg Price',
+    'width' => '80px',
+    'data' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'QDate',
+    'width' => '80px',
+    'data' => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'Quote',
+    'width' => '80px',
+    'data' => 'number_format($item["latest_price"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'Value',
+    'width' => '120px',
+    'data' => 'number_format($item["total_value"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum the values.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'Profit/Loss',
+    'width' => '120px',
+    'data' => 'number_format($item["profit_loss"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum profit/loss.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'YTD P/L',
 
-// Check for required variables; you can also set defaults if needed.
-if (!isset($data)) {
-  die('No data provided');
-}
+    'width' => '120px',
+    'data' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
+    'aggregate' => 'sum',  // Sum YTD profit/loss.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => '% of Portfolio',
+    'width' => '',
+    'data' => 'htmlspecialchars($item["percent_of_portfolio"])."%"',
+    'aggregate' => 'average',  // Or "average" if desired.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+];
 
-if (!isset($columns) || !is_array($columns)) {
-  die('Columns not defined properly.');
-}
 
-if (!isset($title)) {
-  $title = 'Generic view';
-}
 
-if (!isset($model)) {
-  $model = 'transaction';
-}
-
-// echo "<pre>";
-$data = array_values($data);
-
-//check if all defined colums exists
-foreach ($columns as $col) {
-  if (substr($col['data'], 0, 1) !== '#' && !array_key_exists($col['data'], $data[0])) {
-    echo "<pre>";
-    echo "File: " . __FILE__ . ", Line: " . __LINE__ . PHP_EOL;
-    echo '$columns (as defined in table): ' . PHP_EOL;
-    print_r($data);
-    echo '$columns (as defined in view): ' . PHP_EOL;
-    print_r($columns);
-    exit("Error: Key '{$col['data']}' does not exist in the item array.");
-  }
-}
+if (!isset($title))
+  $title = 'Generic view (specify titel in controller)';
 
 // --- Prepare Aggregates ---
 // Initialize accumulators for columns with aggregation rules.
@@ -54,13 +108,12 @@ foreach ($columns as $colIndex => $col) {
   if (isset($col['filter']) && $col['filter'] === 'select') {
     $uniqueValues[$colIndex] = [];
     foreach ($data as $item) {
-      $value = $item[$col['data']];
+      // Evaluate the column's data code.
+      $value = eval ('return ' . $col['data'] . ';');
       $uniqueValues[$colIndex][$value] = $value;
     }
   }
 }
-
-// print_r($data);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +121,7 @@ foreach ($columns as $colIndex => $col) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><?= htmlspecialchars($title) ?></title>
+  <title><?= $title ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Optional: custom style for filter inputs */
@@ -81,9 +134,7 @@ foreach ($columns as $colIndex => $col) {
 
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
   <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
-    <h1 class="text-2xl font-semibold mb-4"><?= htmlspecialchars($title) ?></h1>
-    <?php $activeTab = $model; ?>
-    <?php include_once __DIR__ . "/../common/nav.php"; ?>
+    <h1 class="text-2xl font-semibold mb-4"><?= $title ?></h1>
     <!-- The grid table -->
     <div class="overflow-x-auto">
       <table id="gridView" class="w-full border-collapse border border-gray-300" data-sorted-col="" data-sort-dir="asc">
@@ -94,7 +145,7 @@ foreach ($columns as $colIndex => $col) {
               $widthStyle = !empty($col['width']) ? " style=\"width:{$col['width']}\"" : "";
               $sortable = !empty($col['sortable']);
               ?>
-              <th class="border border-gray-300 px-3 py-2 text-left text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
+              <th class="border border-gray-300 px-3 py-2 text-left  text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
                 <?= $widthStyle ?>   <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
                 <?= htmlspecialchars($col['name']) ?>
               </th>
@@ -116,6 +167,7 @@ foreach ($columns as $colIndex => $col) {
                     <input type="text" class="filter-input" data-column="<?= $colIndex ?>"
                       placeholder="Filter <?= htmlspecialchars($col['name']) ?>">
                   <?php }
+                  // If filter is 'none', output nothing.
                 endif; ?>
               </td>
             <?php endforeach; ?>
@@ -124,29 +176,16 @@ foreach ($columns as $colIndex => $col) {
         <tbody>
           <?php foreach ($data as $item): ?>
             <tr class="border border-gray-300">
-              <?php foreach ($columns as $colIndex => $col):
-                $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left'; ?>
-                <td class="px-3 py-2 <?= $alignment ?>">
+              <?php foreach ($columns as $colIndex => $col): ?>
+                <td class="px-3 py-2 <?= ($colIndex >= 5) ? 'text-right' : 'text-left' ?>">
                   <?php
-                  if ($col['data'] === '#edit') {
-                    $cellValue = sprintf(
-                      '<a href="%s/%s/edit/%s" class="hover:bg-yellow-500 text-black p-2 rounded-lg transition duration-200 transform hover:scale-110">✏️</a>',
-                      $GLOBALS['BASE'],
-                      $model,
-                      $item['id']
-                    );
-                  } else {
-                    // place value in cell
-                    if (isset($col['formatter'])) {
-                      $cellValue = eval ('return ' . $col['formatter'] . ';');
-                    } else {
-                      $cellValue = $item[$col['data']];
-                    }
-                  }
+                  // Evaluate the code snippet to get the cell value.
+                  $cellValue = eval ('return ' . $col['data'] . ';');
                   echo $cellValue;
 
                   // If aggregation is required, update the accumulator.
                   if (isset($aggregates[$colIndex])) {
+                    // Remove formatting to allow numeric addition.
                     $numeric = floatval(str_replace([',', ' '], '', $cellValue));
                     $aggregates[$colIndex]['value'] += $numeric;
                     $aggregates[$colIndex]['count']++;
@@ -166,12 +205,16 @@ foreach ($columns as $colIndex => $col) {
                 if (isset($aggregates[$colIndex])) {
                   $agg = $aggregates[$colIndex];
                   if ($agg['type'] === 'average' && $agg['count'] > 0) {
+                    //echo number_format($agg['value'] / $agg['count'], 2, '.', ' ');
                     $average = number_format($agg['value'] / $agg['count'], 2, '.', ' ');
                     echo '<span style="text-decoration: overline; font-weight: bold;color:grey;">avg ' . $average . '%</span>';
                   } else {
                     $total = number_format($agg['value'], 2, '.', ' ');
                     echo '<span style="text-decoration: overline; font-weight: bold;color:black;">' . $total . '</span>';
                   }
+                } else {
+                  // For the first column, you might label it as "Total"
+                  echo ($colIndex === 0) ? "" : "";
                 }
                 ?>
               </td>
@@ -184,13 +227,17 @@ foreach ($columns as $colIndex => $col) {
 
   <!-- JavaScript for Sorting and Filtering -->
   <script>
-    // Sorting Function
+    // Sorting Function (with explicit sort direction tracking)
     function sortTable(columnIndex) {
       const table = document.getElementById("gridView");
       const tbody = table.querySelector("tbody");
       const rows = Array.from(tbody.querySelectorAll("tr"));
+
+      // Get current sorted column and sort direction
       let currentSortCol = table.dataset.sortedCol;
       let sortDir = table.dataset.sortDir || "asc";
+
+      // Toggle sort direction if the same column is clicked, otherwise reset to ascending.
       if (currentSortCol == columnIndex) {
         sortDir = (sortDir === "asc") ? "desc" : "asc";
       } else {
@@ -198,11 +245,15 @@ foreach ($columns as $colIndex => $col) {
       }
       table.dataset.sortedCol = columnIndex;
       table.dataset.sortDir = sortDir;
+
       const sortedRows = rows.sort((rowA, rowB) => {
         const cellA = rowA.cells[columnIndex].innerText.trim();
         const cellB = rowB.cells[columnIndex].innerText.trim();
+
+        // Attempt numeric comparison first.
         const numA = parseFloat(cellA.replace(/[^0-9.-]+/g, ""));
         const numB = parseFloat(cellB.replace(/[^0-9.-]+/g, ""));
+
         let comparison = 0;
         if (!isNaN(numA) && !isNaN(numB)) {
           comparison = numA - numB;
@@ -211,9 +262,13 @@ foreach ($columns as $colIndex => $col) {
         }
         return comparison;
       });
+
+      // Reverse rows if descending sort.
       if (sortDir === "desc") {
         sortedRows.reverse();
       }
+
+      // Replace tbody rows with sorted rows.
       tbody.innerHTML = "";
       sortedRows.forEach(row => tbody.appendChild(row));
     }
@@ -221,12 +276,14 @@ foreach ($columns as $colIndex => $col) {
     // Filtering Function
     document.querySelectorAll(".filter-input").forEach(input => {
       input.addEventListener("keyup", filterTable);
-      input.addEventListener("change", filterTable);
+      input.addEventListener("change", filterTable); // for select elements
     });
 
     function filterTable() {
       const table = document.getElementById("gridView");
       const rows = table.querySelectorAll("tbody tr");
+
+      // For each row, check every filter input.
       rows.forEach(row => {
         let visible = true;
         document.querySelectorAll(".filter-input").forEach(input => {

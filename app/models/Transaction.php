@@ -70,4 +70,5 @@ class Transaction extends GenericModel
         // Initialize joins dynamically using $this->table
    
     }
+
 }

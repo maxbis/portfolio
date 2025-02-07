@@ -4,31 +4,14 @@ require_once '../app/models/Exchange.php';
 
 class ExchangeController extends Controller
 {
+    public $model;
     private $exchangeModel;
     public function __construct()
     {
-        $this->exchangeModel = new Exchange();
+        $this->childFileName(__FILE__);
+        $this->loadModel($this->controllerName);
+        $this->model = new Exchange();
     }
 
-    public function listd()
-    {
-        $exchanges = $this->exchangeModel->get();
-        $this->renderView('exchange/listd', ['data' => $exchanges]);
-    }
-
-    public function list()
-    {
-        $exchanges = $this->exchangeModel->get();
-        $this->renderView('exchange/listd', ['data' => $exchanges]);
-    }
-
-    public function edit($id)
-    {
-        $exchange = $this->exchangeModel->get($id);
-        if ($exchange) {
-            $this->renderView('exchange/edit', [ 'exchange' => $exchange]);
-        } else {
-            echo "Transaction not found.";
-        }
-    }
+  
 }

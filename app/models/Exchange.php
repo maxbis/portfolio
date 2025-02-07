@@ -9,7 +9,7 @@ class Exchange extends GenericModel
         'name' => [
             'type' => 's',
             'label' => 'Exchange Name',
-            'input' => 'text',  // renders <input type="date">
+            'input' => 'text', 
             'required' => true
         ],
     ];

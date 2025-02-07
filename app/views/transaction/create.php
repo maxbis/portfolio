@@ -2,8 +2,10 @@
 // Example: views/transaction/create.php
 
 $title = "Create Transaction";
-$action = $GLOBALS['BASE'] . "/transaction/insert"; // or /create
 $model = "transaction";
+
+
+$action = $GLOBALS['BASE'] . "/$model/insert"; // or /create
 
 // For creation, $record can be an empty array (or you can pre-populate defaults if needed)
 $record = [];
