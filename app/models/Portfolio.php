@@ -18,7 +18,7 @@ class Portfolio {
 
         // Aggregate transactions, splitting into pre- and post-Jan 1 parts.
         $sql = "SELECT 
-                    symbol,
+                    symbol, b.short_name as 'broker', currency,
                     SUM(number) AS total_shares,
                     SUM(amount_home * number) AS total_cost,
                     SUM(CASE WHEN date <= ? THEN number ELSE 0 END) AS pre_shares,
@@ -26,7 +26,8 @@ class Portfolio {
                     SUM(CASE WHEN date > ? THEN number ELSE 0 END) AS post_shares,
                     SUM(CASE WHEN date > ? THEN amount_home * number ELSE 0 END) AS post_cost
                 FROM transaction
-                GROUP BY symbol";
+                join broker b on transaction.broker_id = b.id
+                GROUP BY 1,2,3";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssss", $jan1, $jan1, $jan1, $jan1);
         $stmt->execute();
@@ -75,16 +76,27 @@ class Portfolio {
                 $ytdProfitLoss = $ytdPre + $ytdPost;
             }
             
+            $latesetCurrencyPrice = 1;
+            $YTDCurrencyPrice = 1;
+            if ($row['currency'] == 'USD') {
+                $latesetCurrencyPrice = $this->getLatestQuote('USD')['close'];
+                $YTDCurrencyPrice = $this->getYearStartQuote('USD')['close'];
+            }
+
             // Calculate the overall market value and total profit/loss.
-            $totalValue = $totalShares * $latestPrice;
+            $totalValue = $totalShares * $latestPrice / $latesetCurrencyPrice;
             $profitLoss = $totalValue - $totalCost;
+
+            $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice;
             
             $portfolio[$symbol] = [
                 'symbol'            => $symbol,
+                'broker'            => $row['broker'],
                 'number'            => $totalShares,
                 'avg_buy_price'     => round($avgBuyPrice, 2),
                 'latest_price'      => round($latestPrice, 2),
                 'quote_date'        => $quoteDate,
+                'exchange_rate'     => round($latesetCurrencyPrice, 2),
                 'total_value'       => round($totalValue, 2),
                 'profit_loss'       => round($profitLoss, 2),
                 'ytd_profit_loss'   => round($ytdProfitLoss, 2)
@@ -134,10 +146,21 @@ class Portfolio {
     private function getYearStartQuote($symbol) {
         $previousYear = date("Y") - 1;
         $previousYearEnd = $previousYear . "-12-31";
-        
+
+        return $this->getQuoteOnDate($symbol, $previousYearEnd);
+    }
+
+    /**
+     * Get the last known quote at or before a given date.
+     * If no date is provided, the current date is used.
+     */
+    public function getQuoteOnDate($symbol, $date=null) {
+        if (!$date) {
+            $date = date("Y-m-d");
+        }
         $sql = "SELECT close, quote_date FROM quotes WHERE symbol = ? AND quote_date <= ? ORDER BY quote_date DESC LIMIT 1";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ss", $symbol, $previousYearEnd);
+        $stmt->bind_param("ss", $symbol, $date);
         $stmt->execute();
         $result = $stmt->get_result();
         $quote = $result->fetch_assoc();

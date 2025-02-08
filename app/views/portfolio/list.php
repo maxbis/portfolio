@@ -9,7 +9,15 @@
 //   - filter    : "text", "select", or "none" to control the filtering UI.
 $columns = [
   [
-    'name' => 'Symbol',
+    'name' => 'Broker<br/>&nbsp;',
+    'width' => '80px',
+    'data' => 'broker',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',  // Dropdown filter.
+  ],
+  [
+    'name' => 'Symbol<br/>&nbsp;',
     'width' => '80px',
     'data' => 'symbol',
     'aggregate' => null,
@@ -17,8 +25,9 @@ $columns = [
     'filter' => 'select',  // Dropdown filter.
   ],
   [
-    'name' => 'Number',
+    'name' => 'Number<br/>&nbsp;',
     'width' => '80px',
+    'align' => 'right',
     'data' => 'number',
     'aggregate' => null,
     'sortable' => 1,
@@ -27,6 +36,7 @@ $columns = [
   [
     'name' => 'Avg Price',
     'width' => '80px',
+    'align' => 'right',
     'data' => 'avg_buy_price',
     'formatter' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
     'aggregate' => null,
@@ -34,8 +44,9 @@ $columns = [
     'filter' => 'text',
   ],
   [
-    'name' => 'QDate',
+    'name' => 'Quote Date',
     'width' => '80px',
+    'align' => 'right',
     'data' => 'quote_date',
     'formatter' => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
     'aggregate' => null,
@@ -43,8 +54,9 @@ $columns = [
     'filter' => 'text',
   ],
   [
-    'name' => 'Quote',
+    'name' => 'Quote<br/>&nbsp;',
     'width' => '80px',
+    'align' => 'right',
     'data' => 'latest_price',
     'formatter' => 'number_format($item["latest_price"], 2, ".", " ")',
     'aggregate' => null,
@@ -52,8 +64,19 @@ $columns = [
     'filter' => 'none',  // No filter.
   ],
   [
-    'name' => 'Value',
+    'name' => 'Exch Rate',
+    'width' => '40px',
+    'align' => 'right',
+    'data' => 'exchange_rate',
+    'formatter' => 'number_format($item["exchange_rate"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'Value<br/>EUR',
     'width' => '120px',
+    'align' => 'right',
     'data' => 'total_value',
     'formatter' => 'number_format($item["total_value"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum the values.
@@ -61,8 +84,9 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'Profit/Loss',
+    'name' => 'Profit/Loss EUR',
     'width' => '120px',
+    'align' => 'right',
     'data' => 'profit_loss',
     'formatter' => 'number_format($item["profit_loss"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum profit/loss.
@@ -70,9 +94,9 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'YTD P/L',
-
+    'name' => 'YTD P/L EUR',
     'width' => '120px',
+    'align' => 'right',
     'data' => 'ytd_profit_loss',
     'formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum YTD profit/loss.
@@ -82,6 +106,7 @@ $columns = [
   [
     'name' => '% of Portfolio',
     'width' => '',
+    'align' => 'right',
     'data' => 'percent_of_portfolio',
     'formatter' => '$item["percent_of_portfolio"]."%"',
     'aggregate' => 'average',  // Or "average" if desired.

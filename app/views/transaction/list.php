@@ -30,6 +30,15 @@ $columns = [
     'align' => 'right',
   ],
   [
+    'name' => 'Currency',
+    'width' => '120px',
+    'data' => 'currency',	
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+    'align' => 'left',
+  ],
+  [
     'name' => 'Symbol',
     'width' => '100px',
     'data' => 'symbol',

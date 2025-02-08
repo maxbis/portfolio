@@ -14,6 +14,14 @@ class TransactionController extends Controller
         $this->model = new Transaction();
     }
 
+    public function create()
+    {
+        $this->exchangeModel = new Exchange();
+        $exchanges = $this->exchangeModel->get();
+
+        $this->renderView($this->controllerName . '/my_create', ['exchanges' => $exchanges]);
+    }
+
     public function edit($id)
     {
         $transaction = $this->model->get($id);
@@ -22,18 +30,12 @@ class TransactionController extends Controller
         $exchanges = $this->exchangeModel->get();
 
         if ($transaction) {
-            $this->renderView('transaction/edit', ['record' => $transaction, 'exchanges' => $exchanges]);
+            $this->renderView('transaction/my_edit', ['record' => $transaction, 'exchanges' => $exchanges]);
         } else {
             echo "Transaction not found.";
         }
     }
 
-    
-    public function listd()
-    {
-        $records = $this->model->get();
-        $this->renderView($this->controllerName.'/listd', ['data' => $records]);
-    }
 
 
 }

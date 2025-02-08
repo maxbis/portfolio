@@ -21,6 +21,7 @@ if (!isset($model)) {
 // echo "<pre>";
 $data = array_values($data);
 ?>
+
 <?php if (empty($data)): ?>
   <script src="https://cdn.tailwindcss.com"></script>
   <div class="container mx-auto mt-4">
@@ -124,7 +125,7 @@ foreach ($columns as $colIndex => $col) {
               ?>
               <th class="border border-gray-300 px-3 py-2 text-left text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
                 <?= $widthStyle ?>   <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
-                <?= htmlspecialchars($col['name']) ?>
+                <?= $col['name'] ?>
               </th>
             <?php endforeach; ?>
           </tr>

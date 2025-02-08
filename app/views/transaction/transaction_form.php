@@ -1,31 +1,48 @@
+<?php
+/**
+ * Expected variables:
+ *   - $action: the form action URL (e.g., "/transaction/update/{$record['id']}" or "/transaction/insert")
+ *   - $title: the title to show on the form (e.g., "Edit Transaction" or "Create Transaction")
+ *   - $record: an associative array of field values (if editing). Can be empty for create.
+ *   - $exchanges: an array of exchange options.
+ */
+
+// Get today's date in the format yyyy-mm-dd
+$today = date('Y-m-d');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction</title>
+    <title><?= htmlspecialchars($title) ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        function confirmDelete(url) {
+            if (confirm('Are you sure you want to delete this transaction? This action cannot be undone.')) {
+                window.location.href = url;
+            }
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
     <div class="max-w-lg w-full bg-white p-6 shadow-lg rounded-lg">
-        <h1 class="text-2xl font-semibold mb-4 text-center">Edit Transaction</h1>
+        <h1 class="text-2xl font-semibold mb-4 text-center"><?= htmlspecialchars($title) ?></h1>
 
-        <form action="<?= $GLOBALS['BASE'] ?>/transaction/update/<?= $transaction['id'] ?>" method="POST"
-            class="space-y-4">
+        <form action="<?= $action ?>" method="POST" class="space-y-4">
 
             <!-- Grid Layout for First Four Fields -->
             <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label for="date">Date:</label>
-                    <input type="date" id="transaction_date" name="date" id="date" value="<?= $transaction['date'] ?>">
+                    <input type="date" id="transaction_date" name="date" value="<?= $record['date'] ?? $today ?>">
                 </div>
-
 
                 <div>
                     <label class="block text-gray-700 text-sm">Symbol:</label>
-                    <input type="text" name="symbol" value="<?= $transaction['symbol'] ?>"
+                    <input type="text" name="symbol" value="<?= $record['symbol'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md">
                 </div>
 
@@ -34,7 +51,7 @@
                     <select name="exchange_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
                         <?php foreach ($exchanges as $exchange): ?>
                             <option value="<?= $exchange['id'] ?>"
-                                <?= ($exchange['id'] == $transaction['exchange_id']) ? 'selected' : '' ?>>
+                                <?= isset($record['exchange_id']) && $exchange['id'] == $record['exchange_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($exchange['name']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -43,13 +60,13 @@
 
                 <div>
                     <label class="block text-gray-700 text-sm">Number:</label>
-                    <input type="text" name="number" value="<?= $transaction['number'] ?>"
+                    <input type="text" name="number" value="<?= $record['number'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
 
                 <div>
                     <label class="block text-gray-700 text-sm">Price:</label>
-                    <input type="text" id='amount' name="amount" value="<?= $transaction['amount'] ?>"
+                    <input type="text" id='amount' name="amount" value="<?= $record['amount'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
 
@@ -57,13 +74,10 @@
                     <label class="block text-gray-700 text-sm">Currency:</label>
                     <select id="currencySelect" name="currency"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-                        <option value="EURO" <?= $transaction['currency'] === 'EURO' ? 'selected' : '' ?>>EUR</option>
-                        <option value="EURUSDX" <?= $transaction['currency'] === 'EURUSDX' ? 'selected' : '' ?>>USD
-                        </option>
+                        <option value="EUR" <?= isset($record['currency']) && $record['currency'] === 'EUR' ? 'selected' : '' ?>>EURO</option>
+                        <option value="USD" <?= isset($record['currency']) && $record['currency'] === 'USD' ? 'selected' : '' ?>>USD</option>
                     </select>
                 </div>
-
-
 
                 <div>
                     <label class="block text-gray-700 text-sm"></label>&nbsp;
@@ -71,17 +85,16 @@
 
                 <div>
                     <label class="block text-gray-700 text-sm">Price EU:</label>
-                    <input type="text" id='amount_home' name="amount_home" value="<?= $transaction['amount_home'] ?>"
+                    <input type="text" id='amount_home' name="amount_home" value="<?= $record['amount_home'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" readonly>
                 </div>
-
             </div>
 
             <!-- Description Field (Full Width) -->
             <div>
                 <label class="block text-gray-700 text-sm">Description:</label>
                 <textarea name="description"
-                    class="w-full p-2 border border-gray-300 rounded-md h-24"><?= $transaction['description'] ?></textarea>
+                    class="w-full p-2 border border-gray-300 rounded-md h-24"><?= $record['description'] ?? '' ?></textarea>
             </div>
 
             <div class="flex justify-between">
@@ -91,19 +104,18 @@
                 </a>
 
                 <div class="flex space-x-2">
-                    <a href="<?= $GLOBALS['BASE'] ?>/transaction/delete/<?= $transaction['id'] ?>"
-                        class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                        onclick="return confirm('Are you sure you want to delete this transaction? This action cannot be undone.');">
-                        Delete
-                    </a>
+                    <?php if (!empty($record)): ?>
+                        <a href="javascript:void(0);" onclick="confirmDelete('<?= $GLOBALS['BASE'] ?>/transaction/delete/<?= $record['id'] ?>')"
+                            class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                            Delete
+                        </a>
+                    <?php endif; ?>
 
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                        Update
+                        <?= strpos($action, 'update') !== false ? 'Update' : 'Create' ?>
                     </button>
                 </div>
             </div>
-
-
         </form>
     </div>
 </body>
@@ -135,7 +147,7 @@
                 fetch(url, { method: 'GET' })
                     .then(response => response.json())
                     .then(data => {
-                        console.log("Data returnd: " + data.close);
+                        console.log("Data returned: " + data.close);
                         if (data.close !== null) {
                             homeAmount.value = (foreignPriceField.value / data.close).toFixed(2);
                         } else {
@@ -149,9 +161,8 @@
             }
         }
 
-        // Fire the get curency update when date or currency is changed
+        // Fire the get currency update when date or currency is changed
         currencySelect.addEventListener('change', fetchClosePrice);
         dateInput.addEventListener('change', fetchClosePrice);
     });
-
 </script>

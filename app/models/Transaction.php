@@ -18,8 +18,8 @@ class Transaction extends GenericModel
             'required' => true,
             // if not a foreign key, you can supply your own options:
             'options' => [
-                'EURO'    => 'EUR',
-                'EURUSDX' => 'USD'
+                'EUR'    => 'EUR',
+                'USD' => 'USD'
             ]
         ],
         'amount' => [
