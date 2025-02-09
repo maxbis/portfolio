@@ -1,8 +1,5 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'portfolio');
+include 'secret.php';
 
 // Automatically detect base URL
 $basePath = str_replace('/public', '', dirname($_SERVER['SCRIPT_NAME']));
