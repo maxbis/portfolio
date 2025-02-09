@@ -40,6 +40,12 @@ class Transaction extends GenericModel
             'input' => 'text',
             'readonly' => false  // we want to show this but not allow editing
         ],
+        'cash' => [ // This is a cash delta for cost or dividents
+            'type' => 'd',
+            'label' => 'Amount',
+            'input' => 'text',
+            'required' => true
+        ],
         'number' => [
             'type' => 'i',
             'label' => 'Number',
@@ -70,6 +76,19 @@ class Transaction extends GenericModel
                 'valueField' => 'id',
                 'textField'  => 'short_name',
                 'alias' => 'b' // optional alias for the joined table
+            ]
+        ],
+        'strategy_id' => [
+            'type' => 'i',
+            'label' => 'Strategy',
+            'input' => 'select',
+            'required' => true,
+            // Indicate that this is a foreign key.
+            'foreign' => [
+                'model'      => 'Strategy',
+                'valueField' => 'id',
+                'textField'  => 'name',
+                'alias' => 's' // optional alias for the joined table
             ]
         ],
         'description' => [

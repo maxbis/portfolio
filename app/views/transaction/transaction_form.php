@@ -78,7 +78,7 @@ $today = date('Y-m-d');
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 text-sm">Price:</label>
+                    <label class="block text-gray-700 text-sm" title="Price per share">Price:</label>
                     <input type="text" id='amount' name="amount" value="<?= $record['amount'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
@@ -93,14 +93,32 @@ $today = date('Y-m-d');
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 text-sm"></label>&nbsp;
+                    <label class="block text-gray-700 text-sm">Strategy:</label>
+                    <select name="strategy_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                        <?php foreach ($strategies as $strategy): ?>
+                            <option value="<?= $strategy['id'] ?>"
+                                <?= isset($record['strategy_id']) && $strategy['id'] == $record['strategy_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($strategy['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-
                 <div>
                     <label class="block text-gray-700 text-sm">Price EU:</label>
                     <input type="text" id='amount_home' name="amount_home" value="<?= $record['amount_home'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 bg-gray-200 rounded-md" readonly>
                 </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm" title="Costs, cash or dividend">Amount:</label>
+                    <input type="text" id='cash' name="cash" value="<?= $record['cash'] ?? '' ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                </div>
+
+                <div>
+                    
+                </div>
+
             </div>
 
             <!-- Description Field (Full Width) -->
@@ -139,6 +157,7 @@ $today = date('Y-m-d');
     document.addEventListener("DOMContentLoaded", function () {
         const currencySelect = document.getElementById('currencySelect');
         const dateInput = document.getElementById('transaction_date');
+        const amountInput = document.getElementById('amount');
         const homeAmount = document.getElementById('amount_home');
         const foreignPriceField = document.getElementById('amount');
 
@@ -177,5 +196,6 @@ $today = date('Y-m-d');
         // Fire the get currency update when date or currency is changed
         currencySelect.addEventListener('change', fetchClosePrice);
         dateInput.addEventListener('change', fetchClosePrice);
+        amountInput.addEventListener('change', fetchClosePrice);
     });
 </script>

@@ -2,6 +2,7 @@
 require_once '../core/Controller.php';
 require_once '../app/models/Exchange.php';
 require_once '../app/models/Broker.php';
+require_once '../app/models/Strategy.php';
 
 class TransactionController extends Controller
 {
@@ -38,8 +39,12 @@ class TransactionController extends Controller
         $this->brokerModel = new Broker();
         $brokers = $this->brokerModel->get();
 
+        $this->strategyModel = new Strategy();
+        $strategies = $this->strategyModel->get();
+
         if ($transaction) {
-            $this->renderView('transaction/my_edit', ['record' => $transaction, 'exchanges' => $exchanges, 'brokers' => $brokers]);	
+            $this->renderView('transaction/my_edit', 
+            ['record' => $transaction, 'exchanges' => $exchanges, 'brokers' => $brokers, 'strategies' => $strategies]);	
         } else {
             echo "Transaction not found.";
         }

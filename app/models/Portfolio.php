@@ -18,24 +18,38 @@ class Portfolio {
 
         // Aggregate transactions, splitting into pre- and post-Jan 1 parts.
         $sql = "SELECT 
-                    symbol, b.short_name as 'broker', currency,
+                    symbol, 
+                    b.short_name as 'broker',
+                    s.name as 'strategy',
+                    -- Subquery to get the currency of the record with the oldest date for each symbol
+                    (SELECT currency
+                    FROM transaction t2 
+                    WHERE t2.symbol = t1.symbol 
+                    ORDER BY t2.date ASC 
+                    LIMIT 1) AS currency,
+                    -- Sum of the number of shares
                     SUM(number) AS total_shares,
+                    -- Sum of the total cost in home currency
                     SUM(amount_home * number) AS total_cost,
+                    -- Sum of the number of shares before January 1st
                     SUM(CASE WHEN date <= ? THEN number ELSE 0 END) AS pre_shares,
+                    -- Sum of the total cost in home currency before January 1st
                     SUM(CASE WHEN date <= ? THEN amount_home * number ELSE 0 END) AS pre_cost,
+                    -- Sum of the number of shares after January 1st
                     SUM(CASE WHEN date > ? THEN number ELSE 0 END) AS post_shares,
-                    SUM(CASE WHEN date > ? THEN amount_home * number ELSE 0 END) AS post_cost
-                FROM transaction
-                join broker b on transaction.broker_id = b.id
-                GROUP BY 1,2,3";
+                    -- Sum of the total cost in home currency after January 1st
+                    SUM(CASE WHEN date > ? THEN amount_home * number ELSE 0 END) AS post_cost,
+                    -- Sum of the cash
+                    SUM(CASE WHEN date > ? THEN cash ELSE 0 END) AS post_cash,
+                    SUM(cash) as cash
+                FROM transaction t1
+                JOIN broker b ON t1.broker_id = b.id
+                JOIN strategy s ON t1.strategy_id = s.id
+                GROUP BY symbol, b.short_name, s.name";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssss", $jan1, $jan1, $jan1, $jan1);
+        $stmt->bind_param("sssss", $jan1, $jan1, $jan1, $jan1, $jan1);
         $stmt->execute();
         $result = $stmt->get_result();
-
-        // $rows = $result->fetch_all(MYSQLI_ASSOC);
-        // echo "<pre>$sql";
-        // print_r($rows); exit;
 
         $portfolio = [];
         $totalPortfolioValue = 0;
@@ -43,14 +57,17 @@ class Portfolio {
             $symbol = $row['symbol'];
             $totalShares = $row['total_shares'];
             $totalPastValue = $row['total_cost'];
+            $cash = $row['cash'];
+            $post_cash = $row['post_cash'];
+
             $avgBuyPrice = ($totalShares != 0) ? $totalPastValue / $totalShares : 0;
 
             if (strtoupper($symbol) === 'EUR') {
                 // For cash, we simply use a fixed value.
-                $latestPrice   = 1;
+                $latestPrice   = null;
                 $quoteDate     = null;
-                $yearStartPrice = 1;
-                $ytdProfitLoss = 0;
+                $yearStartPrice = null;
+                $ytdProfitLoss = null;
             } else {
                 // Get the latest market price and its quote date.
                 $quoteData = $this->getLatestQuote($symbol);
@@ -87,16 +104,25 @@ class Portfolio {
                 $YTDCurrencyPrice = $this->getYearStartQuote('USD')['close'];
             }
 
-            // ToDO wrong P&L for EUR
             // Calculate the overall market value and total profit/loss.
-            $totalValueNow = $totalShares * $latestPrice / $latestExchangeRate;
-            $profitLoss = $totalValueNow - $totalPastValue;
+            $totalValueNow =  $totalShares * $latestPrice / $latestExchangeRate;
+            $profitLoss = $totalValueNow - $totalPastValue + $cash;
 
-            $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice;
+            $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice + $post_cash;
+
+            if (strtoupper($symbol) === 'EUR') {
+                $profitLoss = 0;
+                $ytdProfitLoss = 0;
+                $spendThisYear = $this->getSumInvestmentsAfter($jan1);
+                $totalValueNow = $cash - $spendThisYear;
+            }
+
+            
             
             $portfolio[$symbol] = [
                 'symbol'            => $symbol,
                 'broker'            => $row['broker'],
+                'strategy'          => $row['strategy'],
                 'number'            => $totalShares,
                 'avg_buy_price'     => round($avgBuyPrice, 2),
                 'latest_price'      => round($latestPrice, 2),
@@ -104,7 +130,8 @@ class Portfolio {
                 'exchange_rate'     => round($latestExchangeRate, 2),
                 'total_value'       => round($totalValueNow, 2),
                 'profit_loss'       => round($profitLoss, 2),
-                'ytd_profit_loss'   => round($ytdProfitLoss, 2)
+                'ytd_profit_loss'   => round($ytdProfitLoss, 2),
+                'cash'              => round($cash, 2),
             ];
             
             $totalPortfolioValue += $totalValueNow;
@@ -182,5 +209,23 @@ class Portfolio {
                 'quote_date' => null
             ];
         }
+    }
+
+    /**
+     * Get the sum of all investments after January 1st of the current year.
+     */
+    public function getSumInvestmentsAfter($date) {
+
+        $sql = "SELECT SUM(amount_home * number) AS total_investments
+                FROM transaction
+                WHERE date > ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+        $stmt->close();
+
+        return $data['total_investments'];
     }
 }

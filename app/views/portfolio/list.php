@@ -25,6 +25,14 @@ $columns = [
     'filter' => 'select',  // Dropdown filter.
   ],
   [
+    'name' => 'Strategy<br/>&nbsp;',
+    'width' => '40px',
+    'data' => 'strategy',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',
+  ],
+  [
     'name' => 'Number<br/>&nbsp;',
     'width' => '80px',
     'align' => 'right',
@@ -113,6 +121,16 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',
   ],
+  // [
+  //   'name' => 'Cash<br/>EUR',
+  //   'width' => '120px',
+  //   'align' => 'right',
+  //   'data' => 'cash',
+  //   'formatter' => 'number_format($item["cash"], 2, ".", " ")',
+  //   'aggregate' => 'sum',  // Sum the values.
+  //   'sortable' => 1,
+  //   'filter' => 'none',
+  // ],
 ];
 
 // Set additional variables
