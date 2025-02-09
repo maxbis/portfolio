@@ -41,11 +41,18 @@ $today = date('Y-m-d');
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 text-sm">Symbol:</label>
-                    <input type="text" name="symbol" value="<?= $record['symbol'] ?? '' ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                    <label class="block text-gray-700 text-sm">Broker:</label>
+                    <select name="broker_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                        <?php foreach ($brokers as $broker): ?>
+                            <option value="<?= $broker['id'] ?>"
+                                <?= isset($record['broker_id']) && $broker['id'] == $record['broker_id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($broker['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
+                <!-- ToDo broker drop down -->
                 <div>
                     <label class="block text-gray-700 text-sm">Exchange:</label>
                     <select name="exchange_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
@@ -56,6 +63,12 @@ $today = date('Y-m-d');
                             </option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 text-sm">Symbol:</label>
+                    <input type="text" name="symbol" value="<?= $record['symbol'] ?? '' ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md">
                 </div>
 
                 <div>

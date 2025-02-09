@@ -12,8 +12,16 @@ $columns = [
     'filter' => 'text',
   ],
   [
-    'name' => 'Number',
-    'width' => '100px',
+    'name' => 'Broker',
+    'width' => '40px',
+    'data' => 'broker_short_name',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',
+  ],
+  [
+    'name' => '#',
+    'width' => '40px',
     'data' => 'number',
     'aggregate' => null,
     'sortable' => 1,

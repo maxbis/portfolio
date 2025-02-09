@@ -11,6 +11,12 @@ class Transaction extends GenericModel
             'input' => 'date',  // renders <input type="date">
             'required' => true
         ],
+        'symbol' => [
+            'type' => 's',
+            'label' => 'Symbol',
+            'input' => 'text',
+            'required' => true
+        ],
         'currency' => [
             'type' => 's',
             'label' => 'Currency',
@@ -51,6 +57,19 @@ class Transaction extends GenericModel
                 'valueField' => 'id',
                 'textField'  => 'name',
                 'alias' => 'e' // optional alias for the joined table
+            ]
+        ],
+        'broker_id' => [
+            'type' => 'i',
+            'label' => 'Broker',
+            'input' => 'select',
+            'required' => true,
+            // Indicate that this is a foreign key.
+            'foreign' => [
+                'model'      => 'Broker',
+                'valueField' => 'id',
+                'textField'  => 'short_name',
+                'alias' => 'b' // optional alias for the joined table
             ]
         ],
         'description' => [

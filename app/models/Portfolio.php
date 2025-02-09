@@ -33,6 +33,10 @@ class Portfolio {
         $stmt->execute();
         $result = $stmt->get_result();
 
+        // $rows = $result->fetch_all(MYSQLI_ASSOC);
+        // echo "<pre>$sql";
+        // print_r($rows); exit;
+
         $portfolio = [];
         $totalPortfolioValue = 0;
         while ($row = $result->fetch_assoc()) {
@@ -40,7 +44,7 @@ class Portfolio {
             $totalShares = $row['total_shares'];
             $totalCost = $row['total_cost'];
             $avgBuyPrice = ($totalShares != 0) ? $totalCost / $totalShares : 0;
-            
+
             if (strtoupper($symbol) === 'EUR') {
                 // For cash, we simply use a fixed value.
                 $latestPrice   = 1;
@@ -111,7 +115,7 @@ class Portfolio {
             $percent = ($totalPortfolioValue != 0) ? ($data['total_value'] / $totalPortfolioValue) * 100 : 0;
             $portfolio[$symbol]['percent_of_portfolio'] = round($percent, 2);
         }
-        
+
         return $portfolio;
     }
     
