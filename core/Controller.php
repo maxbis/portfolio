@@ -13,6 +13,7 @@ class Controller {
     }
 
     public function loadModel($model) {
+        $model = ucfirst($model);
         require_once "../app/models/$model.php";
         return new $model();
     }
