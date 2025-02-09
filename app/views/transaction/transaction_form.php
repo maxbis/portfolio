@@ -99,7 +99,7 @@ $today = date('Y-m-d');
                 <div>
                     <label class="block text-gray-700 text-sm">Price EU:</label>
                     <input type="text" id='amount_home' name="amount_home" value="<?= $record['amount_home'] ?? '' ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" readonly>
+                        class="w-24 p-1 text-sm border border-gray-300 bg-gray-200 rounded-md" readonly>
                 </div>
             </div>
 

@@ -42,8 +42,8 @@ class Portfolio {
         while ($row = $result->fetch_assoc()) {
             $symbol = $row['symbol'];
             $totalShares = $row['total_shares'];
-            $totalCost = $row['total_cost'];
-            $avgBuyPrice = ($totalShares != 0) ? $totalCost / $totalShares : 0;
+            $totalPastValue = $row['total_cost'];
+            $avgBuyPrice = ($totalShares != 0) ? $totalPastValue / $totalShares : 0;
 
             if (strtoupper($symbol) === 'EUR') {
                 // For cash, we simply use a fixed value.
@@ -80,16 +80,17 @@ class Portfolio {
                 $ytdProfitLoss = $ytdPre + $ytdPost;
             }
             
-            $latesetCurrencyPrice = 1;
+            $latestExchangeRate = 1;
             $YTDCurrencyPrice = 1;
             if ($row['currency'] == 'USD') {
-                $latesetCurrencyPrice = $this->getLatestQuote('USD')['close'];
+                $latestExchangeRate = $this->getLatestQuote('USD')['close'];
                 $YTDCurrencyPrice = $this->getYearStartQuote('USD')['close'];
             }
 
+            // ToDO wrong P&L for EUR
             // Calculate the overall market value and total profit/loss.
-            $totalValue = $totalShares * $latestPrice / $latesetCurrencyPrice;
-            $profitLoss = $totalValue - $totalCost;
+            $totalValueNow = $totalShares * $latestPrice / $latestExchangeRate;
+            $profitLoss = $totalValueNow - $totalPastValue;
 
             $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice;
             
@@ -100,13 +101,13 @@ class Portfolio {
                 'avg_buy_price'     => round($avgBuyPrice, 2),
                 'latest_price'      => round($latestPrice, 2),
                 'quote_date'        => $quoteDate,
-                'exchange_rate'     => round($latesetCurrencyPrice, 2),
-                'total_value'       => round($totalValue, 2),
+                'exchange_rate'     => round($latestExchangeRate, 2),
+                'total_value'       => round($totalValueNow, 2),
                 'profit_loss'       => round($profitLoss, 2),
                 'ytd_profit_loss'   => round($ytdProfitLoss, 2)
             ];
             
-            $totalPortfolioValue += $totalValue;
+            $totalPortfolioValue += $totalValueNow;
         }
         $stmt->close();
         

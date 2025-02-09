@@ -38,6 +38,15 @@ $columns = [
     'align' => 'right',
   ],
   [
+    'name' => 'Amount Home',
+    'width' => '120px',
+    'data' => 'amount_home',	
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+    'align' => 'right',
+  ],
+  [
     'name' => 'Currency',
     'width' => '120px',
     'data' => 'currency',	

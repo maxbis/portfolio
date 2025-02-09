@@ -38,7 +38,7 @@ class Transaction extends GenericModel
             'type' => 'd',
             'label' => 'Price EU',
             'input' => 'text',
-            'readonly' => true  // we want to show this but not allow editing
+            'readonly' => false  // we want to show this but not allow editing
         ],
         'number' => [
             'type' => 'i',
@@ -88,6 +88,17 @@ class Transaction extends GenericModel
 
         // Initialize joins dynamically using $this->table
    
+    }
+
+    public function insert()
+    {
+        // If amount_home is not set, set it to amount
+        if (empty($_POST['amount_home'])) {
+            $_POST['amount_home'] = $_POST['amount'];
+        }
+
+        // Continue wiht the parent method
+        parent::insert();
     }
 
 }
