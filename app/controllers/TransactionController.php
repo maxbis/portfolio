@@ -7,8 +7,8 @@ require_once '../app/models/Strategy.php';
 class TransactionController extends Controller
 {
     private $exchangeModel;
-
     private $brokerModel;
+    private $strategyModel;
     public $model;
 
     public function __construct()
@@ -26,7 +26,11 @@ class TransactionController extends Controller
         $this->brokerModel = new Broker();
         $brokers = $this->brokerModel->get();
 
-        $this->renderView($this->controllerName . '/my_create', ['exchanges' => $exchanges,  'brokers' => $brokers]);
+        $this->strategyModel = new Strategy();
+        $strategies = $this->strategyModel->get();
+
+        $this->renderView($this->controllerName . '/my_create',
+        ['exchanges' => $exchanges,  'brokers' => $brokers, 'strategies' => $strategies]);
     }
 
     public function edit($id)
