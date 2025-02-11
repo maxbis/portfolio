@@ -7,8 +7,8 @@ require_once '../app/models/Strategy.php';
 class TransactionController extends Controller
 {
     private $exchangeModel;
-
     private $brokerModel;
+    private $strategyModel;
     private $strategyModel;
     public $model;
 
