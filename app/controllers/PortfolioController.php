@@ -13,7 +13,7 @@ class PortfolioController extends Controller {
     public function list() {
         $records = $this->portfolioModel->getPortfolio();
         $this->renderView('portfolio/list', 
-        ['title' => 'Portfolio', 'data' => $records, 'activeTab' => 'porfolios']);
+        ['title' => 'Portfolio', 'data' => $records]);
     }
 
     public function lista($groupBy='symbol') {
