@@ -200,6 +200,38 @@ abstract class GenericModel
     }
 
     /**
+     * Retrieve all records with optional sorting.
+     *
+     * @param array $sortInfo An associative array where keys are column names and values are 'ASC' or 'DESC'.
+     * @return array An array of records.
+     */
+    public function getAllSorted($sortInfo = [])
+    {
+        list($joinClause, $extraSelect) = $this->buildJoins();
+
+        // Build the SELECT clause.
+        $sql = "SELECT {$this->table}.*{$extraSelect} FROM {$this->table} {$joinClause}";
+
+        // Add sorting if provided.
+        if (!empty($sortInfo)) {
+            $sortClauses = [];
+            foreach ($sortInfo as $column => $direction) {
+                $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+                $sortClauses[] = "{$column} {$direction}";
+            }
+            $sql .= " ORDER BY " . implode(', ', $sortClauses);
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            $errorInfo = $this->conn->errorInfo();
+            throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * Delete a record.
      *
      * @param int $id The record's ID.

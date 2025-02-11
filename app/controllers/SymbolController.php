@@ -1,18 +1,17 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Quote.php';
+require_once '../app/models/Symbol.php';
 
-class QuoteController extends Controller
+class SymbolController extends Controller
 {
     public $model;
-    private $quoteModel;
+    private $symbolModel;
     public function __construct()
     {
         $this->childFileName(__FILE__);
         $this->loadModel($this->controllerName);
-        $this->model = new Quote();
+        $this->model = new Symbol();
     }
 
   
 }
-?>

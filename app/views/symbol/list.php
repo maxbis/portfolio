@@ -4,39 +4,56 @@
 
 $columns = [
   [
-    'name' => 'symbol',
+    'name' => 'id',
+    'width' => '100px',
+    'data' => 'id',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'Symbol',
     'width' => '100px',
     'data' => 'symbol',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'select',
+    'align' => 'left',
   ],
   [
-    'name' => 'Date',
+    'name' => 'Foreign Symbol',
     'width' => '100px',
-    'data' => 'quote_date',
+    'data' => 'other_symbol',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'select',
     'align' => 'left',
   ],
   [
-    'name' => 'Close',
+    'name' => 'Name',
     'width' => '100px',
-    'data' => 'close',
+    'data' => 'name',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'select',
     'align' => 'left',
+  ],
+  [
+    'name'      => '',
+    'width'     => '60px',
+    'data'      => '#edit',
+    'aggregate' => null,
+    'sortable'  => 0,
+    'filter'    => 'none',
   ]
 ];
 
 // Set additional variables
 if (!isset($title)) {
-  $title = 'Latest Quotes';
+  $title = 'Instrument List';
 }
 if (!isset($model)) {
-  $model = 'quote';
+  $model = 'symbol';
 }
 
 // Include the generic grid view.

@@ -9,6 +9,7 @@ class TransactionController extends Controller
     private $exchangeModel;
 
     private $brokerModel;
+    private $strategyModel;
     public $model;
 
     public function __construct()
@@ -21,12 +22,15 @@ class TransactionController extends Controller
     public function create()
     {
         $this->exchangeModel = new Exchange();
-        $exchanges = $this->exchangeModel->get();
+        $exchanges = $this->exchangeModel->getAllSorted(['name'=>'ASC']);
 
         $this->brokerModel = new Broker();
-        $brokers = $this->brokerModel->get();
+        $brokers = $this->brokerModel->getAllSorted(['name'=>'ASC']);
 
-        $this->renderView($this->controllerName . '/my_create', ['exchanges' => $exchanges,  'brokers' => $brokers]);
+        $this->strategyModel = new Strategy();
+        $strategies = $this->strategyModel->getAllSorted(['name'=>'ASC']);
+
+        $this->renderView($this->controllerName . '/my_create', ['exchanges' => $exchanges,  'brokers' => $brokers, 'strategies' => $strategies]);
     }
 
     public function edit($id)
@@ -50,6 +54,15 @@ class TransactionController extends Controller
         }
     }
 
-
+    public function list()
+    {
+        $records = $this->model->getAllSorted(['id'=>'DESC']);
+        foreach ($records as &$record) {
+            $record['investment'] = number_format($record['amount_home'] * $record['number'] - $record['cash'], 2, '.', '');
+        }
+        // echo "<pre>";
+        // print_r($records);exit;
+        $this->renderView($this->controllerName.'/list', ['data' => $records]);
+    }
 
 }

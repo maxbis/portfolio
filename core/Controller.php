@@ -13,7 +13,7 @@ class Controller {
     }
 
     public function loadModel($model) {
-        $model = ucfirst($model);
+        $model = ucfirst($model); // all models are capitalized (e.g. Portfolio)
         require_once "../app/models/$model.php";
         return new $model();
     }

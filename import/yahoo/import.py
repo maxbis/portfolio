@@ -29,6 +29,7 @@ def import_json_to_db(cache_dir, db_config):
 
     # Iterate over each symbol in the dictionary
     for key, value in symbols.items():
+        key = key.replace('=', '')
         file_path = os.path.join(cache_dir, f"{key}.json")
         if not os.path.exists(file_path):
             print(f"File {file_path} does not exist, skipping.")
@@ -90,7 +91,7 @@ if __name__ == "__main__":
     # Directory where the JSON cache files are stored.
     cache_dir = "cache"  # adjust path as needed
 
-     # Execute the get_quotes.py script
-    subprocess.run(["python", "get_quotes.py"], check=True)
+    # Execute the get_quotes.py script
+    # subprocess.run(["python", "get_quotes.py"], check=True)
 
     import_json_to_db(cache_dir, db_config)

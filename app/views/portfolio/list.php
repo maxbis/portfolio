@@ -33,8 +33,8 @@ $columns = [
     'filter' => 'select',
   ],
   [
-    'name' => 'Number<br/>&nbsp;',
-    'width' => '80px',
+    'name' => '#<br/>&nbsp;',
+    'width' => '60px',
     'align' => 'right',
     'data' => 'number',
     'aggregate' => null,
@@ -43,7 +43,7 @@ $columns = [
   ],
   [
     'name' => 'Avg Price',
-    'width' => '80px',
+    'width' => '90px',
     'align' => 'right',
     'data' => 'avg_buy_price',
     'formatter' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
@@ -63,7 +63,7 @@ $columns = [
   ],
   [
     'name' => 'Quote<br/>&nbsp;',
-    'width' => '80px',
+    'width' => '90px',
     'align' => 'right',
     'data' => 'latest_price',
     'formatter' => 'number_format($item["latest_price"], 2, ".", " ")',
@@ -117,7 +117,7 @@ $columns = [
     'align' => 'right',
     'data' => 'percent_of_portfolio',
     'formatter' => '$item["percent_of_portfolio"]."%"',
-    'aggregate' => 'average',  // Or "average" if desired.
+    'aggregate' => 'sum',  // Or "average" if desired.
     'sortable' => 1,
     'filter' => 'none',
   ],

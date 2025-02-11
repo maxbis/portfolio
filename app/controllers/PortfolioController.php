@@ -12,6 +12,14 @@ class PortfolioController extends Controller {
 
     public function list() {
         $records = $this->portfolioModel->getPortfolio();
-        $this->renderView('portfolio/list', ['title' => 'Portfolio', 'data' => $records]);
+        $this->renderView('portfolio/list', 
+        ['title' => 'Portfolio', 'data' => $records, 'activeTab' => 'porfolios']);
+    }
+
+    public function lista() {
+        $records = $this->portfolioModel->getPortfolio();
+        $records = $this->portfolioModel->aggregateRecords($records);
+        $this->renderView('portfolio/list',
+        ['title' => 'Portfolio', 'data' => $records]);
     }
 }
