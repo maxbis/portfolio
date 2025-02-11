@@ -9,7 +9,6 @@ class TransactionController extends Controller
     private $exchangeModel;
     private $brokerModel;
     private $strategyModel;
-    private $strategyModel;
     public $model;
 
     public function __construct()
