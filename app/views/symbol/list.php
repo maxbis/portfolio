@@ -3,17 +3,10 @@
 // Define your columns including the edit column
 
 $columns = [
+
   [
-    'name' => 'id',
-    'width' => '100px',
-    'data' => 'id',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'text',
-  ],
-  [
-    'name' => 'Symbol',
-    'width' => '100px',
+    'name' => 'Symbol<br>&nbsp;',
+    'width' => '90px',
     'data' => 'symbol',
     'aggregate' => null,
     'sortable' => 1,
@@ -22,7 +15,7 @@ $columns = [
   ],
   [
     'name' => 'Foreign Symbol',
-    'width' => '100px',
+    'width' => '90px',
     'data' => 'other_symbol',
     'aggregate' => null,
     'sortable' => 1,
@@ -30,8 +23,8 @@ $columns = [
     'align' => 'left',
   ],
   [
-    'name' => 'Name',
-    'width' => '100px',
+    'name' => 'Name<br>&nbsp;',
+    'width' => '',
     'data' => 'name',
     'aggregate' => null,
     'sortable' => 1,
