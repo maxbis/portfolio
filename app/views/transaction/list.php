@@ -76,6 +76,7 @@ $columns = [
     'name' => 'Symbol',
     'width' => '100px',
     'data' => 'symbol',
+    'title' => 'symbol_name',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'text',

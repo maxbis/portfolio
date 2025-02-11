@@ -16,10 +16,10 @@ class PortfolioController extends Controller {
         ['title' => 'Portfolio', 'data' => $records, 'activeTab' => 'porfolios']);
     }
 
-    public function lista() {
+    public function lista($groupBy='symbol') {
         $records = $this->portfolioModel->getPortfolio();
-        $records = $this->portfolioModel->aggregateRecords($records);
-        $this->renderView('portfolio/list',
+        $records = $this->portfolioModel->aggregateRecords($records, $groupBy);
+        $this->renderView('portfolio/lista',
         ['title' => 'Portfolio', 'data' => $records]);
     }
 }

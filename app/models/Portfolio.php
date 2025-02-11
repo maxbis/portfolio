@@ -1,13 +1,19 @@
 <?php
 require_once '../config/config.php';
+require_once 'Symbol.php';
 
 class Portfolio
 {
     private $conn;
+    private $symbolsModel;
+    private $symbols;
 
     public function __construct()
     {
         $this->conn = dbConnect();
+        $this->symbolsModel = new Symbol();
+        $symbols = $this->symbolsModel->get();
+        $this->symbols = array_column($symbols, 'name', 'symbol');
     }
 
     /**
@@ -111,8 +117,12 @@ class Portfolio
             // Calculate the overall market value and total profit/loss.
             $totalValueNow = $totalShares * $latestPrice / $latestExchangeRate;
             $profitLoss = $totalValueNow - $totalPastValue + $cash;
-
             $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice + $post_cash;
+            if ($totalValueNow) {
+                $ytdProfitLossPerc = $ytdProfitLoss*100 / $totalValueNow;
+            } else {
+                $ytdProfitLossPerc = 0;
+            }
 
             if (strtoupper($symbol) === 'EUR') {
                 $profitLoss = 0;
@@ -126,6 +136,7 @@ class Portfolio
 
             $portfolio[] = [
                 'symbol' => $symbol,
+                'symbol_title' => $this->symbols[$symbol] ?? '?',
                 'broker' => $broker,
                 'strategy' => $row['strategy'],
                 'number' => $totalShares,
@@ -136,6 +147,7 @@ class Portfolio
                 'total_value' => round($totalValueNow, 2),
                 'profit_loss' => round($profitLoss, 2),
                 'ytd_profit_loss' => round($ytdProfitLoss, 2),
+                'profit_loss_percent' => round($ytdProfitLossPerc, 2),
                 'cash' => round($cash, 2),
             ];
 
@@ -253,12 +265,12 @@ class Portfolio
      * @param array $records An array of associative arrays.
      * @return array Aggregated records.
      */
-    public function aggregateRecords(array $records): array
+    public function aggregateRecords(array $records, $groupBy='symbol'): array
     {
         // First, group records by symbol.
         $grouped = [];
         foreach ($records as $record) {
-            $symbol = $record['symbol'];
+            $symbol = $record[$groupBy];
             if (!isset($grouped[$symbol])) {
                 $grouped[$symbol] = [];
             }
@@ -271,6 +283,7 @@ class Portfolio
             // Initialize the aggregated result.
             $agg = [
                 'symbol' => $symbol,
+                'symbol_title' => null,
                 'broker' => null,
                 'strategy' => null,
                 'number' => 0,
@@ -281,13 +294,14 @@ class Portfolio
                 'total_value' => 0,
                 'profit_loss' => 0,
                 'ytd_profit_loss' => 0,
+                'profit_loss_percent' => null,
                 'cash' => 0,
                 'percent_of_portfolio' => 0,
             ];
 
             $weightedBuyPriceSum = 0;
             $maxTotalValue = null;   // to find the record with the highest total_value
-            $recordForBroker = null; // record from which to take broker and strategy
+            $recordHigestValue = null; // record from which to take broker and strategy
 
             foreach ($group as $record) {
                 // Sum the number and accumulate for weighted average.
@@ -300,11 +314,12 @@ class Portfolio
                 $agg['ytd_profit_loss'] += $record['ytd_profit_loss'];
                 $agg['cash'] += $record['cash'];
                 $agg['percent_of_portfolio'] += $record['percent_of_portfolio'];
+                $agg['profit_loss_percent'] += $record['profit_loss_percent'];
 
                 // Choose the record with the highest total_value for broker and strategy.
                 if ($maxTotalValue === null || $record['total_value'] > $maxTotalValue) {
                     $maxTotalValue = $record['total_value'];
-                    $recordForBroker = $record;
+                    $recordHigestValue = $record;
                 }
 
                 // Choose the record with the most recent quote_date.
@@ -313,6 +328,7 @@ class Portfolio
                     $agg['quote_date'] = $record['quote_date'];
                     $agg['latest_price'] = $record['latest_price'];
                     $agg['exchange_rate'] = $record['exchange_rate'];
+                    $agg['symbol_title'] = $record['symbol_title'];
                 }
             }
 
@@ -322,10 +338,12 @@ class Portfolio
             }
 
             // Set broker and strategy from the record with the highest total_value.
-            if ($recordForBroker !== null) {
+            if ($recordHigestValue !== null) {
                 $agg['broker'] = '*';
-                $agg['strategy'] = $recordForBroker['strategy'];
+                $agg['strategy'] = $recordHigestValue['strategy'];
             }
+
+
 
             $aggregated[] = $agg;
         }

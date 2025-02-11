@@ -150,8 +150,14 @@ foreach ($columns as $colIndex => $col) {
           <?php foreach ($data as $item): ?>
             <tr class="border border-gray-300">
               <?php foreach ($columns as $colIndex => $col):
-                $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left'; ?>
-                <td class="px-3 py-2 <?= $alignment ?>">
+                    $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
+                    if (isset($col['title'])) {
+                      $title="title=\"".$item[$col['title']]."\"";
+                    } else {
+                      $title="";
+                    }
+                ?>
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $title ?>>
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(

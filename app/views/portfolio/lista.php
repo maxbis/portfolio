@@ -8,16 +8,9 @@
 //   - sortable  : (1/0) If the column header should be clickable for sorting.
 //   - filter    : "text", "select", or "none" to control the filtering UI.
 $columns = [
+
   [
-    'name' => 'Broker<br/>&nbsp;',
-    'width' => '80px',
-    'data' => 'broker',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'select',  // Dropdown filter.
-  ],
-  [
-    'name' => 'Symbol<br/>&nbsp;',
+    'name' => 'Index<br/>&nbsp;',
     'width' => '80px',
     'data' => 'symbol',
     'title' => 'symbol_title',
@@ -25,14 +18,7 @@ $columns = [
     'sortable' => 1,
     'filter' => 'select',  // Dropdown filter.
   ],
-  [
-    'name' => 'Strategy<br/>&nbsp;',
-    'width' => '40px',
-    'data' => 'strategy',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'select',
-  ],
+
   [
     'name' => '#<br/>&nbsp;',
     'width' => '60px',
@@ -40,7 +26,7 @@ $columns = [
     'data' => 'number',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'text',  // Text input filter.
+    'filter' => 'none',  // Text input filter.
   ],
   [
     'name' => 'Avg Price',

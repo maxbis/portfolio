@@ -15,7 +15,13 @@ class Transaction extends GenericModel
             'type' => 's',
             'label' => 'Symbol',
             'input' => 'text',
-            'required' => true
+            'required' => true,
+            'foreign' => [
+                'model'      => 'Symbol',
+                'valueField' => 'symbol',
+                'textField'  => 'name',
+                'alias' => 'sy' // optional alias for the joined table
+            ]
         ],
         'currency' => [
             'type' => 's',
@@ -88,7 +94,7 @@ class Transaction extends GenericModel
                 'model'      => 'Strategy',
                 'valueField' => 'id',
                 'textField'  => 'name',
-                'alias' => 's' // optional alias for the joined table
+                'alias' => 'st' // optional alias for the joined table
             ]
         ],
         'description' => [
