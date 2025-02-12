@@ -89,12 +89,12 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'PL %<br>&nbsp;',	
+    'name' => 'YTD PL%',	
     'width' => '60px',
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
-    'aggregate' => 'sum',  // Sum profit/loss.
+    'aggregate' => null,
     'sortable' => 1,
     'filter' => 'none',
   ],
@@ -109,7 +109,7 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => '% of Portfolio',
+    'name' => '% of Portfolio<br>&nbsp;',
     'width' => '',
     'align' => 'right',
     'data' => 'percent_of_portfolio',

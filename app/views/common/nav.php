@@ -2,7 +2,7 @@
 // Set a default value in case $activeTab isn't set.
 if (!isset($activeTab)) {
     $activeTab = $model;
-} 
+}
 ?>
 
 <nav class="flex border-b border-gray-300 mb-6 space-x-4">
@@ -23,7 +23,22 @@ if (!isset($activeTab)) {
                 class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Strategy</a>
             <p class="block text-sm px-4 py-2 text-gray-700">-----</p>
             <a href="<?= $GLOBALS['BASE'] ?>/portfolio/list"
-                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">Detailed</a>
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">Detailed (latest)</a>
+
+            <div class="relative">
+                <!-- When this button is clicked, the hidden date picker is revealed -->
+                <button type="button" onclick="toggleDatePicker()"
+                    class="w-full text-left block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    By Date
+                </button>
+                <!-- The date input is initially hidden; when shown it displays the native date picker -->
+                <input type="date" id="portfolioDatePicker"
+                    class="absolute top-0 left-0 w-full text-sm px-4 py-2 border border-gray-300 rounded bg-white"
+                    style="display: none;" onchange="redirectToDate(this.value)" />
+            </div>
+
+
+
         </div>
     </div>
 
@@ -57,3 +72,23 @@ if (!isset($activeTab)) {
         Instruments
     </a>
 </nav>
+
+<script>
+    function toggleDatePicker() {
+        var picker = document.getElementById('portfolioDatePicker');
+        // Toggle the input display – if hidden, show it and focus so the native picker appears
+        if (picker.style.display === 'none' || picker.style.display === '') {
+            picker.style.display = 'block';
+            picker.focus();
+        } else {
+            picker.style.display = 'none';
+        }
+    }
+
+    function redirectToDate(dateValue) {
+        if (dateValue) {
+            // Redirect to the URL with the selected date (format: yyyy-mm-dd)
+            window.location.href = '<?= $GLOBALS['BASE'] ?>/portfolio/list/' + dateValue;
+        }
+    }
+</script>

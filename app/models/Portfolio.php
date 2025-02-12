@@ -19,7 +19,7 @@ class Portfolio
     /**
      * Get the portfolio overview with a proper YTD P&L calculation.
      */
-    public function getPortfolio()
+    public function getPortfolio($date = null)
     {
         // Determine January 1st of the current year.
         $currentYear = date("Y");
@@ -80,7 +80,11 @@ class Portfolio
                 $ytdProfitLoss = null;
             } else {
                 // Get the latest market price and its quote date.
-                $quoteData = $this->getLatestQuote($symbol);
+                if ($date != null) {
+                    $quoteData = $this->getQuoteOnDate($symbol, $date);
+                } else {
+                    $quoteData = $this->getLatestQuote($symbol);
+                }
                 $latestPrice = $quoteData['close'];
                 $quoteDate = $quoteData['quote_date'];
 
@@ -110,7 +114,11 @@ class Portfolio
             $latestExchangeRate = 1;
             $YTDCurrencyPrice = 1;
             if ($row['currency'] == 'USD') {
-                $latestExchangeRate = $this->getLatestQuote('USD')['close'];
+                if ($date != null) {
+                    $latestExchangeRate = $this->getQuoteOnDate('USD', $date)['close'];
+                } else {
+                    $latestExchangeRate = $this->getLatestQuote('USD')['close'];
+                }
                 $YTDCurrencyPrice = $this->getYearStartQuote('USD')['close'];
             }
 
@@ -119,7 +127,7 @@ class Portfolio
             $profitLoss = $totalValueNow - $totalPastValue + $cash;
             $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice + $post_cash;
             if ($totalValueNow) {
-                $ytdProfitLossPerc = $ytdProfitLoss*100 / $totalValueNow;
+                $ytdProfitLossPerc = $ytdProfitLoss * 100 / $totalValueNow;
             } else {
                 $ytdProfitLossPerc = 0;
             }
@@ -169,7 +177,12 @@ class Portfolio
      */
     private function getLatestQuote($symbol)
     {
-        $sql = "SELECT close, quote_date FROM quotes WHERE symbol = ? ORDER BY quote_date DESC LIMIT 1";
+        $sql = "
+                SELECT close, quote_date
+                FROM quotes
+                WHERE symbol = ?
+                ORDER BY quote_date DESC LIMIT 1
+            ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $symbol);
         $stmt->execute();
@@ -265,7 +278,7 @@ class Portfolio
      * @param array $records An array of associative arrays.
      * @return array Aggregated records.
      */
-    public function aggregateRecords(array $records, $groupBy='symbol'): array
+    public function aggregateRecords(array $records, $groupBy = 'symbol'): array
     {
         // First, group records by symbol.
         $grouped = [];
@@ -314,7 +327,6 @@ class Portfolio
                 $agg['ytd_profit_loss'] += $record['ytd_profit_loss'];
                 $agg['cash'] += $record['cash'];
                 $agg['percent_of_portfolio'] += $record['percent_of_portfolio'];
-                $agg['profit_loss_percent'] += $record['profit_loss_percent'];
 
                 // Choose the record with the highest total_value for broker and strategy.
                 if ($maxTotalValue === null || $record['total_value'] > $maxTotalValue) {
@@ -347,6 +359,14 @@ class Portfolio
 
             $aggregated[] = $agg;
         }
+
+        foreach ($aggregated as &$item) {
+            $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / $item['total_value'], 2);
+        }
+        unset($item); // break the reference after the loop
+
+        // echo "<pre>";
+        // print_r($aggregated);
 
         return $aggregated;
     }

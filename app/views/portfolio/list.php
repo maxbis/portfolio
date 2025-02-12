@@ -40,7 +40,7 @@ $columns = [
     'data' => 'number',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'text',  // Text input filter.
+    'filter' => 'none', 
   ],
   [
     'name' => 'Avg Price',
@@ -50,7 +50,7 @@ $columns = [
     'formatter' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'text',
+    'filter' => 'none',
   ],
   [
     'name' => 'Quote Date',
@@ -103,12 +103,12 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'PL %<br>&nbsp;',	
+    'name' => 'YTD PL%',	
     'width' => '60px',
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
-    'aggregate' => 'sum',  // Sum profit/loss.
+    'aggregate' => null,  // No aggregation.
     'sortable' => 1,
     'filter' => 'none',
   ],

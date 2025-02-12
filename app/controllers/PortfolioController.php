@@ -10,8 +10,8 @@ class PortfolioController extends Controller {
         // $this->controllerName = $this->childFileName(__FILE__);
     }
 
-    public function list() {
-        $records = $this->portfolioModel->getPortfolio();
+    public function list($date=null) {
+        $records = $this->portfolioModel->getPortfolio($date);
         $this->renderView('portfolio/list', 
         ['title' => 'Portfolio', 'data' => $records]);
     }
