@@ -58,7 +58,7 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
         volume = int(row.get("Volume"))
         dividends = float(row.get("Dividends", 0.0))
         splits = float(row.get("Stock Splits", 0.0))
-
+    
         # If no split occurred (yfinance returns 0), store 1.00 as per the table default.
         if not splits:
             splits = 1.00
@@ -138,7 +138,7 @@ def main():
     # Retrieve symbol mapping from the 'symbol' table.
     # The column 'other_symbol' is used as the key, and 'symbol' as the value.
     try:
-        cursor.execute("SELECT other_symbol, symbol FROM symbol")
+        cursor.execute("SELECT other_symbol, symbol FROM symbol WHERE active=1")
         rows = cursor.fetchall()
         symbol_dict = {row[0]: row[1] for row in rows}
     except Exception as e:

@@ -95,6 +95,7 @@ $columns = [
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
     'aggregate' => null,
+    'formula' => '12',
     'sortable' => 1,
     'filter' => 'none',
   ],

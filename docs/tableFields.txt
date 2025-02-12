@@ -1,0 +1,229 @@
+Available Options in $tableFields
+
+Each field in $tableFields is an associative array with configuration settings. Here are the possible options:
+1. type (string)
+
+    Defines the data type of the field in the database.
+    Typically, values are:
+        's' → String (VARCHAR, TEXT)
+        'i' → Integer
+        'd' → Decimal (FLOAT, DOUBLE)
+        'b' → Boolean (TinyInt 1)
+
+2. label (string)
+
+    The label that appears in the form next to the field.
+    Example: 'label' => 'Full Name'
+
+3. input (string)
+
+    Defines the type of input field used in the form.
+    Possible values:
+        'text' → Standard text input
+        'textarea' → Multi-line text box
+        'password' → Password input (hidden characters)
+        'email' → Email input (validates email format)
+        'number' → Numeric input
+        'date' → Date picker
+        'datetime-local' → Date & time picker
+        'checkbox' → Boolean checkbox
+        'radio' → Radio buttons
+        'select' → Dropdown selection
+        'hidden' → Hidden input field
+
+4. required (boolean)
+
+    Specifies if the field must be filled out before submission.
+    Example: 'required' => true
+
+5. editable (boolean)
+
+    Determines if the field should be editable in the form.
+    Example: 'editable' => false (useful for fields like auto-incrementing IDs)
+
+6. readonly (boolean)
+
+    If true, the field is displayed but cannot be modified.
+    Example: 'readonly' => true
+
+7. options (associative array)
+
+    Used for dropdowns ('select') or radio buttons ('radio').
+    Example:
+
+    'status' => [
+        'type' => 's',
+        'label' => 'Status',
+        'input' => 'select',
+        'options' => [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+            'pending' => 'Pending'
+        ],
+        'required' => true
+    ]
+
+8. foreign (associative array)
+
+    Defines if the field is a foreign key and links to another model.
+    Structure:
+        'model' → The related model's class name.
+        'valueField' → The field to use as the value in <option> elements.
+        'textField' → The field to display in <option> elements.
+    Example:
+
+    'category_id' => [
+        'type' => 'i',
+        'label' => 'Category',
+        'input' => 'select',
+        'foreign' => [
+            'model' => 'Category',
+            'valueField' => 'id',
+            'textField' => 'name'
+        ],
+        'required' => true
+    ]
+
+    The dropdown will fetch options dynamically from the Category model.
+
+9. default (mixed)
+
+    Specifies a default value for the field when creating a new record.
+    Example: 'default' => 'New User'
+
+10. placeholder (string)
+
+    Provides placeholder text for text inputs.
+    Example: 'placeholder' => 'Enter your name'
+
+11. maxlength (integer)
+
+    Sets the maximum number of characters allowed in text inputs.
+    Example: 'maxlength' => 255
+
+12. min & max (numeric)
+
+    For number, date, and range inputs.
+    Example:
+
+    'age' => [
+        'type' => 'i',
+        'label' => 'Age',
+        'input' => 'number',
+        'min' => 18,
+        'max' => 99
+    ]
+
+13. step (numeric)
+
+    Defines the step size for number fields.
+    Example: 'step' => 0.01 (for decimal numbers)
+
+14. pattern (string)
+
+    Specifies a regex pattern for input validation.
+    Example:
+
+    'phone' => [
+        'type' => 's',
+        'label' => 'Phone Number',
+        'input' => 'text',
+        'pattern' => '^\d{10}$',
+        'placeholder' => 'Enter a 10-digit number'
+    ]
+
+15. help (string)
+
+    A small hint displayed under the field.
+    Example: 'help' => 'Enter your full name as it appears on official documents'
+
+16. class (string)
+
+    Additional CSS classes for styling the input field.
+    Example: 'class' => 'bg-gray-200 text-sm'
+
+17. wrapper_class (string)
+
+    Adds custom classes to the field wrapper (e.g., div around the input).
+    Example: 'wrapper_class' => 'mb-4 flex items-center'
+
+18. attributes (associative array)
+
+    Additional attributes for the input field.
+    Example:
+
+    'email' => [
+        'type' => 's',
+        'label' => 'Email',
+        'input' => 'email',
+        'attributes' => [
+            'autocomplete' => 'off',
+            'data-validation' => 'custom-email'
+        ]
+    ]
+
+Example Configuration
+
+public $tableFields = [
+    'id' => [
+        'type' => 'i',
+        'label' => 'ID',
+        'input' => 'hidden',
+        'editable' => false
+    ],
+    'name' => [
+        'type' => 's',
+        'label' => 'Full Name',
+        'input' => 'text',
+        'required' => true,
+        'maxlength' => 255,
+        'placeholder' => 'Enter your full name'
+    ],
+    'email' => [
+        'type' => 's',
+        'label' => 'Email',
+        'input' => 'email',
+        'required' => true,
+        'pattern' => '^[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,4}$',
+        'help' => 'Please enter a valid email address.'
+    ],
+    'age' => [
+        'type' => 'i',
+        'label' => 'Age',
+        'input' => 'number',
+        'min' => 18,
+        'max' => 99,
+        'required' => true
+    ],
+    'gender' => [
+        'type' => 's',
+        'label' => 'Gender',
+        'input' => 'radio',
+        'options' => [
+            'male' => 'Male',
+            'female' => 'Female',
+            'other' => 'Other'
+        ],
+        'required' => true
+    ],
+    'status' => [
+        'type' => 's',
+        'label' => 'Status',
+        'input' => 'select',
+        'options' => [
+            'active' => 'Active',
+            'inactive' => 'Inactive'
+        ]
+    ],
+    'category_id' => [
+        'type' => 'i',
+        'label' => 'Category',
+        'input' => 'select',
+        'foreign' => [
+            'model' => 'Category',
+            'valueField' => 'id',
+            'textField' => 'name'
+        ],
+        'required' => true
+    ]
+];

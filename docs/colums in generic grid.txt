@@ -1,0 +1,113 @@
+$columns Data Format Specification
+
+The $columns variable is an array where each element is an associative array that defines one column in the grid view. Each column definition controls both how the column is rendered (header, cell, filtering, etc.) and how it behaves (sorting, aggregation). Below are the keys you can use in each column definition:
+
+    name
+        Type: string
+        Purpose: Specifies the header label that is displayed at the top of the column.
+        Example:
+
+    'name' => 'Broker'
+
+width
+
+    Type: string
+    Purpose: Defines the CSS width for the column (e.g., using pixels, percentages).
+    Example:
+
+    'width' => '40px'
+
+data
+
+    Type: string
+    Purpose: Indicates which key from each data row (associative array) is used to populate the cell’s content.
+    Special Note:
+        If the value starts with a special character (like '#'), it signals that this column uses a special rendering logic (e.g., '#edit' renders an edit link) and is exempt from the usual key-checking in the data array.
+    Example:
+
+    'data' => 'broker_short_name'
+
+aggregate
+
+    Type: string or null
+    Purpose: Defines if and how the column should be aggregated. When specified, an aggregate value (such as a sum or an average) is computed from the numeric values in this column.
+    Allowed Values:
+        "sum" – the column’s values are summed.
+        "average" – the column’s values are averaged.
+        null (or omitted) – no aggregation is performed.
+    Example:
+
+    'aggregate' => 'sum'
+
+sortable
+
+    Type: integer or boolean
+    Purpose: Determines whether the column is sortable. A truthy value (e.g., 1 or true) means that clicking the header will sort the table by that column.
+    Example:
+
+    'sortable' => 1
+
+filter
+
+    Type: string
+    Purpose: Specifies the type of filter input rendered for the column in the filter row.
+    Allowed Values:
+        "text" – a text input is provided for free-form text filtering.
+        "select" – a dropdown is rendered that contains the unique values from the column.
+        "none" – no filter input is rendered.
+    Example:
+
+    'filter' => 'select'
+
+align
+
+    Type: string (optional)
+    Purpose: Sets the text alignment for the content in the column’s cells. If not provided, text defaults to left alignment.
+    Allowed Values:
+        "right" – right-aligned text.
+        Any other value (or omitted) results in left alignment.
+    Example:
+
+    'align' => 'right'
+
+formatter
+
+    Type: string (optional)
+    Purpose: Contains PHP code (as a string) that is executed (via eval) to format or transform the cell’s content. This is useful for custom display logic.
+    Caution: Ensure that any code provided here is secure and trusted, as it is evaluated at runtime.
+    Example:
+
+    'formatter' => '$item["amount"] . " USD"'
+
+title
+
+    Type: string (optional)
+    Purpose: When set, the value from the data row corresponding to this key is used as the title attribute (HTML tooltip) for the cell. This is helpful for providing additional information on hover.
+    Example:
+
+        'title' => 'description'
+
+Usage Summary
+
+    Defining Columns:
+    Each column in your grid is defined with the above keys. For example, a column showing a broker’s short name with filtering might be defined as:
+
+    [
+      'name' => 'Broker',
+      'width' => '40px',
+      'data' => 'broker_short_name',
+      'aggregate' => null,
+      'sortable' => 1,
+      'filter' => 'select',
+    ]
+
+    Special Handling:
+        Columns with a data value beginning with a special marker (like #edit) are rendered with special behaviors (e.g., generating an edit link).
+        The formatter key allows you to override the default display of the cell’s content by executing custom PHP code.
+
+    Interactive Features:
+        Sorting: Controlled by the sortable flag and implemented by clicking the header cell.
+        Filtering: Determined by the filter key. The grid supports both text-based filtering and dropdown filtering (select).
+        Aggregation: If an aggregate rule is provided (such as "sum" or "average"), both PHP and JavaScript accumulate and display the computed aggregate in the footer row. The aggregates dynamically update when the grid is sorted or filtered.
+
+This formal description should serve as a comprehensive guide to understanding and utilizing the $columns data format in your generic list view.
