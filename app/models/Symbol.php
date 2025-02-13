@@ -24,6 +24,15 @@ class Symbol extends GenericModel
             'input' => 'text',
             'required' => true
         ],
+        'notes' => [
+            'type' => 's',
+            'label' => 'Notes',
+            'input' => 'textarea',
+            'rows' => 5,
+            'class' => 'text-sm',
+            'placeholder' => 'Enter your comments here...',
+            'required' => false
+        ],
         'active' => [
             'type' => 'i',
             'label' => 'Active',

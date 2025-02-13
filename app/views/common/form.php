@@ -99,7 +99,9 @@ foreach ($fields as $field => $config) {
         }
         // If the field is a textarea:
         elseif ($config['input'] === 'textarea') {
-          echo '<textarea name="' . $fieldName . '" id="' . $fieldName . '" class="w-full p-2 border border-gray-300 rounded-md" ' . (isset($config['required']) && $config['required'] ? 'required' : '') . '>' . $value . '</textarea>';
+          $class = isset($config['class']) ? $config['class'] : '';
+          echo '<textarea name="' . $fieldName . '" id="' . $fieldName . '" class="w-full p-2 border border-gray-300 rounded-md ' . $class . '" ' . (isset($config['required']) && $config['required'] ? 'required' : '') . '>' . $value . '</textarea>';
+
         }
         // Otherwise, assume it’s a text input (you can add more mappings as needed).
         else {
