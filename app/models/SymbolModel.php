@@ -36,6 +36,12 @@ class Symbol extends GenericModel
                 'alias' => 'se' // optional alias for the joined table
             ]
         ],
+        'beta' => [
+            'type' => 'd',
+            'label' => 'Beta',
+            'input' => 'text',
+            'required' => false
+        ],
         'notes' => [
             'type' => 's',
             'label' => 'Notes',
@@ -43,6 +49,20 @@ class Symbol extends GenericModel
             'rows' => 5,
             'class' => 'text-sm',
             'placeholder' => 'Enter your comments here...',
+            'required' => false
+        ],
+        'risk' => [
+            'type' => 'i',
+            'label' => 'Risk',
+            'input' => 'select',
+            'options' => [
+                'A' => 'A',
+                'B' => 'B',
+                'C' => 'C',
+                'D' => 'D',
+                'E' => 'E',
+                'F' => 'F',
+            ],
             'required' => false
         ],
         'active' => [
