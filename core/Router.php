@@ -6,13 +6,16 @@ class Router
         $url = '/' . trim($url, '/');
         $base = $GLOBALS['BASE'] . '/';
         $url = preg_replace('#^' . preg_quote($base, '#') . '#i', '', $url);
-        $parts = explode('/', $url);
+        $parts = explode('?', $url);
+        $parts = explode('/', $parts[0]);
 
 
         $controllerName = !empty($parts[0]) ? ucfirst($parts[0]) . 'Controller' : 'HomeController';
-        $methodName = $parts[1] ?? 'index';
-        //$param = $parts[2] ?? null; // Handle extra parameters (like ID)    
+        $methodName = $parts[1] ?? 'index'; // only take part before ? 
         $paramList = array_slice($parts, 2);
+
+        // echo "controllerName: $controllerName <br>methodName: $methodName <br>param: "; print_r($paramList); echo "<br>";
+        // exit;	
 
         $controllerFile = "../app/controllers/$controllerName.php";
 

@@ -4,7 +4,7 @@
 
 $columns = [
   [
-    'name' => 'id',
+    'name' => 'Date',
     'width' => '140px',
     'data' => 'date',
     'aggregate' => null,

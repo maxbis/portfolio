@@ -32,6 +32,15 @@ $columns = [
     'align' => 'left',
   ],
   [
+    'name' => 'Notes<br>&nbsp;',
+    'width' => '',
+    'data' => 'notes',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',
+    'align' => 'left',
+  ],
+  [
     'name'      => '',
     'width'     => '60px',
     'data'      => '#edit',

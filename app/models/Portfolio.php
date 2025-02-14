@@ -82,10 +82,13 @@ class Portfolio
                 // Get the latest market price and its quote date.
                 if ($date != null) {
                     $quoteData = $this->getQuoteOnDate($symbol, $date);
+                    $quoteDataPrev = $this->getQuoteOnDate($symbol, $date, 1);
                 } else {
                     $quoteData = $this->getLatestQuote($symbol);
+                    $quoteDataPrev = $this->getLatestQuote($symbol, 1);
                 }
                 $latestPrice = $quoteData['close'];
+                $latestPricePrev = $quoteDataPrev['close'];
                 $quoteDate = $quoteData['quote_date'];
 
                 // Get the year start price from the previous year's end quote.
@@ -150,6 +153,8 @@ class Portfolio
                 'number' => $totalShares,
                 'avg_buy_price' => round($avgBuyPrice, 2),
                 'latest_price' => round($latestPrice, 2),
+                'delta' => round($latestPrice - $latestPricePrev, 2),
+                'delta_percent' => round((($latestPrice - $latestPricePrev) / $latestPricePrev) * 100, 2),  
                 'quote_date' => $quoteDate,
                 'exchange_rate' => round($latestExchangeRate, 2),
                 'total_value' => round($totalValueNow, 2),
@@ -175,13 +180,18 @@ class Portfolio
     /**
      * Get the latest quote for a given symbol.
      */
-    private function getLatestQuote($symbol)
+    private function getLatestQuote($symbol, $offset=null)
     {
+        if ( $offset) {
+            $offset = "OFFSET $offset";
+        } else {
+            $offset = "";
+        }
         $sql = "
                 SELECT close, quote_date
                 FROM quotes
                 WHERE symbol = ?
-                ORDER BY quote_date DESC LIMIT 1
+                ORDER BY quote_date DESC LIMIT 1 $offset
             ";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("s", $symbol);
@@ -218,12 +228,17 @@ class Portfolio
      * Get the last known quote at or before a given date.
      * If no date is provided, the current date is used.
      */
-    public function getQuoteOnDate($symbol, $date = null)
+    public function getQuoteOnDate($symbol, $date = null, $offset=null)
     {
         if (!$date) {
             $date = date("Y-m-d");
         }
-        $sql = "SELECT close, quote_date FROM quotes WHERE symbol = ? AND quote_date <= ? ORDER BY quote_date DESC LIMIT 1";
+        if ( $offset) {
+            $offset = "OFFSET $offset";
+        } else {
+            $offset = "";
+        }
+        $sql = "SELECT close, quote_date FROM quotes WHERE symbol = ? AND quote_date <= ? ORDER BY quote_date DESC LIMIT 1 $offset";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ss", $symbol, $date);
         $stmt->execute();

@@ -1,6 +1,7 @@
 <?php
 // grid.php
 
+
 // Check for required variables; you can also set defaults if needed.
 if (!isset($data)) {
   die('No data provided');
@@ -31,13 +32,13 @@ $data = array_values($data);
     </div>
     <br>
     <div class="mb-4">
-      <a href="<?= htmlspecialchars($GLOBALS['BASE'].'/'.$model.'/create') ?>"
-         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+      <a href="<?= htmlspecialchars($GLOBALS['BASE'] . '/' . $model . '/create') ?>"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         New
       </a>
     </div>
   </div>
-<?php exit; endif; ?>
+  <?php exit; endif; ?>
 
 <?php
 // Check if all defined columns exist.
@@ -54,14 +55,15 @@ foreach ($columns as $col) {
 }
 
 // --- Prepare Aggregates ---
-// We still initialize accumulators for PHP (in case no filtering happens), but we will update the footer dynamically.
+// These accumulators are here in case no filtering happens,
+// but the footer will be updated dynamically.
 $aggregates = [];
 foreach ($columns as $colIndex => $col) {
   if (!empty($col['aggregate'])) {
     $aggregates[$colIndex] = [
       'value' => 0,
       'count' => 0,
-      'type' => $col['aggregate']  // "sum" or "average"
+      'type' => $col['aggregate']  // "sum", "average", or "formula"
     ];
   }
 }
@@ -100,9 +102,9 @@ foreach ($columns as $colIndex => $col) {
     <h1 class="text-2xl font-semibold mb-4"><?= htmlspecialchars($title) ?></h1>
     <?php include_once __DIR__ . "/../common/nav.php"; ?>
 
-    <?php if (! isset($noCreate)) : ?>
+    <?php if (!isset($noCreate)): ?>
       <div class="mb-4">
-        <a href="<?= $GLOBALS['BASE'].'/'.$model ?>/create"
+        <a href="<?= $GLOBALS['BASE'] . '/' . $model ?>/create"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           New
         </a>
@@ -120,7 +122,7 @@ foreach ($columns as $colIndex => $col) {
               $sortable = !empty($col['sortable']);
               ?>
               <th class="border border-gray-300 px-3 py-2 text-left text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
-                <?= $widthStyle ?> <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
+                <?= $widthStyle ?>   <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
                 <?= $col['name'] ?>
               </th>
             <?php endforeach; ?>
@@ -134,12 +136,15 @@ foreach ($columns as $colIndex => $col) {
                     <select class="filter-input" data-column="<?= $colIndex ?>">
                       <option value="">All</option>
                       <?php foreach ($uniqueValues[$colIndex] as $value): ?>
-                        <option value="<?= htmlspecialchars($value) ?>"><?= htmlspecialchars($value) ?></option>
+                        <option value="<?= htmlspecialchars($value) ?>" <?= (isset($_GET[$col['data']]) && $_GET[$col['data']] == $value) ? 'selected' : '' ?>>
+                          <?= htmlspecialchars($value) ?>
+                        </option>
                       <?php endforeach; ?>
                     </select>
                   <?php } elseif ($col['filter'] === 'text') { ?>
                     <input type="text" class="filter-input" data-column="<?= $colIndex ?>"
-                      placeholder="Filter <?= htmlspecialchars($col['name']) ?>">
+                      placeholder="Filter <?= htmlspecialchars($col['name']) ?>"
+                      value="<?= isset($_GET[$col['data']]) ? htmlspecialchars($_GET[$col['data']]) : '' ?>">
                   <?php }
                 endif; ?>
               </td>
@@ -150,14 +155,14 @@ foreach ($columns as $colIndex => $col) {
           <?php foreach ($data as $item): ?>
             <tr class="border border-gray-300">
               <?php foreach ($columns as $colIndex => $col):
-                    $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
-                    if (isset($col['title'])) {
-                      $title="title=\"".$item[$col['title']]."\"";
-                    } else {
-                      $title="";
-                    }
+                $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
+                if (isset($col['title'])) {
+                  $titleAttr = "title=\"" . $item[$col['title']] . "\"";
+                } else {
+                  $titleAttr = "";
+                }
                 ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $title ?>>
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>>
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
@@ -169,7 +174,7 @@ foreach ($columns as $colIndex => $col) {
                   } else {
                     // If a formatter is defined, use it.
                     if (isset($col['formatter'])) {
-                      $cellValue = eval('return ' . $col['formatter'] . ';');
+                      $cellValue = eval ('return ' . $col['formatter'] . ';');
                     } else {
                       $cellValue = $item[$col['data']];
                     }
@@ -195,14 +200,8 @@ foreach ($columns as $colIndex => $col) {
               <td class="border border-gray-300 px-3 py-2 text-right">
                 <?php
                 if (isset($aggregates[$colIndex])) {
-                  $agg = $aggregates[$colIndex];
-                  if ($agg['type'] === 'average' && $agg['count'] > 0) {
-                    $average = number_format($agg['value'] / $agg['count'], 2, '.', ' ');
-                    echo '<span style="text-decoration: overline; font-weight: bold;color:grey;">avg ' . $average . '%</span>';
-                  } else {
-                    $total = number_format($agg['value'], 2, '.', ' ');
-                    echo '<span style="text-decoration: overline; font-weight: bold;color:black;">' . $total . '</span>';
-                  }
+                  // This value will be updated dynamically by JS.
+                  echo '<span style="text-decoration: overline; font-weight: bold;color:black;"></span>';
                 }
                 ?>
               </td>
@@ -220,52 +219,97 @@ foreach ($columns as $colIndex => $col) {
     // *********************************************************
     var aggregatesConfig = {};
     <?php foreach ($columns as $colIndex => $col):
-      if (isset($col['aggregate'])): ?>
-        aggregatesConfig[<?= $colIndex ?>] = "<?= $col['aggregate'] ?>";
-    <?php
+      if (isset($col['aggregate'])):
+        if ($col['aggregate'] === 'formula' && isset($col['formula'])): ?>
+          aggregatesConfig[<?= $colIndex ?>] = {
+            type: "formula",
+            formula: "<?= addslashes($col['formula']) ?>",
+            aggregateToken: "<?= addslashes($col['aggregateToken'] ?? '') ?>"
+          };
+        <?php else: ?>
+          aggregatesConfig[<?= $colIndex ?>] = {
+            type: "<?= $col['aggregate'] ?>",
+            aggregateToken: "<?= addslashes($col['aggregateToken'] ?? '') ?>"
+          };
+          <?php
+        endif;
       endif;
     endforeach; ?>
 
     // *********************************************************
-    // 2. Function to recalc aggregates based on only visible rows
+    // 2. Function to safely evaluate a formula with tokens replaced by computed aggregates
+    // *********************************************************
+    function evaluateFormula(formula, values) {
+      for (var key in values) {
+        var regex = new RegExp('{' + key + '}', 'g');
+        formula = formula.replace(regex, values[key]);
+      }
+      try {
+        return eval(formula); // Use eval only with trusted inputs.
+      } catch (e) {
+        console.error("Error evaluating formula:", e);
+        return '';
+      }
+    }
+
+    // *********************************************************
+    // 3. Function to recalc aggregates based on only visible rows
     // *********************************************************
     function recalcAggregates() {
       var table = document.getElementById("gridView");
       var tbody = table.querySelector("tbody");
       var footerCells = table.querySelector("tfoot tr").cells;
 
-      // Loop through each column that has an aggregation rule.
+      // Object to hold computed aggregate values keyed by aggregateToken.
+      var computedAggregates = {};
+
+      // Loop through each column configuration that is not a formula.
       for (var colIndex in aggregatesConfig) {
-        var aggType = aggregatesConfig[colIndex];
-        var total = 0;
-        var count = 0;
-
-        // Iterate over each visible row
-        tbody.querySelectorAll("tr").forEach(function(row) {
-          if (row.style.display !== "none") {
-            var cell = row.cells[colIndex];
-            var text = cell.innerText;
-            // Remove non-numeric characters
-            var num = parseFloat(text.replace(/[^0-9.-]+/g, ""));
-            if (!isNaN(num)) {
-              total += num;
-              count++;
+        var config = aggregatesConfig[colIndex];
+        if (config.type !== "formula") {
+          var total = 0;
+          var count = 0;
+          tbody.querySelectorAll("tr").forEach(function (row) {
+            if (row.style.display !== "none") {
+              var cell = row.cells[colIndex];
+              var text = cell.innerText;
+              var num = parseFloat(text.replace(/[^0-9.-]+/g, ""));
+              if (!isNaN(num)) {
+                total += num;
+                count++;
+              }
             }
+          });
+          // Update footer cell based on the type of aggregate.
+          if (config.type === "sum" && count > 0) {
+            footerCells[colIndex].innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:black;">' +
+              total.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) +
+              '</span>';
           }
-        });
+          if (config.type === "average" && count > 0) {
+            var average = (total / count).toFixed(2);
+            footerCells[colIndex].innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:grey;">avg ' + average + '%</span>';
+          }
+          // If an aggregateToken is provided, store the computed aggregate value.
+          if (config.aggregateToken) {
+            computedAggregates[config.aggregateToken] = total; // Adjust this if you need averages instead.
+          }
+        }
+      }
 
-        var footerCell = footerCells[colIndex];
-        if (aggType === "average" && count > 0) {
-          var average = (total / count).toFixed(2);
-          footerCell.innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:grey;">avg ' + average + '%</span>';
-        } else {
-          footerCell.innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:black;">' + total.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + '</span>';
+      // Now, process columns with type "formula".
+      for (var colIndex in aggregatesConfig) {
+        var config = aggregatesConfig[colIndex];
+        if (config.type === "formula" && config.formula) {
+          var result = evaluateFormula(config.formula, computedAggregates);
+          var formatted = (typeof result === "number") ? result.toFixed(2) : result;
+          footerCells[colIndex].innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:black;">' + formatted + '</span>';
         }
       }
     }
 
     // *********************************************************
-    // 3. Sorting Function (modified to call recalcAggregates)
+    // 4. Sorting Function (modified to call recalcAggregates)
     // *********************************************************
     function sortTable(columnIndex) {
       const table = document.getElementById("gridView");
@@ -302,7 +346,7 @@ foreach ($columns as $colIndex => $col) {
     }
 
     // *********************************************************
-    // 4. Filtering Function (modified to call recalcAggregates)
+    // 5. Filtering Function (modified to call recalcAggregates)
     // *********************************************************
     function filterTable() {
       const table = document.getElementById("gridView");
@@ -329,7 +373,11 @@ foreach ($columns as $colIndex => $col) {
     });
 
     // Recalculate aggregates on initial load.
-    document.addEventListener("DOMContentLoaded", recalcAggregates);
+    document.addEventListener("DOMContentLoaded", function () {
+      // Apply filters based on pre-populated values from GET parameters
+      filterTable();
+      recalcAggregates();
+    });
   </script>
 </body>
 
