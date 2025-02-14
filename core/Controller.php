@@ -14,7 +14,7 @@ class Controller {
 
     public function loadModel($model) {
         $model = ucfirst($model); // all models are capitalized (e.g. Portfolio)
-        require_once "../app/models/$model.php";
+        require_once "../app/models/".$model."Model.php";
         return new $model();
     }
     

@@ -46,6 +46,7 @@ foreach ($columns as $col) {
   if (substr($col['data'], 0, 1) !== '#' && !array_key_exists($col['data'], $data[0])) {
     echo "<pre>";
     echo "File: " . __FILE__ . ", Line: " . __LINE__ . PHP_EOL;
+    echo "Error: Key '{$col['data']}' does not exist in the item array.";
     echo '$data: ' . PHP_EOL;
     print_r($data);
     echo '$columns: ' . PHP_EOL;
@@ -78,6 +79,23 @@ foreach ($columns as $colIndex => $col) {
       $uniqueValues[$colIndex][$value] = $value;
     }
   }
+}
+
+function renderCell($item, $column) {
+    $value = $item[$column['data']];
+    if (isset($column['formatter'])) {
+        $value = eval('return ' . $column['formatter'] . ';');
+    }
+
+    if (isset($column['link'])) {
+        $link = $column['link'];
+        foreach ($item as $key => $val) {
+            $link = str_replace("{" . $key . "}", $val, $link);
+        }
+        $value = "<a href=\"".$GLOBALS['BASE']."$link\">$value</a>";
+    }
+
+    return $value;
 }
 ?>
 <!DOCTYPE html>
@@ -176,7 +194,7 @@ foreach ($columns as $colIndex => $col) {
                     if (isset($col['formatter'])) {
                       $cellValue = eval ('return ' . $col['formatter'] . ';');
                     } else {
-                      $cellValue = $item[$col['data']];
+                      $cellValue = renderCell($item, $col);
                     }
                   }
                   echo $cellValue;

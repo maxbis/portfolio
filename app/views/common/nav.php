@@ -21,6 +21,8 @@ if (!isset($activeTab)) {
                 class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Broker</a>
             <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/strategy"
                 class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Strategy</a>
+            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/sector"
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Sector</a>
             <p class="block text-sm px-4 py-2 text-gray-700">-----</p>
             <a href="<?= $GLOBALS['BASE'] ?>/portfolio/list"
                 class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">Detailed (latest)</a>
@@ -70,6 +72,11 @@ if (!isset($activeTab)) {
     <a href="<?= $GLOBALS['BASE'] ?>/symbol/list"
         class="px-4 py-2 border-b-2 <?= $activeTab === 'symbol' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
         Instruments
+    </a>
+
+    <a href="<?= $GLOBALS['BASE'] ?>/sector/list"
+        class="px-4 py-2 border-b-2 <?= $activeTab === 'sector' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
+        Sector
     </a>
 </nav>
 

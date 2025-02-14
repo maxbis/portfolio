@@ -1,6 +1,6 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Quote.php';
+require_once '../app/models/QuoteModel.php';
 
 class QuoteController extends Controller
 {

@@ -32,6 +32,15 @@ $columns = [
     'align' => 'left',
   ],
   [
+    'name' => 'Sector<br>&nbsp;',
+    'width' => '',
+    'data' => 'sector_name',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',
+    'align' => 'left',
+  ],
+  [
     'name' => 'Notes<br>&nbsp;',
     'width' => '',
     'data' => 'notes',

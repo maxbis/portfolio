@@ -1,6 +1,6 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Broker.php';
+require_once '../app/models/BrokerModel.php';
 
 class BrokerController extends Controller
 {

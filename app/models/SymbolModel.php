@@ -24,6 +24,18 @@ class Symbol extends GenericModel
             'input' => 'text',
             'required' => true
         ],
+        'sector_id' => [
+            'type' => 's',
+            'label' => 'Sector',
+            'input' => 'select',
+            'required' => true,
+            'foreign' => [
+                'model'      => 'Sector',
+                'valueField' => 'id',
+                'textField'  => 'name',
+                'alias' => 'se' // optional alias for the joined table
+            ]
+        ],
         'notes' => [
             'type' => 's',
             'label' => 'Notes',

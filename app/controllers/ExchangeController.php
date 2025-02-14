@@ -1,6 +1,6 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Exchange.php';
+require_once '../app/models/ExchangeModel.php';
 
 class ExchangeController extends Controller
 {

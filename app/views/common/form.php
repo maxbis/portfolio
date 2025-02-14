@@ -10,7 +10,7 @@
  */
 
 // Ensure the model class is loaded.
-require_once __DIR__ . "/../../models/" . ucfirst($model) . ".php";  // adjust path as needed
+require_once __DIR__ . "/../../models/" . ucfirst($model) . "Model.php";  // adjust path as needed
 
 $modelClass = ucfirst($model);
 $instance = new $modelClass();
@@ -27,7 +27,7 @@ foreach ($fields as $field => $config) {
   if (isset($config['foreign'])) {
     $foreignModel = $config['foreign']['model'];
     // Make sure to load the foreign model class. 
-    require_once __DIR__ . "/../../models/" . ucfirst($foreignModel) . ".php"; // adjust path as needed
+    require_once __DIR__ . "/../../models/" . ucfirst($foreignModel) . "Model.php"; // adjust path as needed
     $foreignInstance = new $foreignModel();
     // Get all records from the foreign table.
     // You might want to customize this (ordering, filtering, etc.)

@@ -1,8 +1,8 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Exchange.php';
-require_once '../app/models/Broker.php';
-require_once '../app/models/Strategy.php';
+require_once '../app/models/ExchangeModel.php';
+require_once '../app/models/BrokerModel.php';
+require_once '../app/models/StrategyModel.php';
 
 class TransactionController extends Controller
 {

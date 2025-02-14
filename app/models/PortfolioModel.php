@@ -1,12 +1,11 @@
 <?php
 require_once '../config/config.php';
-require_once 'Symbol.php';
+require_once 'SymbolModel.php';
 
 class Portfolio
 {
     private $conn;
     private $symbolsModel;
-    private $symbols;
 
     public function __construct()
     {
@@ -27,9 +26,10 @@ class Portfolio
 
         // Aggregate transactions, splitting into pre- and post-Jan 1 parts.
         $sql = "SELECT 
-                    symbol, 
-                    b.short_name as 'broker',
-                    min(s.name) as 'strategy',
+                    t1.symbol as 'symbol', 
+                    br.short_name as 'broker',
+                    min(str.name) as 'strategy',
+                    min(se.name) as 'sector',
                     -- Subquery to get the currency of the record with the oldest date for each symbol
                     (SELECT currency
                     FROM transaction t2 
@@ -52,9 +52,11 @@ class Portfolio
                     SUM(CASE WHEN date > ? THEN cash ELSE 0 END) AS post_cash,
                     SUM(cash) as cash
                 FROM transaction t1
-                JOIN broker b ON t1.broker_id = b.id
-                JOIN strategy s ON t1.strategy_id = s.id
-                GROUP BY symbol, b.short_name";
+                JOIN broker br ON t1.broker_id = br.id
+                JOIN strategy str ON t1.strategy_id = str.id
+                JOIN symbol sy ON t1.symbol = sy.symbol
+                JOIN sector se ON sy.sector_id = se.id
+                GROUP BY t1.symbol, br.short_name";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sssss", $jan1, $jan1, $jan1, $jan1, $jan1);
         $stmt->execute();
@@ -148,6 +150,7 @@ class Portfolio
             $portfolio[] = [
                 'symbol' => $symbol,
                 'symbol_title' => $this->symbols[$symbol] ?? '?',
+                'sector' => $row['sector'],
                 'broker' => $broker,
                 'strategy' => $row['strategy'],
                 'number' => $totalShares,
@@ -311,6 +314,7 @@ class Portfolio
             // Initialize the aggregated result.
             $agg = [
                 'symbol' => $symbol,
+                'sector' => null,
                 'symbol_title' => null,
                 'broker' => null,
                 'strategy' => null,
@@ -368,6 +372,7 @@ class Portfolio
             if ($recordHigestValue !== null) {
                 $agg['broker'] = '*';
                 $agg['strategy'] = $recordHigestValue['strategy'];
+                $agg['sector'] = $recordHigestValue['sector'];
             }
 
 

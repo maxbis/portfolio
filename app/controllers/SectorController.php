@@ -1,16 +1,16 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/SymbolModel.php';
+require_once '../app/models/SectorModel.php';
 
-class SymbolController extends Controller
+class SectorController extends Controller
 {
     public $model;
-    private $symbolModel;
+    private $sectorModel;
     public function __construct()
     {
         $this->childFileName(__FILE__);
         $this->loadModel($this->controllerName);
-        $this->model = new Symbol();
+        $this->model = new Sector();
     }
 
   

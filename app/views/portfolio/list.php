@@ -13,6 +13,7 @@ $columns = [
     'width' => '80px',
     'data' => 'broker',
     'aggregate' => null,
+    'link' => '/portfolio/list?broker={broker}',
     'sortable' => 1,
     'filter' => 'select',  // Dropdown filter.
   ],
@@ -22,6 +23,7 @@ $columns = [
     'data' => 'symbol',
     'title' => 'symbol_title',
     'aggregate' => null,
+    'link' => '/portfolio/list?symbol={symbol}',
     'sortable' => 1,
     'filter' => 'select',  // Dropdown filter.
   ],
@@ -30,6 +32,7 @@ $columns = [
     'width' => '40px',
     'data' => 'strategy',
     'aggregate' => null,
+    'link' => '/portfolio/list?strategy={strategy}',
     'sortable' => 1,
     'filter' => 'select',
   ],
@@ -167,6 +170,7 @@ if (!isset($model)) {
 }
 
 $noCreate = true;
+
 // Include the generic grid view.
 include __DIR__ . '/../common/grid.php';
 ?>

@@ -1,6 +1,6 @@
 <?php
 require_once '../core/Controller.php';
-require_once '../app/models/Portfolio.php';
+require_once '../app/models/PortfolioModel.php';
 
 class PortfolioController extends Controller {
     private $portfolioModel;
