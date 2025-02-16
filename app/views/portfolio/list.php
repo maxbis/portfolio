@@ -128,6 +128,12 @@ $columns = [
     'filter' => 'none',
   ],
   [
+    'name' => '% of Selection',
+    'align' => 'right',
+    'data' => '{total_value} / {VALUE_EUR} * 100',
+    'aggregate' => 'sum',  // Or "average" if desired.
+  ],
+  [
     'name' => '% of Portfolio',
     'width' => '',
     'align' => 'right',

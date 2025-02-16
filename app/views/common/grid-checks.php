@@ -108,6 +108,15 @@ function checkDataReferences(array $columns, array $data): array {
     // Get keys from the first data record.
     $firstDataKeys = array_keys($data[0]);
     
+    // Gather valid aggregate tokens from the columns.
+    $validAggregateTokens = [];
+    foreach ($columns as $col) {
+        if (isset($col['aggregateToken']) && is_string($col['aggregateToken']) && trim($col['aggregateToken']) !== '') {
+            $validAggregateTokens[] = $col['aggregateToken'];
+        }
+    }
+    
+    // Check each column.
     foreach ($columns as $colIndex => $col) {
         // Check that the 'data' key exists and is a string.
         if (!isset($col['data']) || !is_string($col['data'])) {
@@ -121,8 +130,8 @@ function checkDataReferences(array $columns, array $data): array {
         if (preg_match_all('/\{([^}]+)\}/', $dataField, $matches)) {
             // $matches[1] holds all tokens found.
             foreach ($matches[1] as $token) {
-                if (!in_array($token, $firstDataKeys)) {
-                    $errors[] = "Column index {$colIndex}: Token '{$token}' is not a key in the data array.";
+                if (!in_array($token, $firstDataKeys) && !in_array($token, $validAggregateTokens)) {
+                    $errors[] = "Column index {$colIndex}: Token '{$token}' is not a key in the data array nor a valid aggregate token.";
                 }
             }
         } else {
@@ -136,6 +145,7 @@ function checkDataReferences(array $columns, array $data): array {
     return $errors;
 }
 
+    
 // Validate the columns.
 $errors =  checkDataReferences($columns, $data);
 $errors = array_merge($errors, checkColumnsSyntax($columns));

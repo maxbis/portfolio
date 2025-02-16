@@ -1,7 +1,6 @@
 <?php
 // grid.php
 
-
 // Check for required variables; you can also set defaults if needed.
 if (!isset($data)) {
   die('No data provided');
@@ -27,12 +26,11 @@ if (!isset($model)) {
 // Reindex the data array.
 $data = array_values($data);
 
-//Helper function to check if a column is hidden.
+// Helper function to check if a column is hidden.
 function isColumnHidden(array $col): bool
 {
   return isset($col['hide']) && $col['hide'] === true;
 }
-
 ?>
 
 <?php if (empty($data)): ?>
@@ -53,8 +51,6 @@ function isColumnHidden(array $col): bool
   <?php exit; endif; ?>
 
 <?php
-
-
 // --- Prepare Aggregates ---
 // These accumulators are here in case no filtering happens,
 // but the footer will be updated dynamically.
@@ -83,7 +79,7 @@ foreach ($columns as $colIndex => $col) {
 
 function renderCell($item, $column)
 {
-  if (strpos($column['data'], '}') == false) {
+  if (strpos($column['data'], '}') === false) {
     $value = $item[$column['data']];
   } else {
     $value = '?';
@@ -103,7 +99,6 @@ function renderCell($item, $column)
 
   return $value;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -140,16 +135,15 @@ function renderCell($item, $column)
     <div class="overflow-x-auto">
       <table id="gridView" class="w-full border-collapse border border-gray-300" data-sorted-col="" data-sort-dir="asc">
         <thead class="bg-gray-200">
-
           <!-- Header Row -->
           <tr>
             <?php foreach ($columns as $colIndex => $col):
               $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
-              $widthStyle = !empty($col['width']) ? 'width:'.$col['width'].';' : '';
+              $widthStyle = !empty($col['width']) ? 'width:' . $col['width'] . ';' : '';
               $sortable = !empty($col['sortable']);
               ?>
               <th class="border border-gray-300 px-3 py-2 text-left text-center <?= $sortable ? 'cursor-pointer' : '' ?>"
-                style="<?= $widthStyle . $hiddenStyle ?>"   <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
+                style="<?= $widthStyle . $hiddenStyle ?>" <?= $sortable ? "onclick=\"sortTable({$colIndex})\"" : "" ?>>
                 <?= $col['name'] ?>
               </th>
             <?php endforeach; ?>
@@ -158,7 +152,7 @@ function renderCell($item, $column)
 
           <!-- Filter Row -->
           <tr class="bg-gray-100">
-            <?php foreach ($columns as $colIndex => $col): 
+            <?php foreach ($columns as $colIndex => $col):
               $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
             ?>
               <td class="border border-gray-300 px-3 py-2" style="<?= $hiddenStyle ?>">
@@ -186,11 +180,8 @@ function renderCell($item, $column)
 
         <!-- Data Rows -->
         <tbody>
-          <?php foreach ($data as $item):
-            $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
-          ?>
-            <tr data-row='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') ?>' class="border border-gray-300" style="<?= $hiddenStyle ?>">
-
+          <?php foreach ($data as $item): ?>
+            <tr data-row='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') ?>' class="border border-gray-300">
               <?php foreach ($columns as $colIndex => $col):
                 $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
                 if (isset($col['title'])) {
@@ -198,7 +189,7 @@ function renderCell($item, $column)
                 } else {
                   $titleAttr = "";
                 }
-                ?>
+              ?>
                 <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>>
                   <?php
                   if ($col['data'] === '#edit') {
@@ -211,7 +202,7 @@ function renderCell($item, $column)
                   } else {
                     // If a formatter is defined, use it.
                     if (isset($col['formatter'])) {
-                      $cellValue = eval ('return ' . $col['formatter'] . ';');
+                      $cellValue = eval('return ' . $col['formatter'] . ';');
                     } else {
                       $cellValue = renderCell($item, $col);
                     }
@@ -257,6 +248,9 @@ function renderCell($item, $column)
 
   <!-- JavaScript for Sorting, Filtering, and Dynamic Aggregates -->
   <script>
+    // Declare a global variable to store computed aggregate values.
+    var computedAggregates = {};
+
     // *********************************************************
     // 1. Build the Aggregates Configuration from PHP.
     // For a standard "sum" or "average" aggregate, we use it directly.
@@ -305,56 +299,36 @@ function renderCell($item, $column)
     }
 
     // *********************************************************
-    // 4. Evaluate a cell's formula using the row's original data.
-    // Each row must have a "data-row" attribute containing the original JSON.
+    // 4. Evaluate a cell's formula using the row's original data and computedAggregates.
     function evaluateCellFormula(formula, rowData) {
-      for (var key in rowData) {
-        var regex = new RegExp('{' + key + '}', 'g');
-        formula = formula.replace(regex, rowData[key]);
-      }
+      var replacedFormula = formula.replace(/\{([^}]+)\}/g, function(match, token) {
+        if (typeof computedAggregates !== 'undefined' && computedAggregates[token] !== undefined) {
+          return computedAggregates[token];
+        } else if (rowData[token] !== undefined) {
+          return rowData[token];
+        } else {
+          console.error("Token", token, "not found in computed aggregates or row data.");
+          return 0;
+        }
+      });
       try {
-        return eval(formula);
+        return eval(replacedFormula);
       } catch (e) {
-        console.error("Error evaluating cell formula:", formula, e);
+        console.error("Error evaluating cell formula:", replacedFormula, e);
         return '';
       }
     }
 
     // *********************************************************
-    // 5. Recalculate Data Cells for Columns Defined as a Formula.
-    // This loops over each row, reads its original data (from data-row),
-    // evaluates the column's formula, and updates the cell's text.
-    function recalcDataCells() {
-      // If no computed columns, nothing to do.
-      if (Object.keys(dataFormulaConfig).length === 0) return;
-      var table = document.getElementById("gridView");
-      var tbody = table.querySelector("tbody");
-      tbody.querySelectorAll("tr").forEach(function (row) {
-        // Parse the original row data from the data-row attribute.
-        var rowData = JSON.parse(row.getAttribute("data-row"));
-        // Loop through each column with a formula.
-        for (var colIndex in dataFormulaConfig) {
-          var formula = dataFormulaConfig[colIndex];
-          var result = evaluateCellFormula(formula, rowData);
-          // Optionally format numbers (here: fixed to 2 decimals).
-          if (typeof result === "number") {
-            result = result.toFixed(2);
-          }
-          row.cells[colIndex].innerText = result;
-        }
-      });
-    }
-
-    // *********************************************************
-    // 6. Recalculate Aggregates from the Visible Rows.
+    // 5. Recalculate Aggregates from the Visible Rows.
     // This computes sums or averages, and also evaluates aggregate formulas.
     function recalcAggregates() {
       var table = document.getElementById("gridView");
       var tbody = table.querySelector("tbody");
       var footerCells = table.querySelector("tfoot tr").cells;
 
-      // Object to store computed aggregates for tokens.
-      var computedAggregates = {};
+      // Set the global computedAggregates object.
+      computedAggregates = {};
 
       // Loop through each column configuration that is not a formula aggregate.
       for (var colIndex in aggregatesConfig) {
@@ -365,7 +339,6 @@ function renderCell($item, $column)
           tbody.querySelectorAll("tr").forEach(function (row) {
             if (row.style.display !== "none") {
               var cell = row.cells[colIndex];
-              // Remove any non-numeric characters (except dot and minus).
               var text = cell.innerText;
               var num = parseFloat(text.replace(/[^0-9\.\-]+/g, ""));
               if (!isNaN(num)) {
@@ -405,6 +378,28 @@ function renderCell($item, $column)
     }
 
     // *********************************************************
+    // 6. Recalculate Data Cells for Columns Defined as a Formula.
+    // This loops over each row, reads its original data (from data-row),
+    // evaluates the column's formula using both the row data and computed aggregates,
+    // and updates the cell's text.
+    function recalcDataCells() {
+      if (Object.keys(dataFormulaConfig).length === 0) return;
+      var table = document.getElementById("gridView");
+      var tbody = table.querySelector("tbody");
+      tbody.querySelectorAll("tr").forEach(function (row) {
+        var rowData = JSON.parse(row.getAttribute("data-row"));
+        for (var colIndex in dataFormulaConfig) {
+          var formula = dataFormulaConfig[colIndex];
+          var result = evaluateCellFormula(formula, rowData);
+          if (typeof result === "number") {
+            result = result.toFixed(2);
+          }
+          row.cells[colIndex].innerText = result;
+        }
+      });
+    }
+
+    // *********************************************************
     // 7. Sorting Function: Sort by the given column and then recalc.
     function sortTable(columnIndex) {
       var table = document.getElementById("gridView");
@@ -434,9 +429,9 @@ function renderCell($item, $column)
       sortedRows.forEach(function (row) {
         tbody.appendChild(row);
       });
-      // After sorting, re-evaluate computed cells and aggregates.
-      recalcDataCells();
+      // First update aggregates then recalc calculated data columns.
       recalcAggregates();
+      recalcDataCells();
     }
 
     // *********************************************************
@@ -456,9 +451,9 @@ function renderCell($item, $column)
         });
         row.style.display = visible ? "" : "none";
       });
-      // After filtering, re-evaluate computed cells and aggregates.
-      recalcDataCells();
       recalcAggregates();
+      recalcDataCells();
+      recalcAggregates(); // need to do this again in order to get the corrent aggregates for calculated columns
     }
 
     // *********************************************************
@@ -469,11 +464,11 @@ function renderCell($item, $column)
     });
 
     // *********************************************************
-    // 10. On Initial Load, Recalculate Data Cells and Aggregates.
+    // 10. On Initial Load, Recalculate Aggregates and then Data Cells.
     document.addEventListener("DOMContentLoaded", function () {
       filterTable();
-      recalcDataCells();
       recalcAggregates();
+      recalcDataCells();
     });
   </script>
 
