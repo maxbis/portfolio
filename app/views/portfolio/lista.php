@@ -87,7 +87,6 @@ $columns = [
     'data' => 'profit_loss',
     'formatter' => 'number_format($item["profit_loss"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum profit/loss.
-    '_aggregateToken' => 'PL', // Custom token for formula.
     'sortable' => 1,
     'filter' => 'none',
   ],
@@ -100,6 +99,17 @@ $columns = [
     'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
     'sortable' => 1,
     'filter' => 'none',
+  ],
+  [
+    'name' => 'TEST YTD PL',
+    'data' => 'ytd_profit_loss',
+  ],
+  [
+    'name' => 'TEST',
+    'width' => '60px',
+    'align' => 'right',
+    'data' => '{profit_loss} / {total_value} * 100',
+    'aggregate' => 'sum',
   ],
   [
     'name' => 'YTD P/L EUR',
