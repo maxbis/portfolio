@@ -112,8 +112,7 @@ $columns = [
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
-    'aggregate' => 'formula',
-    'formula' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
+    'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
     'sortable' => 1,
     'filter' => 'none',
   ],

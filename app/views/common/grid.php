@@ -81,21 +81,22 @@ foreach ($columns as $colIndex => $col) {
   }
 }
 
-function renderCell($item, $column) {
-    $value = $item[$column['data']];
-    if (isset($column['formatter'])) {
-        $value = eval('return ' . $column['formatter'] . ';');
-    }
+function renderCell($item, $column)
+{
+  $value = $item[$column['data']];
+  if (isset($column['formatter'])) {
+    $value = eval ('return ' . $column['formatter'] . ';');
+  }
 
-    if (isset($column['link'])) {
-        $link = $column['link'];
-        foreach ($item as $key => $val) {
-            $link = str_replace("{" . $key . "}", $val, $link);
-        }
-        $value = "<a href=\"".$GLOBALS['BASE']."$link\">$value</a>";
+  if (isset($column['link'])) {
+    $link = $column['link'];
+    foreach ($item as $key => $val) {
+      $link = str_replace("{" . $key . "}", $val, $link);
     }
+    $value = "<a href=\"" . $GLOBALS['BASE'] . "$link\">$value</a>";
+  }
 
-    return $value;
+  return $value;
 }
 ?>
 <!DOCTYPE html>
@@ -232,27 +233,38 @@ function renderCell($item, $column) {
 
   <!-- JavaScript for Sorting, Filtering, and Dynamic Aggregates -->
   <script>
+    var debug = true;
+
+    function d(data) {
+      if (debug) {
+        console.log(data);
+      }
+    }
+
     // *********************************************************
     // 1. Pass aggregation configuration from PHP to JS
     // *********************************************************
     var aggregatesConfig = {};
     <?php foreach ($columns as $colIndex => $col):
       if (isset($col['aggregate'])):
-        if ($col['aggregate'] === 'formula' && isset($col['formula'])): ?>
-          aggregatesConfig[<?= $colIndex ?>] = {
-            type: "formula",
-            formula: "<?= addslashes($col['formula']) ?>",
-            aggregateToken: "<?= addslashes($col['aggregateToken'] ?? '') ?>"
-          };
-        <?php else: ?>
+        // If the aggregate is "sum" or "average", treat it as a standard aggregate.
+        // Otherwise, assume it’s a formula string.
+        if ($col['aggregate'] === 'sum' || $col['aggregate'] === 'average'): ?>
           aggregatesConfig[<?= $colIndex ?>] = {
             type: "<?= $col['aggregate'] ?>",
             aggregateToken: "<?= addslashes($col['aggregateToken'] ?? '') ?>"
           };
-          <?php
-        endif;
+        <?php else: ?>
+          aggregatesConfig[<?= $colIndex ?>] = {
+            type: "formula",
+            formula: "<?= addslashes($col['aggregate']) ?>",
+            aggregateToken: "<?= addslashes($col['aggregateToken'] ?? '') ?>"
+          };
+        <?php endif;
       endif;
     endforeach; ?>
+
+    d(aggregatesConfig)
 
     // *********************************************************
     // 2. Function to safely evaluate a formula with tokens replaced by computed aggregates
@@ -310,7 +322,7 @@ function renderCell($item, $column) {
           }
           // If an aggregateToken is provided, store the computed aggregate value.
           if (config.aggregateToken) {
-            computedAggregates[config.aggregateToken] = total; // Adjust this if you need averages instead.
+            computedAggregates[config.aggregateToken] = total; // Adjust if needed.
           }
         }
       }
@@ -397,6 +409,8 @@ function renderCell($item, $column) {
       recalcAggregates();
     });
   </script>
+
+
 </body>
 
 </html>
