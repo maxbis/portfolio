@@ -107,24 +107,13 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'Profit/Loss EUR',
-    'width' => '120px',
-    'align' => 'right',
-    'data' => 'profit_loss',
-    'formatter' => 'number_format($item["profit_loss"], 2, ".", " ")',
-    'aggregate' => 'sum',  // Sum profit/loss.
-    'aggregateToken' => 'PL', // Custom token for formula.
-    'sortable' => 1,
-    'filter' => 'none',
-  ],
-  [
     'name' => 'YTD PL%',	
     'width' => '60px',
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
     'aggregate' => 'formula',
-    'formula' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula
+    'formula' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
     'sortable' => 1,
     'filter' => 'none',
   ],
