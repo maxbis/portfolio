@@ -101,17 +101,6 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'TEST YTD PL',
-    'data' => 'ytd_profit_loss',
-  ],
-  [
-    'name' => 'TEST',
-    'width' => '60px',
-    'align' => 'right',
-    'data' => '{profit_loss} / {total_value} * 100',
-    'aggregate' => 'sum',
-  ],
-  [
     'name' => 'YTD P/L EUR',
     'width' => '120px',
     'align' => 'right',
