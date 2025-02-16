@@ -107,16 +107,6 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => '% of Total Value',
-    'width' => '120px',
-    'align' => 'right',
-    'data' => 'percent_of_total_value',
-    'formatter' => 'number_format($item["percent_of_total_value"], 2, ".", " ")."%"',
-    'aggregate' => null,  // No aggregation needed.
-    'sortable' => 1,
-    'filter' => 'none',
-  ],
-  [
     'name' => 'Profit/Loss EUR',
     'width' => '120px',
     'align' => 'right',
