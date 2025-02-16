@@ -132,6 +132,7 @@ $columns = [
     'align' => 'right',
     'data' => '{total_value} / {VALUE_EUR} * 100',
     'aggregate' => 'sum',  // Or "average" if desired.
+    'sortable' => 1,
   ],
   [
     'name' => '% of Portfolio',

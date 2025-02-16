@@ -125,6 +125,9 @@ function checkDataReferences(array $columns, array $data): array {
         }
         
         $dataField = $col['data'];
+        if ($dataField === '#edit') {
+            continue;
+        }
         
         // Check if the data field contains any token(s) in curly braces.
         if (preg_match_all('/\{([^}]+)\}/', $dataField, $matches)) {
