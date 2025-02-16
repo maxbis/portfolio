@@ -145,6 +145,11 @@ class Portfolio
                 $totalValueNow = $cash - $spendThisYear;
             }
 
+            if ($latestPricePrev == 0) {
+                $delta_percentage = 0;
+            } else {   
+                $delta_percentage = round((($latestPrice - $latestPricePrev) / $latestPricePrev) * 100, 2);
+            }
 
 
             $portfolio[] = [
@@ -157,7 +162,7 @@ class Portfolio
                 'avg_buy_price' => round($avgBuyPrice, 2),
                 'latest_price' => round($latestPrice, 2),
                 'delta' => round($latestPrice - $latestPricePrev, 2),
-                'delta_percent' => round((($latestPrice - $latestPricePrev) / $latestPricePrev) * 100, 2),  
+                'delta_percent' => $delta_percentage,  
                 'quote_date' => $quoteDate,
                 'exchange_rate' => round($latestExchangeRate, 2),
                 'total_value' => round($totalValueNow, 2),
@@ -381,7 +386,11 @@ class Portfolio
         }
 
         foreach ($aggregated as &$item) {
-            $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / $item['total_value'], 2);
+            if ($item['total_value']==0) {
+                $item['profit_loss_percent'] = 0;
+            } else {
+                $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / $item['total_value'], 2);
+            }
         }
         unset($item); // break the reference after the loop
 

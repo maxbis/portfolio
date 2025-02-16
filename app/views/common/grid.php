@@ -324,6 +324,16 @@ function renderCell($item, $column) {
           footerCells[colIndex].innerHTML = '<span style="text-decoration: overline; font-weight: bold;color:black;">' + formatted + '</span>';
         }
       }
+
+      // Calculate and update the percentage of total value for each row.
+      var totalValue = computedAggregates['VALUE_EUR'] || 0;
+      tbody.querySelectorAll("tr").forEach(function (row) {
+        var totalValueCell = row.cells[<?= array_search('total_value', array_column($columns, 'data')) ?>];
+        var percentCell = row.cells[<?= array_search('percent_of_total_value', array_column($columns, 'data')) ?>];
+        var totalValue = parseFloat(totalValueCell.innerText.replace(/[^0-9.-]+/g, ""));
+        var percent = (totalValue / totalValue) * 100;
+        percentCell.innerText = percent.toFixed(2) + "%";
+      });
     }
 
     // *********************************************************

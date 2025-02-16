@@ -6,6 +6,12 @@ if (!isset($activeTab)) {
 ?>
 
 <nav class="flex border-b border-gray-300 mb-6 space-x-4">
+
+    <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/broker"
+        class="px-4 py-2 border-b-2 <?= $activeTab === 'transaction' ? 'text-blue-600 border-blue-600 font-medium' : 'text-gray-600 border-transparent hover:text-blue-600 hover:border-blue-600' ?>">
+        Accounts
+    </a>
+
     <!-- Portfolio with Dropdown Submenu -->
     <div class="relative group inline-flex items-center">
         <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista"

@@ -15,6 +15,7 @@ $columns = [
     'data' => 'symbol',
     'title' => 'symbol_title',
     'aggregate' => null,
+    'link' => '/portfolio/list?broker={symbol}',
     'sortable' => 1,
     'filter' => 'select',  // Dropdown filter.
   ],
