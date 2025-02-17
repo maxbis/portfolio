@@ -161,11 +161,12 @@ class Portfolio
                 'number' => $totalShares,
                 'avg_buy_price' => round($avgBuyPrice, 2),
                 'latest_price' => round($latestPrice, 2),
-                'delta' => round($latestPrice - $latestPricePrev, 2),
-                'delta_percent' => $delta_percentage,  
+                'latest_price_1d' => round($latestPricePrev, 2),
+                'total_value_1d' => round($latestPricePrev * $totalShares / $latestExchangeRate, 2), // difference between latest_price and previous latest_price
+                'total_value_1d_percent' => $delta_percentage,  
                 'quote_date' => $quoteDate,
                 'exchange_rate' => round($latestExchangeRate, 2),
-                'total_value' => round($totalValueNow, 2),
+                'total_value' => round($totalValueNow, 0),
                 'profit_loss' => round($profitLoss, 2),
                 'ytd_profit_loss' => round($ytdProfitLoss, 2),
                 'profit_loss_percent' => round($ytdProfitLossPerc, 2),
@@ -326,6 +327,7 @@ class Portfolio
                 'number' => 0,
                 'avg_buy_price' => 0,
                 'latest_price' => null,
+                'total_value_1d' => null, // difference between latest_price and previous latest_price
                 'quote_date' => null,
                 'exchange_rate' => 1,
                 'total_value' => 0,
@@ -348,6 +350,7 @@ class Portfolio
                 // Sum monetary values.
                 $agg['total_value'] += $record['total_value'];
                 $agg['profit_loss'] += $record['profit_loss'];
+                $agg['total_value_1d'] += $record['total_value_1d'];
                 $agg['ytd_profit_loss'] += $record['ytd_profit_loss'];
                 $agg['cash'] += $record['cash'];
                 $agg['percent_of_portfolio'] += $record['percent_of_portfolio'];

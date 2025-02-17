@@ -42,8 +42,19 @@ $columns = [
     'align' => 'right',
     'data' => 'number',
     'aggregate' => null,
+    'aggregateToken' => 'NUMBER', // Custom token for formula.
     'sortable' => 1,
-    'filter' => 'none', 
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'Exch Rate',
+    'width' => '40px',
+    'align' => 'right',
+    'data' => 'exchange_rate',
+    'formatter' => 'number_format($item["exchange_rate"], 2, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
   ],
   [
     'name' => 'Avg Price',
@@ -66,48 +77,71 @@ $columns = [
     'filter' => 'text',
   ],
   [
+    'name' => 'Quote -1d',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => 'latest_price_1d',
+    'aggregateToken' => 'QUOTE_1D', // Custom token for formula.
+  ],
+  [
     'name' => 'Quote<br/>&nbsp;',
     'width' => '90px',
     'align' => 'right',
     'data' => 'latest_price',
     'formatter' => 'number_format($item["latest_price"], 2, ".", " ")',
     'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'none',  // No filter.
-  ],
-  [
-    'name' => 'Delta<br/>&nbsp;',
-    'width' => '90px',
-    'align' => 'right',
-    'data' => 'delta_percent',
-    'formatter' => '$item["delta_percent"]."%"',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'none',  // No filter.
-  ],
-  [
-    'name' => 'Exch Rate',
-    'width' => '40px',
-    'align' => 'right',
-    'data' => 'exchange_rate',
-    'formatter' => 'number_format($item["exchange_rate"], 2, ".", " ")',
-    'aggregate' => null,
+    'aggregateToken' => 'QUOTE_A', // Custom token for formula.
     'sortable' => 1,
     'filter' => 'none',  // No filter.
   ],
   [
     'name' => 'Value<br/>EUR',
-    'width' => '120px',
+    'width' => '90px',
     'align' => 'right',
     'data' => 'total_value',
-    'formatter' => 'number_format($item["total_value"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum the values.
     'aggregateToken' => 'VALUE_EUR', // Custom token for formula.
     'sortable' => 1,
     'filter' => 'none',
   ],
   [
-    'name' => 'YTD PL%',	
+    'name' => 'Total Value -1d',
+    'data' => 'total_value_1d',
+    'aggregateToken' => 'VALUE_1D', // Custom token for formula.
+    'aggregate' => 'sum',  // Sum the values.
+    'hide' => true,  // Hide this column by default.
+  ],
+  [
+    'name' => 'Day<br/>P/L',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => '{total_value} - {total_value_1d}',
+    'aggregate' => '{VALUE_EUR}-{VALUE_1D}',  // Sum the values.
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'Day<br>P/L%',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => '({total_value}*100 / {total_value_1d}) -100',
+    'aggregate' => 'sum',
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'YTD P/L EUR',
+    'width' => '120px',
+    'align' => 'right',
+    'data' => 'ytd_profit_loss',
+    'formatter' => 'number_format($item["ytd_profit_loss"], 0, ".", " ")',
+    'aggregate' => 'sum',  // Sum YTD profit/loss.
+    'aggregateToken' => 'YTD_PL', // Custom token for formula.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'YTD P/L%',
     'width' => '60px',
     'align' => 'right',
     'data' => 'profit_loss_percent',
@@ -116,17 +150,7 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',
   ],
-  [
-    'name' => 'YTD P/L EUR',
-    'width' => '120px',
-    'align' => 'right',
-    'data' => 'ytd_profit_loss',
-    'formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
-    'aggregate' => 'sum',  // Sum YTD profit/loss.
-    'aggregateToken' => 'YTD_PL', // Custom token for formula.
-    'sortable' => 1,
-    'filter' => 'none',
-  ],
+
   [
     'name' => '% of Selection',
     'align' => 'right',
@@ -144,16 +168,7 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',
   ],
-  // [
-  //   'name' => 'Cash<br/>EUR',
-  //   'width' => '120px',
-  //   'align' => 'right',
-  //   'data' => 'cash',
-  //   'formatter' => 'number_format($item["cash"], 2, ".", " ")',
-  //   'aggregate' => 'sum',  // Sum the values.
-  //   'sortable' => 1,
-  //   'filter' => 'none',
-  // ],
+
 ];
 
 // Set additional variables

@@ -81,7 +81,7 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'Profit/Loss EUR',
+    'name' => 'Total<br> P/L (Eur)',
     'width' => '120px',
     'align' => 'right',
     'data' => 'profit_loss',
@@ -91,14 +91,23 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'YTD PL%',	
-    'width' => '60px',
+    'name' => 'Day<br>P/L',
+    'width' => '90px',
     'align' => 'right',
-    'data' => 'profit_loss_percent',
-    'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
-    'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
+    'data' => '{total_value} - {total_value_1d}',
+    'aggregate' => 'sum',
+    'aggregateToken' => 'DAY_PL', // Custom token for formula.
     'sortable' => 1,
-    'filter' => 'none',
+    'filter' => 'none',  // No filter.
+  ],
+  [
+    'name' => 'Day<br>P/L%',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => '({total_value}*100 / {total_value_1d}) -100',
+    'aggregate' => '({DAY_PL} / {VALUE_EUR}) * 100',
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
   ],
   [
     'name' => 'YTD P/L EUR',
@@ -111,6 +120,16 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',
   ],
+  [
+    'name' => 'YTD PL%',	
+    'width' => '60px',
+    'align' => 'right',
+    'data' => 'profit_loss_percent',
+    'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+
   [
     'name' => '% of Portfolio<br>&nbsp;',
     'width' => '',

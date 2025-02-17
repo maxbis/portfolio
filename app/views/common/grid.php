@@ -154,7 +154,7 @@ function renderCell($item, $column)
           <tr class="bg-gray-100">
             <?php foreach ($columns as $colIndex => $col):
               $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
-            ?>
+              ?>
               <td class="border border-gray-300 px-3 py-2" style="<?= $hiddenStyle ?>">
                 <?php if (isset($col['filter'])):
                   if ($col['filter'] === 'select') { ?>
@@ -181,16 +181,18 @@ function renderCell($item, $column)
         <!-- Data Rows -->
         <tbody>
           <?php foreach ($data as $item): ?>
-            <tr data-row='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') ?>' class="border border-gray-300">
+            <tr data-row='<?= htmlspecialchars(json_encode($item), ENT_QUOTES, 'UTF-8') ?>'
+              class="border border-gray-300">
               <?php foreach ($columns as $colIndex => $col):
+                $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
                 $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
                 if (isset($col['title'])) {
                   $titleAttr = "title=\"" . $item[$col['title']] . "\"";
                 } else {
                   $titleAttr = "";
                 }
-              ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>>
+                ?>
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle ?>">
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
@@ -202,7 +204,7 @@ function renderCell($item, $column)
                   } else {
                     // If a formatter is defined, use it.
                     if (isset($col['formatter'])) {
-                      $cellValue = eval('return ' . $col['formatter'] . ';');
+                      $cellValue = eval ('return ' . $col['formatter'] . ';');
                     } else {
                       $cellValue = renderCell($item, $col);
                     }
@@ -228,7 +230,7 @@ function renderCell($item, $column)
           <tr>
             <?php foreach ($columns as $colIndex => $col):
               $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
-            ?>
+              ?>
               <td class="border border-gray-300 px-3 py-2 text-right" style="<?= $hiddenStyle ?>">
                 <?php
                 if (isset($aggregates[$colIndex])) {
@@ -301,7 +303,7 @@ function renderCell($item, $column)
     // *********************************************************
     // 4. Evaluate a cell's formula using the row's original data and computedAggregates.
     function evaluateCellFormula(formula, rowData) {
-      var replacedFormula = formula.replace(/\{([^}]+)\}/g, function(match, token) {
+      var replacedFormula = formula.replace(/\{([^}]+)\}/g, function (match, token) {
         if (typeof computedAggregates !== 'undefined' && computedAggregates[token] !== undefined) {
           return computedAggregates[token];
         } else if (rowData[token] !== undefined) {
@@ -350,7 +352,7 @@ function renderCell($item, $column)
           if (config.type === "sum" && count > 0) {
             footerCells[colIndex].innerHTML =
               '<span style="text-decoration: overline; font-weight: bold;color:black;">' +
-              total.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) +
+              formatNumber(total) +
               '</span>';
           }
           if (config.type === "average" && count > 0) {
@@ -370,12 +372,43 @@ function renderCell($item, $column)
         var config = aggregatesConfig[colIndex];
         if (config.type === "formula" && config.formula) {
           var result = evaluateFormula(config.formula, computedAggregates);
-          var formatted = (typeof result === "number") ? result.toFixed(2) : result;
           footerCells[colIndex].innerHTML =
-            '<span style="text-decoration: overline; font-weight: bold;color:black;">' + formatted + '</span>';
+            '<span style="text-decoration: overline; font-weight: bold;color:black;">' + formatNumber(result) + '</span>';
         }
       }
     }
+
+    // *********************************************************
+    // 6. Recalculate Data Cells for Columns Defined as a Formula.
+    // This loops over each row, reads its original data (from data-row),
+    // evaluates the column's formula using both the row data and computed aggregates,
+    // and updates the cell's text.
+    function formatNumber(input) {
+      const num = Number(input);
+
+      // If the conversion fails, return the original input.
+      if (isNaN(num)) {
+        return input;
+      }
+
+      // If the number is between -10 and 10 (non-inclusive),
+      // format with exactly 2 decimal places.
+      if (num < 10 && num > -10) {
+        return num.toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      } else {
+        // For numbers >= 10 or <= -10, format with 0 decimals.
+        return num
+          .toLocaleString('en-US', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          })
+          .replace(/,/g, ' ');
+      }
+    }
+
 
     // *********************************************************
     // 6. Recalculate Data Cells for Columns Defined as a Formula.
@@ -392,7 +425,11 @@ function renderCell($item, $column)
           var formula = dataFormulaConfig[colIndex];
           var result = evaluateCellFormula(formula, rowData);
           if (typeof result === "number") {
-            result = result.toFixed(2);
+            if (result > -10 && result < 10) {
+              result = result.toFixed(2);
+            } else {
+              result = result.toFixed(0);
+            }
           }
           row.cells[colIndex].innerText = result;
         }
