@@ -130,7 +130,7 @@ $columns = [
     'filter' => 'none',  // No filter.
   ],
   [
-    'name' => 'YTD P/L EUR',
+    'name' => 'YTD P/L',
     'width' => '120px',
     'align' => 'right',
     'data' => 'ytd_profit_loss',

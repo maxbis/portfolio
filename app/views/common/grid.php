@@ -185,6 +185,8 @@ function renderCell($item, $column)
               class="border border-gray-300">
               <?php foreach ($columns as $colIndex => $col):
                 $hiddenStyle = isColumnHidden($col) ? 'display:none;' : '';
+                $colorStyle = isset($col['color']) ? 'color:' . $col['color'] . ';' : '';
+                $bgStyle = isset($col['bgcolor']) ? 'background-color:' . $col['bgcolor'] . ';' : '';
                 $alignment = isset($col['align']) && $col['align'] === 'right' ? 'text-right' : 'text-left';
                 if (isset($col['title'])) {
                   $titleAttr = "title=\"" . $item[$col['title']] . "\"";
@@ -192,7 +194,7 @@ function renderCell($item, $column)
                   $titleAttr = "";
                 }
                 ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle ?>">
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle.$colorStyle.$bgStyle ?>">
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
@@ -393,7 +395,7 @@ function renderCell($item, $column)
 
       // If the number is between -10 and 10 (non-inclusive),
       // format with exactly 2 decimal places.
-      if (num < 10 && num > -10) {
+      if (num < 100 && num > -100) {
         return num.toLocaleString('en-US', {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
@@ -411,7 +413,7 @@ function renderCell($item, $column)
 
 
     // *********************************************************
-    // 6. Recalculate Data Cells for Columns Defined as a Formula.
+    // 7. Recalculate Data Cells for Columns Defined as a Formula.
     // This loops over each row, reads its original data (from data-row),
     // evaluates the column's formula using both the row data and computed aggregates,
     // and updates the cell's text.
@@ -424,20 +426,13 @@ function renderCell($item, $column)
         for (var colIndex in dataFormulaConfig) {
           var formula = dataFormulaConfig[colIndex];
           var result = evaluateCellFormula(formula, rowData);
-          if (typeof result === "number") {
-            if (result > -10 && result < 10) {
-              result = result.toFixed(2);
-            } else {
-              result = result.toFixed(0);
-            }
-          }
-          row.cells[colIndex].innerText = result;
+          row.cells[colIndex].innerText = formatNumber(result);
         }
       });
     }
 
     // *********************************************************
-    // 7. Sorting Function: Sort by the given column and then recalc.
+    // 8. Sorting Function: Sort by the given column and then recalc.
     function sortTable(columnIndex) {
       var table = document.getElementById("gridView");
       var tbody = table.querySelector("tbody");
@@ -472,7 +467,7 @@ function renderCell($item, $column)
     }
 
     // *********************************************************
-    // 8. Filtering Function: Hide or show rows based on filter inputs.
+    // 9. Filtering Function: Hide or show rows based on filter inputs.
     function filterTable() {
       var table = document.getElementById("gridView");
       var rows = table.querySelectorAll("tbody tr");
@@ -494,14 +489,14 @@ function renderCell($item, $column)
     }
 
     // *********************************************************
-    // 9. Attach Event Listeners to Filter Inputs.
+    // 11. Attach Event Listeners to Filter Inputs.
     document.querySelectorAll(".filter-input").forEach(function (input) {
       input.addEventListener("keyup", filterTable);
       input.addEventListener("change", filterTable);
     });
 
     // *********************************************************
-    // 10. On Initial Load, Recalculate Aggregates and then Data Cells.
+    // 12. On Initial Load, Recalculate Aggregates and then Data Cells.
     document.addEventListener("DOMContentLoaded", function () {
       filterTable();
       recalcAggregates();

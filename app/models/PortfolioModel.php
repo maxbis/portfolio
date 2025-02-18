@@ -147,7 +147,7 @@ class Portfolio
 
             if ($latestPricePrev == 0) {
                 $delta_percentage = 0;
-            } else {   
+            } else {
                 $delta_percentage = round((($latestPrice - $latestPricePrev) / $latestPricePrev) * 100, 2);
             }
 
@@ -159,11 +159,11 @@ class Portfolio
                 'broker' => $broker,
                 'strategy' => $row['strategy'],
                 'number' => $totalShares,
-                'avg_buy_price' => round($avgBuyPrice, 2),
+                'avg_buy_price' => round($avgBuyPrice,2),
                 'latest_price' => round($latestPrice, 2),
                 'latest_price_1d' => round($latestPricePrev, 2),
                 'total_value_1d' => round($latestPricePrev * $totalShares / $latestExchangeRate, 2), // difference between latest_price and previous latest_price
-                'total_value_1d_percent' => $delta_percentage,  
+                'total_value_1d_percent' => $delta_percentage,
                 'quote_date' => $quoteDate,
                 'exchange_rate' => round($latestExchangeRate, 2),
                 'total_value' => round($totalValueNow, 0),
@@ -186,12 +186,28 @@ class Portfolio
         return $portfolio;
     }
 
+    private function formatNumber($num)
+    {
+        if (!is_numeric($num)) {
+            echo "No number, cannot format: $num";
+            exit;
+        }
+
+        // $num = floatval($input);
+        return round($num, 4);
+        if ($num > -100 && $num < 100) {
+            return number_format($num, 2, '.', '');
+        } else {
+            return number_format($num, 0, '.', '');
+        }
+    }
+
     /**
      * Get the latest quote for a given symbol.
      */
-    private function getLatestQuote($symbol, $offset=null)
+    private function getLatestQuote($symbol, $offset = null)
     {
-        if ( $offset) {
+        if ($offset) {
             $offset = "OFFSET $offset";
         } else {
             $offset = "";
@@ -237,12 +253,12 @@ class Portfolio
      * Get the last known quote at or before a given date.
      * If no date is provided, the current date is used.
      */
-    public function getQuoteOnDate($symbol, $date = null, $offset=null)
+    public function getQuoteOnDate($symbol, $date = null, $offset = null)
     {
         if (!$date) {
             $date = date("Y-m-d");
         }
-        if ( $offset) {
+        if ($offset) {
             $offset = "OFFSET $offset";
         } else {
             $offset = "";
@@ -389,7 +405,7 @@ class Portfolio
         }
 
         foreach ($aggregated as &$item) {
-            if ($item['total_value']==0) {
+            if ($item['total_value'] == 0) {
                 $item['profit_loss_percent'] = 0;
             } else {
                 $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / $item['total_value'], 2);

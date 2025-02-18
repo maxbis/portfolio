@@ -94,6 +94,7 @@ $columns = [
     'name' => 'Day<br>P/L',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#f8f8f8',
     'data' => '{total_value} - {total_value_1d}',
     'aggregate' => 'sum',
     'aggregateToken' => 'DAY_PL', // Custom token for formula.
@@ -103,7 +104,9 @@ $columns = [
   [
     'name' => 'Day<br>P/L%',
     'width' => '90px',
+    'bgcolor' => '#f8f8f8',
     'align' => 'right',
+    'color' => 'darkred',
     'data' => '({total_value}*100 / {total_value_1d}) -100',
     'aggregate' => '({DAY_PL} / {VALUE_EUR}) * 100',
     'sortable' => 1,
@@ -112,6 +115,7 @@ $columns = [
   [
     'name' => 'YTD P/L EUR',
     'width' => '120px',
+    'bgcolor' => '#f8f8f8',
     'align' => 'right',
     'data' => 'ytd_profit_loss',
     'formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
@@ -123,6 +127,8 @@ $columns = [
   [
     'name' => 'YTD PL%',	
     'width' => '60px',
+    'color' => 'darkred',
+    'bgcolor' => '#f8f8f8',
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
