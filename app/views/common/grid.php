@@ -114,6 +114,9 @@ function renderCell($item, $column)
       width: 100%;
       box-sizing: border-box;
     }
+    a:hover {
+      background-color: #f0f0f0;
+    }
   </style>
 </head>
 
@@ -194,7 +197,7 @@ function renderCell($item, $column)
                   $titleAttr = "";
                 }
                 ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle.$colorStyle.$bgStyle ?>">
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle . $colorStyle . $bgStyle ?>">
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
