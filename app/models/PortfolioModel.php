@@ -53,10 +53,10 @@ class Portfolio
                     SUM(CASE WHEN date > ? THEN cash ELSE 0 END) AS post_cash,
                     SUM(cash) as cash
                 FROM transaction t1
-                JOIN broker br ON t1.broker_id = br.id
-                JOIN strategy str ON t1.strategy_id = str.id
-                JOIN symbol sy ON t1.symbol = sy.symbol
-                JOIN sector se ON sy.sector_id = se.id
+                LEFT JOIN broker br ON t1.broker_id = br.id
+                LEFT JOIN strategy str ON t1.strategy_id = str.id
+                LEFT JOIN symbol sy ON t1.symbol = sy.symbol
+                LEFT JOIN sector se ON sy.sector_id = se.id
                 GROUP BY t1.symbol, br.short_name";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sssss", $jan1, $jan1, $jan1, $jan1, $jan1);
