@@ -46,6 +46,32 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
         print(f"No historical data found for ticker {symbol_key}.")
         return 0
 
+    # Get beta
+    info = yf.Ticker(symbol_key)
+    beta = info.info.get("beta", None)
+
+    if (beta):
+        print(f"Beta for {symbol_key} is {beta}")
+    else:
+        beta = 1
+
+    # create code to update the symbol table with beta
+    update_query = "UPDATE symbol SET beta = %s WHERE other_symbol = %s "
+    try:
+        cursor.execute(update_query, (beta, symbol_key))
+        conn.commit()
+    except Exception as e:
+        print(f"Error updating beta for symbol {symbol_key}: {e}")
+        return 0
+
+    # print(info['twoHundredDayAverage'])
+    # print(info['revenuePerShare'])
+    # date = datetime.datetime.fromtimestamp(info['dividendDate'])
+    # print(date)
+    # date = datetime.datetime.fromtimestamp(info['earningsTimestamp'])
+    # print(date)
+    # sys.exit(0)
+
     inserts = 0
     # Iterate over each row in the returned DataFrame.
     # The index contains the date; columns include Close, Volume, Dividends, and Stock Splits.

@@ -135,10 +135,23 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',
   ],
-
   [
-    'name' => '% of Portfolio<br>&nbsp;',
-    'width' => '',
+    'name' => 'Beta times Total Value',
+    'data' => 'beta_times_total_value',
+    'aggregate' => 'sum',  // Sum the values.
+    'aggregateToken' => 'BETA_TIMES_TOTAL_VALUE', // Custom token for formula.
+    'hide' => true,  // Hide this column by default.
+  ],
+  [
+    'name' => 'βw<br/>&nbsp;',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => '{beta_times_total_value} / {total_value}',
+    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}', 
+  ],
+  [
+    'name' => '%<br>Port',
+    'width' => '90px',
     'align' => 'right',
     'data' => 'percent_of_portfolio',
     'formatter' => '$item["percent_of_portfolio"]."%"',

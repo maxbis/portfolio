@@ -30,6 +30,7 @@ class Portfolio
                     br.short_name as 'broker',
                     min(str.name) as 'strategy',
                     min(se.name) as 'sector',
+                    min(sy.beta) as 'beta',
                     -- Subquery to get the currency of the record with the oldest date for each symbol
                     (SELECT currency
                     FROM transaction t2 
@@ -71,6 +72,7 @@ class Portfolio
             $cash = $row['cash'];
             $post_cash = $row['post_cash'];
             $broker = $row['broker'];
+            $beta = $row['beta'];
 
             $avgBuyPrice = ($totalShares != 0) ? $totalPastValue / $totalShares : 0;
 
@@ -157,6 +159,7 @@ class Portfolio
                 'symbol_title' => $this->symbols[$symbol] ?? '?',
                 'sector' => $row['sector'],
                 'broker' => $broker,
+                'beta' => $beta,
                 'strategy' => $row['strategy'],
                 'number' => $totalShares,
                 'avg_buy_price' => round($avgBuyPrice,2),
@@ -351,6 +354,7 @@ class Portfolio
                 'ytd_profit_loss' => 0,
                 'profit_loss_percent' => null,
                 'cash' => 0,
+                'beta_times_total_value' => 0,
                 'percent_of_portfolio' => 0,
             ];
 
@@ -370,6 +374,7 @@ class Portfolio
                 $agg['ytd_profit_loss'] += $record['ytd_profit_loss'];
                 $agg['cash'] += $record['cash'];
                 $agg['percent_of_portfolio'] += $record['percent_of_portfolio'];
+                $agg['beta_times_total_value'] += $record['beta'] * $record['total_value'];
 
                 // Choose the record with the highest total_value for broker and strategy.
                 if ($maxTotalValue === null || $record['total_value'] > $maxTotalValue) {

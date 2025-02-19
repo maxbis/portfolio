@@ -159,7 +159,13 @@ $columns = [
     'sortable' => 1,
   ],
   [
-    'name' => '% of Portfolio',
+    'name' => 'β<br>&nbsp;',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => 'beta',
+  ],
+  [
+    'name' => '% of<br>Portfolio',
     'width' => '',
     'align' => 'right',
     'data' => 'percent_of_portfolio',
@@ -167,6 +173,7 @@ $columns = [
     'aggregate' => 'sum',  // Or "average" if desired.
     'sortable' => 1,
     'filter' => 'none',
+    'hide' => true,
   ],
 
 ];
