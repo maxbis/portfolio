@@ -130,7 +130,7 @@ $columns = [
     'filter' => 'none',  // No filter.
   ],
   [
-    'name' => 'YTD P/L',
+    'name' => 'YTD<br>P/L',
     'width' => '120px',
     'align' => 'right',
     'data' => 'ytd_profit_loss',
@@ -146,9 +146,9 @@ $columns = [
     'align' => 'right',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
-    'aggregate' => '({YTD_PL} / ({VALUE_EUR}-{YTD_PL})) * 100', // Custom formula for aggregation.
+    'aggregate' => '({YTD_PL} * 100 / ({VALUE_EUR} - {YTD_PL})) ', // Custom formula for aggregation.
     'sortable' => 1,
-    'filter' => 'none',
+    'filter' => 'none'
   ],
 
   [
