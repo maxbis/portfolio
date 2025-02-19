@@ -132,7 +132,7 @@ class Portfolio
             $profitLoss = $totalValueNow - $totalPastValue + $cash;
             $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice + $post_cash;
             if ($totalValueNow) {
-                $ytdProfitLossPerc = $ytdProfitLoss * 100 / $totalValueNow;
+                $ytdProfitLossPerc = $ytdProfitLoss * 100 / ($totalValueNow-$ytdProfitLoss);
             } else {
                 $ytdProfitLossPerc = 0;
             }
@@ -408,7 +408,7 @@ class Portfolio
             if ($item['total_value'] == 0) {
                 $item['profit_loss_percent'] = 0;
             } else {
-                $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / $item['total_value'], 2);
+                $item['profit_loss_percent'] = round(($item['ytd_profit_loss'] * 100) / ($item['total_value']-$item['ytd_profit_loss']), 2);
             }
         }
         unset($item); // break the reference after the loop

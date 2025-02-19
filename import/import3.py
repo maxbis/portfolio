@@ -37,7 +37,7 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
     print(f"Looking up '{symbol_key}' for my ticker '{my_ticker}'")
     try:
         # Get last 1 year of historical data
-        data = yf.Ticker(symbol_key).history(period="1y")
+        data = yf.Ticker(symbol_key).history(period="7d")
     except Exception as e:
         print(f"Error retrieving data for ticker {symbol_key}: {e}")
         return 0
@@ -95,7 +95,7 @@ def lookup_without_update(ticker):
     """
     print(f"Warning: '{ticker}' was not found in the symbol table. Attempting lookup…")
     try:
-        data = yf.Ticker(ticker).history(period="1y")
+        data = yf.Ticker(ticker).history(period="7d")
     except Exception as e:
         print(f"Error retrieving data for ticker {ticker}: {e}")
         return

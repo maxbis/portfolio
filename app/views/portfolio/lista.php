@@ -131,7 +131,7 @@ $columns = [
     'bgcolor' => '#f8f8f8',
     'align' => 'right',
     'data' => 'profit_loss_percent',
-    'aggregate' => '({YTD_PL} / {VALUE_EUR}) * 100', // Custom formula for aggregation.
+    'aggregate' => '({YTD_PL} / ({VALUE_EUR}-{YTD_PL})) * 100', // Custom formula for aggregation.
     'sortable' => 1,
     'filter' => 'none',
   ],
