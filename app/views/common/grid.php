@@ -198,7 +198,7 @@ function renderCell($item, $column)
                   $titleAttr = "";
                 }
                 ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle . $colorStyle . $bgStyle ?>">	
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle . $colorStyle . $bgStyle ?>">
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
@@ -253,6 +253,92 @@ function renderCell($item, $column)
       </table>
     </div>
   </div>
+
+  <!-- Modal Backdrop -->
+  <div id="modalBackdrop" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden"></div>
+
+  <!-- Modal Window -->
+  <div id="modal" class="fixed inset-0 flex items-center justify-center hidden z-10">
+    <div class="bg-white rounded-lg shadow-lg w-96">
+      <!-- Modal Header -->
+      <div class="border-b px-4 py-2 flex justify-between items-center">
+        <h3 id="modalTitle" class="text-xl font-semibold">Symbol</h3>
+        <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800">&times;</button>
+      </div>
+      <!-- Modal Content -->
+      <div class="p-4">
+        <textarea id="notesField"
+          class="w-full h-32 border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter notes..."></textarea>
+      </div>
+      <!-- Modal Footer -->
+      <div class="border-t px-4 py-2 flex justify-end">
+        <button onclick="saveNotes()" class="bg-blue-500 text-white px-4 py-2 rounded mr-2 hover:bg-blue-600">
+          Save
+        </button>
+        <button onclick="closeModal()" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Store current symbol globally
+    let currentSymbol = '';
+
+    // Opens the modal and retrieves the current notes for the given symbol
+    function openModal(symbol) {
+      currentSymbol = symbol;
+      document.getElementById('modalTitle').textContent = symbol;
+
+      // Show modal and backdrop
+      document.getElementById('modal').classList.remove('hidden');
+      document.getElementById('modalBackdrop').classList.remove('hidden');
+
+      // Retrieve notes via AJAX GET
+      fetch("<?= $GLOBALS['BASE'] ?>/symbol/getNotesAjx?symbol=" + symbol)
+        .then(response => response.json())
+        .then(data => {
+          // Display the retrieved notes (or an empty string if not found)
+          document.getElementById('notesField').value = data.notes || '';
+        })
+        .catch(error => {
+          console.error('Error fetching notes:', error);
+          document.getElementById('notesField').value = '';
+        });
+    }
+
+    // Closes the modal without performing any update
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+      document.getElementById('modalBackdrop').classList.add('hidden');
+    }
+
+    // Saves the updated notes via AJAX POST and closes the modal on success
+    function saveNotes() {
+      const notes = document.getElementById('notesField').value;
+      const formData = new FormData();
+      formData.append('symbol', currentSymbol);
+      formData.append('notes', notes);
+
+      fetch("<?= $GLOBALS['BASE'] ?>/symbol/updateAjx", {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            closeModal();
+          } else {
+            console.error('Error saving notes:', data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error saving notes:', error);
+        });
+    }
+  </script>
 
   <!-- JavaScript for Sorting, Filtering, and Dynamic Aggregates -->
   <script>
@@ -522,7 +608,7 @@ function renderCell($item, $column)
       cursor: pointer;
     }
     #customContextMenu li:hover {
-      background-color: #f0f0f0;
+      background-color:rgb(244, 255, 207);
     }
   `;
     document.head.appendChild(style);
@@ -539,6 +625,7 @@ function renderCell($item, $column)
     contextMenu.style.zIndex = 10000;
     contextMenu.innerHTML = `
     <ul style="list-style: none; margin: 0; padding: 0;">
+      <li id="menuNotes" style="padding: 8px 12px;">Notes</li>
       <li id="menuBuy" style="padding: 8px 12px;">Buy</li>
       <li id="menuSell" style="padding: 8px 12px;">Sell</li>
       <li id="menuDividend" style="padding: 8px 12px;">Dividend</li>
@@ -577,13 +664,17 @@ function renderCell($item, $column)
 
           // Set up click handlers for each option.
           document.getElementById('menuBuy').onclick = function () {
-            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/buy/' + symbol;
+            window.location.href = '<?= $GLOBALS['BASE'] ?>/transaction/buy/' + symbol;
           };
           document.getElementById('menuSell').onclick = function () {
-            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/sell/' + symbol;
+            window.location.href = '<?= $GLOBALS['BASE'] ?>/transaction/sell/' + symbol;
           };
           document.getElementById('menuDividend').onclick = function () {
-            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/dividend/' + symbol;
+            window.location.href = '<?= $GLOBALS['BASE'] ?>/transaction/dividend/' + symbol;
+          };
+          document.getElementById('menuNotes').onclick = function () {
+            openModal(symbol);
+            // window.location.href = '<?= $GLOBALS['BASE'] ?>/transaction/notes/' + symbol;
           };
 
           // Position and show the custom context menu.

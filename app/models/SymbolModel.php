@@ -7,25 +7,21 @@ class Symbol extends GenericModel
 
     public $tableFields = [
         'symbol' => [
-            'type' => 's',
             'label' => 'My Symbol',
             'input' => 'text',
             'required' => true
         ],
         'other_symbol' => [
-            'type' => 's',
             'label' => 'Foreign Symbol',
             'input' => 'text',
             'required' => true
         ],
         'name' => [
-            'type' => 's',
             'label' => 'Name',
             'input' => 'text',
             'required' => true
         ],
         'sector_id' => [
-            'type' => 's',
             'label' => 'Sector',
             'input' => 'select',
             'required' => true,
@@ -37,13 +33,11 @@ class Symbol extends GenericModel
             ]
         ],
         'beta' => [
-            'type' => 'd',
             'label' => 'Beta',
             'input' => 'text',
             'required' => false
         ],
         'notes' => [
-            'type' => 's',
             'label' => 'Notes',
             'input' => 'textarea',
             'rows' => 5,
@@ -52,7 +46,6 @@ class Symbol extends GenericModel
             'required' => false
         ],
         'risk' => [
-            'type' => 'i',
             'label' => 'Risk',
             'input' => 'select',
             'options' => [
@@ -66,7 +59,6 @@ class Symbol extends GenericModel
             'required' => false
         ],
         'active' => [
-            'type' => 'i',
             'label' => 'Active',
             'input' => 'select',
             'options' => [
@@ -83,5 +75,12 @@ class Symbol extends GenericModel
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([':symbol' => $symbol]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateNotes($symbol, $notes)
+    {
+        $sql = "UPDATE symbol SET notes = :notes WHERE symbol = :symbol";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([':notes' => $notes, ':symbol' => $symbol]);
     }
 }
