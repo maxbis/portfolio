@@ -19,7 +19,6 @@ $columns = [
     'sortable' => 1,
     'filter' => 'select',  // Dropdown filter.
   ],
-
   [
     'name' => '#<br/>&nbsp;',
     'width' => '60px',
@@ -91,10 +90,17 @@ $columns = [
     'filter' => 'none',
   ],
   [
+    'name' => 'P/L<br>-1d',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => '{total_value_1d}',
+    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}', 
+  ],
+  [
     'name' => 'Day<br>P/L',
     'width' => '90px',
     'align' => 'right',
-    'bgcolor' => '#f8f8f8',
+    'bgcolor' => '#fffdf7',
     'data' => '{total_value} - {total_value_1d}',
     'aggregate' => 'sum',
     'aggregateToken' => 'DAY_PL', // Custom token for formula.
@@ -104,7 +110,7 @@ $columns = [
   [
     'name' => 'Day<br>P/L%',
     'width' => '90px',
-    'bgcolor' => '#f8f8f8',
+    'bgcolor' => '#fffdf7',
     'align' => 'right',
     'color' => 'darkred',
     'data' => '({total_value}*100 / {total_value_1d}) -100',

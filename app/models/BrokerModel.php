@@ -7,16 +7,24 @@ class Broker extends GenericModel
 
     public $tableFields = [
         'name' => [
-            'type' => 's',
+            '_type' => 's',
             'label' => 'Broker Name',
             'input' => 'text', 
             'required' => true
         ],
         'short_name' => [
-            'type' => 's',
+            '_type' => 's',
             'label' => 'Short Name',
             'input' => 'text', 
             'required' => true
         ],
     ];
+
+    public function getBrokersBySymbol($symbol)
+    {
+        $sql = "SELECT * FROM broker WHERE id IN (SELECT broker_id FROM transaction WHERE symbol = :symbol)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['symbol' => $symbol]);
+        return $stmt->fetchAll();
+    }
 }

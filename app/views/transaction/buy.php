@@ -1,16 +1,17 @@
 <?php
-/**
- * Expected variables:
- *   - $action: the form action URL (e.g., "/transaction/update/{$record['id']}" or "/transaction/insert")
- *   - $title: the title to show on the form (e.g., "Edit Transaction" or "Create Transaction")
- *   - $record: an associative array of field values (if editing). Can be empty for create.
- *   - $exchanges: an array of exchange options.
- */
-
-// Get today's date in the format yyyy-mm-dd
 $today = date('Y-m-d');
-$caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
+$title = ucfirst($caller)." " . $symbol['name'];
+$action = $GLOBALS['BASE'] . "/transaction/insert";
+
+$number_constraint = "";
+if ($caller=="buy") {
+    $number_constraint = "min=1";
+}
+if ($caller=="sell") {
+    $number_constraint = "max=-1";
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,13 +29,14 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
     </script>
 </head>
 
-<?php // echo "<pre>";print_r($symbols);exit; ?>
-
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
     <div class="max-w-lg w-full bg-white p-6 shadow-lg rounded-lg">
         <h1 class="text-2xl font-semibold mb-4 text-center"><?= htmlspecialchars($title) ?></h1>
 
         <form action="<?= $action ?>" method="POST" class="space-y-4">
+
+            <input type="hidden" id="symbol" name="symbol" value="<?= $symbol['symbol'] ?>">
+            <input type="hidden" id="cash" name="cash" value="0">
 
             <!-- Grid Layout for First Four Fields -->
             <div class="grid grid-cols-3 gap-4">
@@ -67,40 +69,11 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                 </div>
 
                 <div>
-                <label class="block text-gray-700 text-sm">Company</label>
-                    <select name="symbol" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
-                        <?php foreach ($symbols as $symbol): ?>
-                            <option value="<?= $symbol['symbol'] ?>" <?= (isset($record['symbol']) && $symbol['symbol'] == $record['symbol']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($symbol['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <!-- <div>
-                    <label class="block text-gray-700 text-sm">Symbol:</label>
-                    <input type="text" name="symbol" value="<?= $record['symbol'] ?? '' ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md">
-                </div> -->
-
-                <div>
-                    <label class="block text-gray-700 text-sm">Number:</label>
-                    <input type="text" name="number" value="<?= $record['number'] ?? '' ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-                </div>
-
-                <div>
-                    <label class="block text-gray-700 text-sm" title="Price per share">Price:</label>
-                    <input type="text" id='amount' name="amount" value="<?= $record['amount'] ?? '' ?>"
-                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-                </div>
-
-                <div>
                     <label class="block text-gray-700 text-sm">Currency:</label>
                     <select id="currencySelect" name="currency"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-                        <option value="EUR" <?= isset($record['currency']) && $record['currency'] === 'EUR' ? 'selected' : '' ?>>EURO</option>
-                        <option value="USD" <?= isset($record['currency']) && $record['currency'] === 'USD' ? 'selected' : '' ?>>USD</option>
+                        <option value="EUR" <?= isset($exchange['currency']) && $exchange['currency'] === 'EUR' ? 'selected' : '' ?>>EURO</option>
+                        <option value="USD" <?= isset($exchange['currency']) && $exchange['currency'] === 'USD' ? 'selected' : '' ?>>USD</option>
                     </select>
                 </div>
 
@@ -120,11 +93,17 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                         class="w-24 p-1 text-sm border border-gray-300 bg-gray-200 rounded-md" readonly>
                 </div>
 
+
                 <div>
-                    <small>costs/dividend:</small>
-                    <input type="text" id='cash' name="cash" value="<?= $record['cash'] ?? '' ?>"
+                    <label class="block text-gray-700 text-sm">Number:</label>
+                    <input type="number" name="number" <?=$number_constraint?> value="<?= $record['number'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                </div>
 
+                <div>
+                    <label class="block text-gray-700 text-sm" title="Price per share">Price:</label>
+                    <input type="text" id='amount' name="amount" value="<?= $record['amount'] ?? '' ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
 
                 <div>
@@ -133,12 +112,7 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
 
             </div>
 
-            <!-- Description Field (Full Width) -->
-            <div>
-                <label class="block text-gray-700 text-sm">Description:</label>
-                <textarea name="description"
-                    class="w-full p-2 border border-gray-300 rounded-md h-24"><?= $record['description'] ?? '' ?></textarea>
-            </div>
+            <br />
 
             <div class="flex justify-between">
                 <a href="<?= $GLOBALS['BASE'] ?>/transaction/list"
@@ -156,7 +130,7 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                     <?php endif; ?>
 
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">
-                        <?= strpos($action, 'update') !== false ? 'Update' : 'Create' ?>
+                        &nbsp;<?=$caller?>&nbsp;
                     </button>
                 </div>
             </div>

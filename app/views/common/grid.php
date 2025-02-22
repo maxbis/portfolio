@@ -114,6 +114,7 @@ function renderCell($item, $column)
       width: 100%;
       box-sizing: border-box;
     }
+
     a:hover {
       background-color: #f0f0f0;
     }
@@ -197,7 +198,7 @@ function renderCell($item, $column)
                   $titleAttr = "";
                 }
                 ?>
-                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle . $colorStyle . $bgStyle ?>">
+                <td class="px-3 py-2 <?= $alignment ?>" <?= $titleAttr ?>style="<?= $hiddenStyle . $colorStyle . $bgStyle ?>">	
                   <?php
                   if ($col['data'] === '#edit') {
                     $cellValue = sprintf(
@@ -319,7 +320,8 @@ function renderCell($item, $column)
         }
       });
       try {
-        return eval(replacedFormula);
+        let result = eval(replacedFormula);
+        return Number.isFinite(result) ? result : 0;
       } catch (e) {
         console.error("Error evaluating cell formula:", replacedFormula, e);
         return '';
@@ -510,3 +512,86 @@ function renderCell($item, $column)
 </body>
 
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Add CSS for the context menu hover effect.
+    var style = document.createElement('style');
+    style.innerHTML = `
+    #customContextMenu li {
+      cursor: pointer;
+    }
+    #customContextMenu li:hover {
+      background-color: #f0f0f0;
+    }
+  `;
+    document.head.appendChild(style);
+
+    // Create the custom context menu element.
+    const contextMenu = document.createElement('div');
+    contextMenu.id = 'customContextMenu';
+    contextMenu.style.position = 'absolute';
+    contextMenu.style.background = '#fff';
+    contextMenu.style.border = '1px solid #ccc';
+    contextMenu.style.boxShadow = '2px 2px 5px rgba(0,0,0,0.3)';
+    contextMenu.style.padding = '5px';
+    contextMenu.style.display = 'none';
+    contextMenu.style.zIndex = 10000;
+    contextMenu.innerHTML = `
+    <ul style="list-style: none; margin: 0; padding: 0;">
+      <li id="menuBuy" style="padding: 8px 12px;">Buy</li>
+      <li id="menuSell" style="padding: 8px 12px;">Sell</li>
+      <li id="menuDividend" style="padding: 8px 12px;">Dividend</li>
+    </ul>
+  `;
+    document.body.appendChild(contextMenu);
+
+    // Hide the custom menu when clicking anywhere else.
+    document.addEventListener('click', function () {
+      contextMenu.style.display = 'none';
+    });
+
+    // Find the column index for the "Symbol" column.
+    let symbolColIndex = -1;
+    const headerCells = document.querySelectorAll('#gridView thead tr:first-child th');
+    headerCells.forEach(function (th, idx) {
+      if (th.textContent.trim().toLowerCase() === 'symbol') {
+        symbolColIndex = idx;
+      }
+    });
+    if (symbolColIndex === -1) {
+      // If no "Symbol" column is found, do nothing.
+      return;
+    }
+
+    // Attach the contextmenu event to each cell in the symbol column.
+    const rows = document.querySelectorAll('#gridView tbody tr');
+    rows.forEach(function (row) {
+      const cells = row.querySelectorAll('td');
+      if (cells.length > symbolColIndex) {
+        const symbolCell = cells[symbolColIndex];
+        symbolCell.addEventListener('contextmenu', function (e) {
+          e.preventDefault();  // Prevent the browser's default context menu.
+          // Get the symbol from the cell text (adjust if your cell contains additional markup).
+          const symbol = symbolCell.innerText.trim();
+
+          // Set up click handlers for each option.
+          document.getElementById('menuBuy').onclick = function () {
+            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/buy/' + symbol;
+          };
+          document.getElementById('menuSell').onclick = function () {
+            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/sell/' + symbol;
+          };
+          document.getElementById('menuDividend').onclick = function () {
+            window.location.href = '<?=$GLOBALS['BASE']?>/transaction/dividend/' + symbol;
+          };
+
+          // Position and show the custom context menu.
+          contextMenu.style.left = e.pageX + 'px';
+          contextMenu.style.top = e.pageY + 'px';
+          contextMenu.style.display = 'block';
+        });
+      }
+    });
+  });
+</script>

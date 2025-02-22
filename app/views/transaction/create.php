@@ -1,15 +1,8 @@
 <?php
-// Example: views/transaction/create.php
+// filepath: /c:/Users/maxbi/www/portfolio/app/views/transaction/my_create.php
 
 $title = "Create Transaction";
-$model = "transaction";
-
-
-$action = $GLOBALS['BASE'] . "/$model/insert"; // or /create
-
-// For creation, $record can be an empty array (or you can pre-populate defaults if needed)
-$record = [];
-
-// Include the generic form:
-include __DIR__ . "/../common/form.php";
+$action = $GLOBALS['BASE'] . "/transaction/insert";
+$record = []; // Empty record for creating a new transaction
+include __DIR__ . "/transaction_form.php";
 ?>

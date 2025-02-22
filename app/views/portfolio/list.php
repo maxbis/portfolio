@@ -28,7 +28,7 @@ $columns = [
     'filter' => 'select',  // Dropdown filter.
   ],
   [
-    'name' => 'Strategy<br/>&nbsp;',
+    'name' => 'Strat.<br/>&nbsp;',
     'width' => '40px',
     'data' => 'strategy',
     'aggregate' => null,
@@ -96,7 +96,7 @@ $columns = [
   ],
   [
     'name' => 'Value<br/>EUR',
-    'width' => '90px',
+    'width' => '120px',
     'align' => 'right',
     'data' => 'total_value',
     'aggregate' => 'sum',  // Sum the values.
@@ -115,6 +115,7 @@ $columns = [
     'name' => 'Day<br/>P/L',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#fffdf7',
     'data' => '{total_value} - {total_value_1d}',
     'aggregate' => '{VALUE_EUR}-{VALUE_1D}',  // Sum the values.
     'sortable' => 1,
@@ -124,6 +125,8 @@ $columns = [
     'name' => 'Day<br>P/L%',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#fffdf7',
+    'color' => 'darkred',
     'data' => '({total_value}*100 / {total_value_1d}) -100',
     'aggregate' => 'sum',
     'sortable' => 1,
@@ -133,8 +136,9 @@ $columns = [
     'name' => 'YTD<br>P/L',
     'width' => '120px',
     'align' => 'right',
+    'bgcolor' => '#f8f8f8',
     'data' => 'ytd_profit_loss',
-    'formatter' => 'number_format($item["ytd_profit_loss"], 0, ".", " ")',
+    'formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum YTD profit/loss.
     'aggregateToken' => 'YTD_PL', // Custom token for formula.
     'sortable' => 1,
@@ -144,6 +148,8 @@ $columns = [
     'name' => 'YTD P/L%',
     'width' => '60px',
     'align' => 'right',
+    'bgcolor' => '#f8f8f8',
+    'color' => 'darkred',
     'data' => 'profit_loss_percent',
     'formatter' => 'number_format($item["profit_loss_percent"], 2, ".", " ")',
     'aggregate' => '({YTD_PL} * 100 / ({VALUE_EUR} - {YTD_PL})) ', // Custom formula for aggregation.
@@ -163,6 +169,13 @@ $columns = [
     'width' => '90px',
     'align' => 'right',
     'data' => 'beta',
+  ],
+  [
+    'name' => 'Cash<br>&nbsp;',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => 'cash',
+    'aggregate' => 'sum', 
   ],
   [
     'name' => '% of<br>Portfolio',

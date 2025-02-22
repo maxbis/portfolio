@@ -50,8 +50,8 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
     info = yf.Ticker(symbol_key)
     beta = info.info.get("beta", None)
 
-    if (beta):
-        print(f"Beta for {symbol_key} is {beta}")
+    if beta:
+        print(f"  Beta for {symbol_key} is {beta}")
     else:
         beta = 1
 
@@ -84,18 +84,19 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
         volume = int(row.get("Volume"))
         dividends = float(row.get("Dividends", 0.0))
         splits = float(row.get("Stock Splits", 0.0))
-    
+
         # If no split occurred (yfinance returns 0), store 1.00 as per the table default.
         if not splits:
             splits = 1.00
 
         # Check whether this quote (symbol + date) already exists.
         check_query = """
-            SELECT 1 FROM quotes 
-            WHERE symbol = %s AND quote_date = %s 
+            SELECT 1 FROM quotes
+            WHERE symbol = %s AND quote_date = %s
             LIMIT 1
         """
         cursor.execute(check_query, (my_ticker, quote_date))
+
         if cursor.fetchone() is None:
             # Record does not exist; insert it.
             insert_query = """
@@ -109,8 +110,28 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
                 print(f"Error inserting record for {my_ticker} on {quote_date}: {e}")
                 continue
 
-    # Commit after processing the symbol.
-    conn.commit()
+
+    # upsert_query = """
+    #     INSERT INTO quotes (symbol, quote_date, close, volume, dividends, split)
+    #     VALUES (%s, %s, %s, %s, %s, %s)
+    #     ON DUPLICATE KEY UPDATE 
+    #         close = VALUES(close),
+    #         volume = VALUES(volume),
+    #         dividends = VALUES(dividends),
+    #         split = VALUES(split);
+    # """  # Use ON CONFLICT for PostgreSQL
+
+    # try:
+    #     cursor.execute(
+    #         upsert_query, (my_ticker, quote_date, close_price, volume, dividends, splits)
+    #     )
+    #     inserts += 1
+    # except Exception as e:
+    #     print(f"Error inserting/updating record for {my_ticker} on {quote_date}: {e}")
+
+    #     # Commit after processing the symbol.
+    #     conn.commit()
+    
     return inserts
 
 
@@ -144,17 +165,14 @@ def main():
         "ticker",
         nargs="?",
         help="A ticker symbol to look up. If this ticker is one of the values in the symbol table, "
-             "then update the table. Otherwise, just report the last close.",
+        "then update the table. Otherwise, just report the last close.",
     )
     args = parser.parse_args()
 
     # Connect to MariaDB using the specified connection parameters.
     try:
         conn = mysql.connector.connect(
-            host="localhost",
-            user="root", 
-            password="",
-            database="portfolio" 
+            host="localhost", user="root", password="", database="portfolio"
         )
         cursor = conn.cursor()
     except Exception as e:
@@ -187,9 +205,15 @@ def main():
 
         if found_key:
             # If found in the symbol table, perform the lookup and update.
-            print(f"Ticker '{input_ticker}' found in the symbol table as key '{found_key}'.")
-            num_inserts = process_symbol(found_key, symbol_dict[found_key], cursor, conn)
-            print(f"Inserted {num_inserts} new quote(s) for '{input_ticker}': '{found_key}'.")
+            print(
+                f"Ticker '{input_ticker}' found in the symbol table as key '{found_key}'."
+            )
+            num_inserts = process_symbol(
+                found_key, symbol_dict[found_key], cursor, conn
+            )
+            print(
+                f"Inserted {num_inserts} new quote(s) for '{input_ticker}': '{found_key}'."
+            )
         else:
             # Not in the symbol table: perform lookup and report last close price without updating.
             lookup_without_update(input_ticker)

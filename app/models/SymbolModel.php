@@ -76,4 +76,12 @@ class Symbol extends GenericModel
             'required' => false
         ],
     ];
+
+    public function getInfoOnSymbol($symbol)
+    {
+        $sql = "SELECT * FROM symbol WHERE symbol = :symbol";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':symbol' => $symbol]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

@@ -18,7 +18,7 @@ class Portfolio
     /**
      * Get the portfolio overview with a proper YTD P&L calculation.
      */
-    public function getPortfolio($date = null)
+    public function _getPortfolio($date = null)
     {
         // Determine January 1st of the current year.
         $currentYear = date("Y");
@@ -130,11 +130,17 @@ class Portfolio
             }
 
             // Calculate the overall market value and total profit/loss.
-            $totalValueNow = $totalShares * $latestPrice / $latestExchangeRate;
-            $profitLoss = $totalValueNow - $totalPastValue + $cash;
+            $totalValueNow = ($totalShares * $latestPrice / $latestExchangeRate);
+            $totalValueNow = $totalValueNow + $cash;
+
+            $profitLoss = $totalValueNow - $totalPastValue;
             $ytdProfitLoss = $ytdProfitLoss / $YTDCurrencyPrice + $post_cash;
-            if ($totalValueNow) {
+
+            if ($totalValueNow-$ytdProfitLoss) {
                 $ytdProfitLossPerc = $ytdProfitLoss * 100 / ($totalValueNow-$ytdProfitLoss);
+                // echo "<pre>";
+                // echo "$symbol $broker $ytdProfitLossPerc $ytdProfitLoss $totalValueNow ";
+                // echo "<br>";
             } else {
                 $ytdProfitLossPerc = 0;
             }
@@ -142,9 +148,14 @@ class Portfolio
             if (strtoupper($symbol) === 'EUR') {
                 $profitLoss = 0;
                 $ytdProfitLoss = 0;
+                
                 // spend this year we want per broker!
                 $spendThisYear = $this->getSumInvestmentsAfter($jan1, $broker);
+
                 $totalValueNow = $cash - $spendThisYear;
+                $total_value_1d = $totalValueNow;
+            } else {
+                $total_value_1d = $latestPricePrev * $totalShares / $latestExchangeRate;
             }
 
             if ($latestPricePrev == 0) {
@@ -165,7 +176,7 @@ class Portfolio
                 'avg_buy_price' => round($avgBuyPrice,2),
                 'latest_price' => round($latestPrice, 2),
                 'latest_price_1d' => round($latestPricePrev, 2),
-                'total_value_1d' => round($latestPricePrev * $totalShares / $latestExchangeRate, 2), // difference between latest_price and previous latest_price
+                'total_value_1d' => round($total_value_1d, 2), // difference between latest_price and previous latest_price
                 'total_value_1d_percent' => $delta_percentage,
                 'quote_date' => $quoteDate,
                 'exchange_rate' => round($latestExchangeRate, 2),
@@ -188,6 +199,183 @@ class Portfolio
 
         return $portfolio;
     }
+
+    public function getPortfolio($date = null)
+    {
+        $currentYear = date('Y');
+        $jan1 = "$currentYear-01-01";
+    
+        // Aggregate transactions with pre/post-Jan 1 splits.
+        $sql = "SELECT 
+                    t1.symbol as 'symbol', 
+                    br.short_name as 'broker',
+                    MIN(str.name) as 'strategy',
+                    MIN(se.name) as 'sector',
+                    MIN(sy.beta) as 'beta',
+                    (SELECT currency
+                     FROM transaction t2 
+                     WHERE t2.symbol = t1.symbol 
+                     ORDER BY t2.date ASC 
+                     LIMIT 1) AS currency,
+                    SUM(number) AS total_shares,
+                    SUM(amount_home * number) AS total_cost,
+                    SUM(CASE WHEN date <= ? THEN number ELSE 0 END) AS pre_shares,
+                    SUM(CASE WHEN date <= ? THEN amount_home * number ELSE 0 END) AS pre_cost,
+                    SUM(CASE WHEN date > ? THEN number ELSE 0 END) AS post_shares,
+                    SUM(CASE WHEN date > ? THEN amount_home * number ELSE 0 END) AS post_cost,
+                    SUM(CASE WHEN date > ? THEN cash ELSE 0 END) AS post_cash,
+                    SUM(cash) as cash
+                FROM transaction t1
+                LEFT JOIN broker br ON t1.broker_id = br.id
+                LEFT JOIN strategy str ON t1.strategy_id = str.id
+                LEFT JOIN symbol sy ON t1.symbol = sy.symbol
+                LEFT JOIN sector se ON sy.sector_id = se.id
+                GROUP BY t1.symbol, br.short_name";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssss", $jan1, $jan1, $jan1, $jan1, $jan1);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        $portfolio = [];
+        $totalPortfolioValue = 0;
+    
+        while ($row = $result->fetch_assoc()) {
+            // Process each row in its own method.
+            $processed = $this->processTransactionRow($row, $date, $jan1);
+            $portfolio[] = $processed['holding'];
+            $totalPortfolioValue += $processed['totalValue'];
+        }
+        $stmt->close();
+    
+        // Calculate the percentage of total portfolio for each holding.
+        foreach ($portfolio as $index => $holding) {
+            $portfolio[$index]['percent_of_portfolio'] = $totalPortfolioValue > 0
+                ? round($holding['total_value'] * 100 / $totalPortfolioValue, 2)
+                : 0;
+        }
+    
+        return $portfolio;
+    }
+    
+    /**
+     * Process a single transaction row and compute derived metrics.
+     *
+     * @param array $row Data from the database.
+     * @param string|null $date Optional quote date.
+     * @param string $jan1 January 1st of the current year.
+     * @return array Contains 'holding' (the processed row) and 'totalValue'.
+     */
+    private function processTransactionRow(array $row, $date, $jan1): array
+    {
+        $symbol         = $row['symbol'];
+        $totalShares    = $row['total_shares'];
+        $totalPastValue = $row['total_cost'];
+        $cash           = $row['cash'];
+        $postCash       = $row['post_cash'];
+        $broker         = $row['broker'];
+        $beta           = $row['beta'];
+    
+        $avgBuyPrice = $totalShares != 0 ? $totalPastValue / $totalShares : 0;
+    
+        // Initialize variables.
+        $latestPrice      = null;
+        $latestPricePrev  = null;
+        $quoteDate        = null;
+        $yearStartPrice   = null;
+        $ytdProfitLoss    = 0;
+    
+        if (strtoupper($symbol) !== 'EUR') {
+            // Get quote data based on the provided date or latest available.
+            if ($date !== null) {
+                $quoteData     = $this->getQuoteOnDate($symbol, $date);
+                $quoteDataPrev = $this->getQuoteOnDate($symbol, $date, 1);
+            } else {
+                $quoteData     = $this->getLatestQuote($symbol);
+                $quoteDataPrev = $this->getLatestQuote($symbol, 1);
+            }
+            $latestPrice     = $quoteData['close'];
+            $latestPricePrev = $quoteDataPrev['close'];
+            $quoteDate       = $quoteData['quote_date'];
+    
+            // Year-start price is used as baseline for YTD calculations.
+            $yearStartData  = $this->getYearStartQuote($symbol);
+            $yearStartPrice = $yearStartData['close'];
+    
+            // Calculate YTD profit/loss.
+            $preShares = $row['pre_shares'];
+            $ytdPre = $preShares > 0 ? $preShares * ($latestPrice - $yearStartPrice) : 0;
+    
+            $postShares = $row['post_shares'];
+            if ($postShares > 0) {
+                $avgPostPrice = $row['post_cost'] / $postShares;
+                $ytdPost = $postShares * ($latestPrice - $avgPostPrice);
+            } else {
+                $ytdPost = 0;
+            }
+            $ytdProfitLoss = $ytdPre + $ytdPost;
+        }
+    
+        // Handle currency conversion for USD.
+        $latestExchangeRate = 1;
+        $YTDCurrencyPrice   = 1;
+        if ($row['currency'] == 'USD') {
+            $latestExchangeRate = $date !== null
+                ? $this->getQuoteOnDate('USD', $date)['close']
+                : $this->getLatestQuote('USD')['close'];
+            $YTDCurrencyPrice = $this->getYearStartQuote('USD')['close'];
+        }
+    
+        // Compute overall market value and profit/loss.
+        if (strtoupper($symbol) !== 'EUR') {
+            $totalValueNow = ($totalShares * $latestPrice / $latestExchangeRate) + $cash;
+            $profitLoss = $totalValueNow - $totalPastValue;
+            // Adjust YTD profit/loss for currency.
+            $ytdProfitLoss = ($ytdProfitLoss / $YTDCurrencyPrice) + $postCash;
+            $totalValue1d = ($latestPricePrev * $totalShares) / $latestExchangeRate;
+        } else {
+            // For EUR (cash), no market price calculations.
+            $profitLoss = 0;
+            $ytdProfitLoss = 0;
+            $spendThisYear = $this->getSumInvestmentsAfter($jan1, $broker);
+            $totalValueNow = $cash - $spendThisYear;
+            $totalValue1d = $totalValueNow;
+        }
+    
+        // Compute percentage change based on previous price.
+        $deltaPercentage = ($latestPricePrev != 0)
+            ? round((($latestPrice - $latestPricePrev) / $latestPricePrev) * 100, 2)
+            : 0;
+    
+        $holding = [
+            'symbol'                => $symbol,
+            'symbol_title'          => $this->symbols[$symbol] ?? '?',
+            'sector'                => $row['sector'],
+            'broker'                => $broker,
+            'beta'                  => $beta,
+            'strategy'              => $row['strategy'],
+            'number'                => $totalShares,
+            'avg_buy_price'         => round($avgBuyPrice, 2),
+            'latest_price'          => $latestPrice !== null ? round($latestPrice, 2) : null,
+            'latest_price_1d'       => $latestPricePrev !== null ? round($latestPricePrev, 2) : null,
+            'total_value_1d'        => round($totalValue1d, 2),
+            'total_value_1d_percent'=> $deltaPercentage,
+            'quote_date'            => $quoteDate,
+            'exchange_rate'         => round($latestExchangeRate, 2),
+            'total_value'           => round($totalValueNow, 0),
+            'profit_loss'           => round($profitLoss, 2),
+            'ytd_profit_loss'       => round($ytdProfitLoss, 2),
+            'profit_loss_percent'   => ($totalValueNow - $ytdProfitLoss) && $totalValueNow ? round($ytdProfitLoss * 100 / ($totalValueNow - $ytdProfitLoss), 2) : 0,
+            'cash'                  => round($cash, 2),
+        ];
+    
+        return [
+            'holding'    => $holding,
+            'totalValue' => $totalValueNow,
+        ];
+    }
+    
+
 
     private function formatNumber($num)
     {

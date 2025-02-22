@@ -5,7 +5,7 @@
 $columns = [
   [
     'name' => 'id',
-    'width' => '100px',
+    'width' => '60px',
     'data' => 'id',
     'aggregate' => null,
     'sortable' => 1,
@@ -13,8 +13,17 @@ $columns = [
   ],
   [
     'name' => 'Exchange',
-    'width' => '100px',
+    'width' => '60px',
     'data' => 'name',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'select',
+    'align' => 'left',
+  ],
+  [
+    'name' => 'Default Currency',
+    'width' => '60px',
+    'data' => 'currency',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'select',

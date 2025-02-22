@@ -21,15 +21,6 @@ if (!isset($activeTab)) {
         <!-- Dropdown menu -->
         <div
             class="absolute left-0 top-6 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg opacity-0 group-hover:opacity-100 transform scale-95 group-hover:scale-100 transition duration-150 ease-in-out pointer-events-none group-hover:pointer-events-auto z-10">
-            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/symbol"
-                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Symbol</a>
-            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/broker"
-                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Broker</a>
-            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/strategy"
-                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Strategy</a>
-            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/sector"
-                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Sector</a>
-            <p class="block text-sm px-4 py-2 text-gray-700">-----</p>
             <a href="<?= $GLOBALS['BASE'] ?>/portfolio/list"
                 class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">Detailed (latest)</a>
 
@@ -45,7 +36,14 @@ if (!isset($activeTab)) {
                     style="display: none;" onchange="redirectToDate(this.value)" />
             </div>
 
-
+            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/symbol"
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Symbol</a>
+            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/broker"
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Broker</a>
+            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/strategy"
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Strategy</a>
+            <a href="<?= $GLOBALS['BASE'] ?>/portfolio/lista/sector"
+                class="block text-sm px-4 py-2 text-gray-700 hover:bg-gray-100">By Sector</a>
 
         </div>
     </div>

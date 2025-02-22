@@ -12,6 +12,6 @@ class SymbolController extends Controller
         $this->loadModel($this->controllerName);
         $this->model = new Symbol();
     }
-
+    
   
 }

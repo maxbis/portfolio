@@ -1,10 +1,7 @@
 <?php
+// filepath: /c:/Users/maxbi/www/portfolio/app/views/transaction/my_edit.php
+
 $title = "Edit Transaction";
-$model = "transaction";
-
-// action for in form to execute when saved
-$action = $GLOBALS['BASE'] . "/$model/update/" . $record['id'];
-
-// Include the generic form:
-include __DIR__ . "/../common/form.php";
+$action = $GLOBALS['BASE'] . "/transaction/update/" . $record['id'];
+include __DIR__ . "/transaction_form.php";
 ?>
