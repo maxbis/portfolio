@@ -107,6 +107,8 @@ function renderCell($item, $column)
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title><?= htmlspecialchars($title) ?></title>
+  <link rel="icon" href="<?= $GLOBALS['BASE'] . '/pictures/favicon.ico' ?>" type="image/x-icon">
+  <link rel="shortcut icon" href="<?= $GLOBALS['BASE'] . '/pictures/favicon.ico' ?>" type="image/x-icon">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Optional: custom style for filter inputs */
@@ -123,7 +125,12 @@ function renderCell($item, $column)
 
 <body class="bg-gray-100 flex">
   <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
-    <h1 class="text-2xl font-semibold mb-4"><?= htmlspecialchars($title) ?></h1>
+
+    <div class="flex items-center space-x-4">
+      <img src="<?= $GLOBALS['BASE'] . '/pictures/icon-60x60.png' ?>" alt="Logo" class="h-10 w-auto">
+      <h1 class="text-2xl font-semibold"><?= htmlspecialchars($title) ?></h1>
+    </div>
+
     <?php include_once __DIR__ . "/../common/nav.php"; ?>
 
     <?php if (!isset($noCreate)): ?>
