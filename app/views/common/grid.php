@@ -123,7 +123,7 @@ function renderCell($item, $column)
   </style>
 </head>
 
-<body class="bg-gray-100 flex">
+<body class="bg-gray-100 flex text-sm">
   <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
 
     <div class="flex items-center space-x-4">
