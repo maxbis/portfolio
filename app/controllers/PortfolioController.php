@@ -19,6 +19,7 @@ class PortfolioController extends Controller {
     public function lista($groupBy='symbol') {
         $records = $this->portfolioModel->getPortfolio();
         $records = $this->portfolioModel->aggregateRecords($records, $groupBy);
+        // echo "<pre>";print_r($records);exit;
         $this->renderView('portfolio/lista',
         ['title' => 'Portfolio', 'data' => $records]);
     }

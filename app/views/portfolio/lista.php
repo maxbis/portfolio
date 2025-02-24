@@ -68,12 +68,14 @@ $columns = [
     'sortable' => 1,
     'filter' => 'none',  // No filter.
   ],
+
   [
-    'name' => 'Value<br/>EUR',
+    'name' => 'Value<br/>EUR*',
     'width' => '120px',
     'align' => 'right',
+    'bgcolor' => '#f4ffe8',
     'data' => 'total_value',
-    'formatter' => 'number_format($item["profit_loss"], 0, ".", " ")',
+    'formatter' => 'number_format($item["total_value"], 0, ".", " ")',
     'aggregate' => 'sum',  // Sum the values.
     'aggregateToken' => 'VALUE_EUR', // Custom token for formula.
     'sortable' => 1,
@@ -94,7 +96,7 @@ $columns = [
     'width' => '90px',
     'align' => 'right',
     'data' => '{total_value_1d}',
-    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}', 
+    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}',
   ],
   [
     'name' => 'Day<br>P/L',
@@ -131,7 +133,7 @@ $columns = [
     'filter' => 'none',
   ],
   [
-    'name' => 'YTD PL%',	
+    'name' => 'YTD PL%',
     'width' => '60px',
     'color' => 'darkred',
     'bgcolor' => '#f8f8f8',
@@ -153,7 +155,7 @@ $columns = [
     'width' => '90px',
     'align' => 'right',
     'data' => '{beta_times_total_value} / {total_value}',
-    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}', 
+    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}',
   ],
   [
     'name' => '%<br>Port',

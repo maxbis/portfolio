@@ -107,8 +107,11 @@ if ($caller=="sell") {
                 </div>
 
                 <div>
-
+                <label class="block text-gray-700 text-sm" title="Price per share">Costs:</label>
+                    <input type="text" id='cash' name="cash" <?=$number_constraint?> value="<?= $record['cash'] ?? '' ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
                 </div>
+
 
             </div>
 

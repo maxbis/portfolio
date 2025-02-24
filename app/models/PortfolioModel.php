@@ -230,7 +230,9 @@ class Portfolio
                 LEFT JOIN strategy str ON t1.strategy_id = str.id
                 LEFT JOIN symbol sy ON t1.symbol = sy.symbol
                 LEFT JOIN sector se ON sy.sector_id = se.id
-                GROUP BY t1.symbol, br.short_name";
+                WHERE br.short_name != 'Test'
+                GROUP BY t1.symbol, br.short_name
+                HAVING total_shares > 0 or sum(cash) > 0";
     
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("sssss", $jan1, $jan1, $jan1, $jan1, $jan1);
@@ -276,6 +278,7 @@ class Portfolio
         $broker         = $row['broker'];
         $beta           = $row['beta'];
     
+        // $symbol = $totalShares == 0 ? 'EUR' : $row['symbol'];
         $avgBuyPrice = $totalShares != 0 ? $totalPastValue / $totalShares : 0;
     
         // Initialize variables.
@@ -608,6 +611,7 @@ class Portfolio
 
         // echo "<pre>";
         // print_r($aggregated);
+        // echo "</pre>";
 
         return $aggregated;
     }

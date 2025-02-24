@@ -98,6 +98,7 @@ $columns = [
     'name' => 'Value<br/>EUR',
     'width' => '120px',
     'align' => 'right',
+    'bgcolor' => '#f4ffe8',
     'data' => 'total_value',
     'aggregate' => 'sum',  // Sum the values.
     'aggregateToken' => 'VALUE_EUR', // Custom token for formula.

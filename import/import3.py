@@ -22,11 +22,10 @@ import datetime
 import yfinance as yf
 import mysql.connector
 
-# Note: The import of symbols from a file has been removed.
-# Now, the symbol mapping will be read from the MariaDB database.
+from dbconfig import DB_CONFIG  # Import database configuration
 
 
-def process_symbol(symbol_key, my_ticker, cursor, conn):
+def process_symbol(symbol_key, my_ticker, cursor, conn, history_period="7d"):
     """
     Looks up the historical quotes for the given ticker over the last year and inserts
     into the database any quotes that are not already present. The table uses symbol_key
@@ -37,7 +36,7 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
     print(f"Looking up '{symbol_key}' for my ticker '{my_ticker}'")
     try:
         # Get last 1 year of historical data
-        data = yf.Ticker(symbol_key).history(period="7d")
+        data = yf.Ticker(symbol_key).history(period=history_period)
     except Exception as e:
         print(f"Error retrieving data for ticker {symbol_key}: {e}")
         return 0
@@ -106,6 +105,8 @@ def process_symbol(symbol_key, my_ticker, cursor, conn):
             try:
                 cursor.execute(insert_query, (my_ticker, quote_date, close_price, volume, dividends, splits))
                 inserts += 1
+                print(f"Inserted record for {my_ticker} on {quote_date}, close = {close_price}")
+                conn.commit()
             except Exception as e:
                 print(f"Error inserting record for {my_ticker} on {quote_date}: {e}")
                 continue
@@ -169,11 +170,9 @@ def main():
     )
     args = parser.parse_args()
 
-    # Connect to MariaDB using the specified connection parameters.
+    # Connect to MariaDB using credentials from dbconfig.py
     try:
-        conn = mysql.connector.connect(
-            host="localhost", user="root", password="", database="portfolio"
-        )
+        conn = mysql.connector.connect(**DB_CONFIG)
         cursor = conn.cursor()
     except Exception as e:
         print("Error connecting to the database:", e)
@@ -209,7 +208,7 @@ def main():
                 f"Ticker '{input_ticker}' found in the symbol table as key '{found_key}'."
             )
             num_inserts = process_symbol(
-                found_key, symbol_dict[found_key], cursor, conn
+                found_key, symbol_dict[found_key], cursor, conn, '1y'
             )
             print(
                 f"Inserted {num_inserts} new quote(s) for '{input_ticker}': '{found_key}'."
