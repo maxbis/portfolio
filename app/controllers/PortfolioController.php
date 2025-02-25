@@ -21,6 +21,6 @@ class PortfolioController extends Controller {
         $records = $this->portfolioModel->aggregateRecords($records, $groupBy);
         // echo "<pre>";print_r($records);exit;
         $this->renderView('portfolio/lista',
-        ['title' => 'Portfolio', 'data' => $records]);
+        ['title' => 'Portfolio', 'data' => $records, 'group' => $groupBy]);
     }
 }

@@ -37,6 +37,15 @@ $columns = [
     'filter' => 'select',
   ],
   [
+    'name' => 'Sector<br/>&nbsp;',
+    'width' => '40px',
+    'data' => 'sector',
+    'aggregate' => null,
+    'link' => '/portfolio/list?sector={sector}',
+    'sortable' => 1,
+    'filter' => 'select',
+  ],
+  [
     'name' => '#<br/>&nbsp;',
     'width' => '60px',
     'align' => 'right',

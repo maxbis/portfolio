@@ -7,6 +7,7 @@ $columns = [
     'name' => 'symbol',
     'width' => '100px',
     'data' => 'symbol',
+    'link' => '/quote/list/{symbol}',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'select',
@@ -28,6 +29,14 @@ $columns = [
     'sortable' => 1,
     'filter' => 'select',
     'align' => 'left',
+  ],
+  [
+    'name'      => '',
+    'width'     => '60px',
+    'data'      => '#edit',
+    'aggregate' => null,
+    'sortable'  => 0,
+    'filter'    => 'none',
   ]
 ];
 

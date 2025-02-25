@@ -67,14 +67,18 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                 </div>
 
                 <div>
-                <label class="block text-gray-700 text-sm">Company</label>
-                    <select name="symbol" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
-                        <?php foreach ($symbols as $symbol): ?>
-                            <option value="<?= $symbol['symbol'] ?>" <?= (isset($record['symbol']) && $symbol['symbol'] == $record['symbol']) ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($symbol['name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label class="block text-gray-700 text-sm">Company</label>
+                    <?php if (isset($record['symbol'])): ?>
+                        <?= $record['symbol'] ?>
+                    <?php else: ?>
+                        <select name="symbol" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                            <?php foreach ($symbols as $symbol): ?>
+                                <option value="<?= $symbol['symbol'] ?>" <?= (isset($record['symbol']) && $symbol['symbol'] == $record['symbol']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($symbol['name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    <?php endif; ?>
                 </div>
 
                 <!-- <div>

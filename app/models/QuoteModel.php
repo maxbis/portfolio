@@ -7,47 +7,40 @@ class Quote extends GenericModel
 
     public $tableFields = [
         'symbol' => [
-            'type' => 's',
             'label' => 'Ticker Symbol',
             'input' => 'text',
             'required' => true
         ],
         'quote_date' => [
-            'type' => 'd',
             'label' => 'Date',
             'input' => 'text',
             'required' => true
         ],
         'close' => [
-            'type' => 'd',
             'label' => 'Close Price',
             'input' => 'text',
             'required' => true
         ],
         'volume' => [
-            'type' => 'i',
             'label' => 'Volume',
             'input' => 'text',
             'required' => false
         ],
         'dividends' => [
-            'type' => 'd',
             'label' => 'Dividend',
             'input' => 'text',
             'required' => false
         ],
         'split' => [
-            'type' => 'i',
             'label' => 'Split',
             'input' => 'text',
             'required' => false
         ],
     ];
 
-    public function get($id = null)
+    public function getLatest()
     {
         // Build the SELECT clause.
-        $sql = "SELECT {$this->table}.* FROM {$this->table}";
         $sql = "
             SELECT q.id, q.quote_date, q.symbol, q.close
             FROM quotes AS q
@@ -60,14 +53,29 @@ class Quote extends GenericModel
             ORDER BY q.symbol ASC;
         ";
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) {
-            $errorInfo = $this->conn->errorInfo();
-            throw new Exception("Failed to prepare statement: " . $errorInfo[2]);
-        }
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->executeSQL($sql);
 
     }
+
+
+    public function getBySymbolAndDate($symbol, $quote_date)
+    {
+        $sql = "SELECT * FROM quotes WHERE symbol = ? AND quote_date <= ? ORDER BY quote_date DESC LIMIT 1";
+        $results = $this->executeSQL($sql, [$symbol, $quote_date]);
+        if (!$results) {
+            return null;
+        }
+        return $results[0];
+    }
+
+
+
+    public function getBySymbol($symbol)
+    {
+        $sql = "SELECT * FROM {$this->table} WHERE symbol = ?";
+        return $this->executeSQL($sql, [$symbol]);
+
+    }
+
 
 }

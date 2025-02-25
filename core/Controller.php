@@ -54,7 +54,7 @@ class Controller {
         if ($record) {
             $this->renderView('/'.$this->controllerName.'/edit', ['record' => $record]);
         } else {
-            echo "Transaction not found.";
+            echo "No record found to edit (invalid id).";
         }
     }
 

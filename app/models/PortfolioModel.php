@@ -377,7 +377,6 @@ class Portfolio
             'totalValue' => $totalValueNow,
         ];
     }
-    
 
 
     private function formatNumber($num)

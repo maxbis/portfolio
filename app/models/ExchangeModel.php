@@ -25,8 +25,6 @@ class Exchange extends GenericModel
     public function getExchangesBySymbol($symbol)
     {
         $sql = "SELECT * FROM exchange WHERE id IN (SELECT exchange_id FROM transaction WHERE symbol = :symbol)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['symbol' => $symbol]);
-        return $stmt->fetchAll();
+        return $this->executeSQL($sql, ['symbol' => $symbol]);
     }
 }

@@ -21,7 +21,7 @@ $columns = [
     'align' => 'left',
   ],
   [
-    'name' => 'Broker',
+    'name' => 'Broker/Account',
     'width' => '100px',
     'data' => 'name',
     'aggregate' => null,
@@ -41,7 +41,7 @@ $columns = [
 
 // Set additional variables
 if (!isset($title)) {
-  $title = 'Broker List';
+  $title = 'Broker/account List';
 }
 if (!isset($model)) {
   $model = 'broker';

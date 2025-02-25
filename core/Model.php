@@ -28,7 +28,7 @@ abstract class GenericModel
         $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8';
         try {
             $pdo = new PDO($dsn, DB_USER, DB_PASS, [
-                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
             ]);
         } catch (PDOException $e) {
@@ -44,9 +44,9 @@ abstract class GenericModel
      */
     public function insert()
     {
-        $columns      = [];
+        $columns = [];
         $placeholders = [];
-        $values       = [];
+        $values = [];
 
         // Loop through each field configuration.
         foreach ($this->tableFields as $field => $config) {
@@ -57,9 +57,9 @@ abstract class GenericModel
                 if (isset($config['readonly']) && $config['readonly'] === true) {
                     continue;
                 }
-                $columns[]      = $field;
+                $columns[] = $field;
                 $placeholders[] = '?';
-                $values[]       = $_POST[$field];
+                $values[] = $_POST[$field];
             }
         }
 
@@ -68,7 +68,7 @@ abstract class GenericModel
         }
 
         $sql = "INSERT INTO {$this->table} (" . implode(', ', $columns) . ") VALUES (" . implode(', ', $placeholders) . ")";
- 
+
         $stmt = $this->conn->prepare($sql);
         if (!$stmt) {
             $errorInfo = $this->conn->errorInfo();
@@ -129,7 +129,7 @@ abstract class GenericModel
      */
     protected function buildJoins()
     {
-        $joinClause  = "";
+        $joinClause = "";
         $extraSelect = "";
 
         // AUTO-JOINS: Process tableFields that have a 'foreign' key.
@@ -139,7 +139,7 @@ abstract class GenericModel
                 // Assume that the foreign model name corresponds to the foreign table name in lowercase.
                 // Optionally, allow overriding the alias in the config via 'alias'.
                 $foreignTable = strtolower($foreign['model']);
-                $alias        = isset($foreign['alias']) ? $foreign['alias'] : $foreignTable;
+                $alias = isset($foreign['alias']) ? $foreign['alias'] : $foreignTable;
                 // Build the join condition:
                 // Assume that the local field is named exactly as defined (e.g. exchange_id)
                 // and that it links to the foreign table's key specified in 'valueField' (e.g. id).
@@ -246,4 +246,28 @@ abstract class GenericModel
         }
         return $stmt->execute([$id]);
     }
+
+    public function executeSQL($sql, $params = [])
+    {
+        // Prepare the statement
+        $stmt = $this->conn->prepare($sql);
+        if (!$stmt) {
+            throw new Exception("Failed to prepare SQL statement.");
+        }
+
+        // Execute with provided parameters
+        if (!$stmt->execute($params)) {
+            throw new Exception("Failed to execute SQL statement.");
+        }
+
+        // If the query is a SELECT statement, fetch and return results.
+        if (stripos(trim($sql), 'SELECT') === 0) {
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $results ? $results : null;
+        }
+
+        // For non-SELECT statements, return the number of affected rows.
+        return $stmt->rowCount();
+    }
+
 }

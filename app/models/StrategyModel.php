@@ -16,8 +16,6 @@ class Strategy extends GenericModel
     public function getStrategiesBySymbol($symbol)
     {
         $sql = "SELECT * FROM strategy WHERE id IN (SELECT strategy_id FROM transaction WHERE symbol = :symbol)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute(['symbol' => $symbol]);
-        return $stmt->fetchAll();
+        $this->executeSQL($sql, ['symbol' => $symbol]);
     }
 }
