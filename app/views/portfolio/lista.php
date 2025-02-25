@@ -96,7 +96,7 @@ $columns = [
     'width' => '90px',
     'align' => 'right',
     'data' => '{total_value_1d}',
-    'aggregate' => '{BETA_TIMES_TOTAL_VALUE} / {VALUE_EUR}',
+    'aggregate' => 'sum',
   ],
   [
     'name' => 'Day<br>P/L',

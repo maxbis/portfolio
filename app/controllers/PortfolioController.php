@@ -12,6 +12,10 @@ class PortfolioController extends Controller {
 
     public function list($date=null) {
         $records = $this->portfolioModel->getPortfolio($date);
+        if (isset($_GET['export']) && $_GET['export']) {
+            $this->exportExcel($records);
+            exit; // Terminate script execution
+        }
         $this->renderView('portfolio/list', 
         ['title' => 'Portfolio', 'data' => $records]);
     }
