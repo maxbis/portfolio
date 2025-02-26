@@ -27,14 +27,14 @@ class QuoteController extends Controller
 
     public function listQuote($symbol)
     {
-        $quotes = $this->quoteModel->getQuotesBySymbol($symbol);
+        $quotes = $this->model->getQuotesBySymbol($symbol);
         $this->renderView('quote/list', ['quotes' => $quotes]);
     }
 
     public function graph($symbol)
     {
-        $quotes = $this->quoteModel->getQuotesBySymbol($symbol);
-        $this->renderView('quote/graph', ['quotes' => $quotes]);
+        $data = $this->model->getBySymbol($symbol);
+        $this->renderView('quote/graph', ['data' => $data]);
     }
 
 
@@ -61,6 +61,13 @@ class QuoteController extends Controller
             echo json_encode(['close' => null]);
         }
     }
+
+    public function graph2($symbol)
+    {
+        $data = $this->model->getBySymbol($symbol);
+        $this->renderView('quote/graph2', ['data' => $data]);
+    }
+
 
 }
 ?>

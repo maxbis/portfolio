@@ -18,7 +18,7 @@ $columns = [
     'data' => 'quote_date',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'select',
+    'filter' => 'text',
     'align' => 'left',
   ],
   [
@@ -27,8 +27,18 @@ $columns = [
     'data' => 'close',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'select',
+    'filter' => 'text',
     'align' => 'left',
+  ],
+  [
+    'name'      => 'Graph',
+    'width'     => '60px',
+    'data'      => 'symbol',
+    'formatter' => '"Graph"',
+    'link'      => '/quote/graph/{symbol}',
+    'aggregate' => null,
+    'sortable'  => 0,
+    'filter'    => 'none',
   ],
   [
     'name'      => '',

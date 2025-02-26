@@ -216,9 +216,9 @@ function renderCell($item, $column)
                     );
                   } else {
                     // If a formatter is defined, use it.
-                    if (isset($col['formatter'])) {
+                    if (isset($col['formatter']) && ! isset($col['link'])) { // if formatter is defined and no link
                       $cellValue = eval ('return ' . $col['formatter'] . ';');
-                    } else {
+                    } else { // if no formatter and no link
                       $cellValue = renderCell($item, $col);
                     }
                   }

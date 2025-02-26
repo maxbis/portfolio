@@ -1,6 +1,7 @@
 <?php
 // Convert PHP quotes array to JSON for use in JavaScript.
-$jsonQuotes = json_encode($quotes);
+$jsonQuotes = json_encode($data);
+// print_r($jsonQuotes);exit;
 ?>
 
 <!-- Tailwind CSS (CDN for demo) -->
@@ -8,6 +9,7 @@ $jsonQuotes = json_encode($quotes);
 
 <!-- Chart.js (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-6">Quote Chart</h1>
@@ -76,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ticks: {
                         // Force numeric scale
                         callback: function(value, index, ticks) {
-                            return '$' + value.toFixed(2);
+                            return value.toFixed(2);
                         }
                     }
                 }

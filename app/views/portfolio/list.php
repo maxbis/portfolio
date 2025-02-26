@@ -64,11 +64,13 @@ $columns = [
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'none',  // No filter.
+    'hide' => true,
   ],
   [
     'name' => 'Avg Price',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#f2faff',
     'data' => 'avg_buy_price',
     'formatter' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
     'aggregate' => null,
@@ -84,18 +86,22 @@ $columns = [
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'text',
+    'hide' => true,
   ],
   [
     'name' => 'Quote -1d',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#edf9fc',
     'data' => 'latest_price_1d',
+    'formatter' => 'number_format($item["latest_price_1d"], 2, ".", " ")',
     'aggregateToken' => 'QUOTE_1D', // Custom token for formula.
   ],
   [
     'name' => 'Quote<br/>&nbsp;',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#edf9fc',
     'data' => 'latest_price',
     'formatter' => 'number_format($item["latest_price"], 2, ".", " ")',
     'aggregate' => null,
@@ -109,8 +115,20 @@ $columns = [
     'align' => 'right',
     'bgcolor' => '#f4ffe8',
     'data' => 'total_value',
+    'formatter' => 'number_format($item["total_value"], 0, ".", " ")',
     'aggregate' => 'sum',  // Sum the values.
     'aggregateToken' => 'VALUE_EUR', // Custom token for formula.
+    'sortable' => 1,
+    'filter' => 'none',
+  ],
+  [
+    'name' => 'Total<br> P/L (Eur)',
+    'width' => '120px',
+    'align' => 'right',
+    'bgcolor' => '#fffdf7',
+    'data' => 'profit_loss',
+    'formatter' => 'number_format($item["profit_loss"], 0, ".", " ")',
+    'aggregate' => 'sum',  // Sum profit/loss.
     'sortable' => 1,
     'filter' => 'none',
   ],
@@ -148,7 +166,7 @@ $columns = [
     'align' => 'right',
     'bgcolor' => '#f8f8f8',
     'data' => 'ytd_profit_loss',
-    'formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
+    '_formatter' => 'number_format($item["ytd_profit_loss"], 2, ".", " ")',
     'aggregate' => 'sum',  // Sum YTD profit/loss.
     'aggregateToken' => 'YTD_PL', // Custom token for formula.
     'sortable' => 1,
@@ -181,7 +199,7 @@ $columns = [
     'data' => 'beta',
   ],
   [
-    'name' => 'Cash<br>&nbsp;',
+    'name' => 'Cash/<br>&nbsp;Div.',
     'width' => '90px',
     'align' => 'right',
     'data' => 'cash',

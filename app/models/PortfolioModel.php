@@ -364,10 +364,10 @@ class Portfolio
             'total_value_1d'        => round($totalValue1d, 2),
             'total_value_1d_percent'=> $deltaPercentage,
             'quote_date'            => $quoteDate,
-            'exchange_rate'         => round($latestExchangeRate, 2),
+            'exchange_rate'         => round($latestExchangeRate, 3),
             'total_value'           => round($totalValueNow, 0),
             'profit_loss'           => round($profitLoss, 2),
-            'ytd_profit_loss'       => round($ytdProfitLoss, 2),
+            'ytd_profit_loss'       => $this->formatNumber($ytdProfitLoss),
             'profit_loss_percent'   => ($totalValueNow - $ytdProfitLoss) && $totalValueNow ? round($ytdProfitLoss * 100 / ($totalValueNow - $ytdProfitLoss), 2) : 0,
             'cash'                  => round($cash, 2),
         ];
@@ -386,12 +386,10 @@ class Portfolio
             exit;
         }
 
-        // $num = floatval($input);
-        return round($num, 4);
         if ($num > -100 && $num < 100) {
-            return number_format($num, 2, '.', '');
+            return number_format($num, 2, '.', ' ');
         } else {
-            return number_format($num, 0, '.', '');
+            return round($num, 0);
         }
     }
 

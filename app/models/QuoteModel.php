@@ -74,7 +74,6 @@ class Quote extends GenericModel
     {
         $sql = "SELECT * FROM {$this->table} WHERE symbol = ?";
         return $this->executeSQL($sql, [$symbol]);
-
     }
 
 

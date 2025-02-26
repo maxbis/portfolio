@@ -20,6 +20,26 @@ $columns = [
     'filter' => 'select',  // Dropdown filter.
   ],
   [
+    'name' => 'Quote Date',
+    'width' => '80px',
+    'align' => 'right',
+    'data' => 'quote_date',
+    'formatter' => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'text',
+  ],
+  [
+    'name' => 'Exch Rate',
+    'width' => '40px',
+    'align' => 'right',
+    'data' => 'exchange_rate',
+    'formatter' => 'number_format($item["exchange_rate"], 3, ".", " ")',
+    'aggregate' => null,
+    'sortable' => 1,
+    'filter' => 'none',  // No filter.
+  ],
+  [
     'name' => '#<br/>&nbsp;',
     'width' => '60px',
     'align' => 'right',
@@ -32,18 +52,9 @@ $columns = [
     'name' => 'Avg Price',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#f2faff',
     'data' => 'avg_buy_price',
     'formatter' => 'number_format($item["avg_buy_price"], 2, ".", " ")',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'text',
-  ],
-  [
-    'name' => 'Quote Date',
-    'width' => '80px',
-    'align' => 'right',
-    'data' => 'quote_date',
-    'formatter' => 'isset($item["quote_date"]) && !empty($item["quote_date"]) ? date("d/m", strtotime($item["quote_date"])) : "-"',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'text',
@@ -52,23 +63,13 @@ $columns = [
     'name' => 'Quote<br/>&nbsp;',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#f2faff',
     'data' => 'latest_price',
     'formatter' => 'number_format($item["latest_price"], 2, ".", " ")',
     'aggregate' => null,
     'sortable' => 1,
     'filter' => 'none',  // No filter.
   ],
-  [
-    'name' => 'Exch Rate',
-    'width' => '40px',
-    'align' => 'right',
-    'data' => 'exchange_rate',
-    'formatter' => 'number_format($item["exchange_rate"], 2, ".", " ")',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'none',  // No filter.
-  ],
-
   [
     'name' => 'Value<br/>EUR*',
     'width' => '120px',
@@ -85,6 +86,7 @@ $columns = [
     'name' => 'Total<br> P/L (Eur)',
     'width' => '120px',
     'align' => 'right',
+    'bgcolor' => '#fffdf7',
     'data' => 'profit_loss',
     'formatter' => 'number_format($item["profit_loss"], 0, ".", " ")',
     'aggregate' => 'sum',  // Sum profit/loss.
@@ -95,6 +97,7 @@ $columns = [
     'name' => 'P/L<br>-1d',
     'width' => '90px',
     'align' => 'right',
+    'bgcolor' => '#fffdf7',
     'data' => '{total_value_1d}',
     'aggregate' => 'sum',
   ],
