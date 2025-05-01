@@ -6,6 +6,7 @@ class Portfolio
 {
     private $conn;
     private $symbolsModel;
+    public array $symbols = [];
 
     public function __construct()
     {
@@ -572,7 +573,10 @@ class Portfolio
 
                 // Choose the record with the most recent quote_date.
                 // (Using strtotime to compare dates; assumes date format is compatible.)
-                if ($agg['quote_date'] === null || strtotime($record['quote_date']) > strtotime($agg['quote_date'])) {
+                if (
+                    empty($agg['quote_date']) || 
+                    (!empty($record['quote_date']) && strtotime($record['quote_date']) > strtotime($agg['quote_date']))
+                ) {
                     $agg['quote_date'] = $record['quote_date'];
                     $agg['latest_price'] = $record['latest_price'];
                     $agg['exchange_rate'] = $record['exchange_rate'];

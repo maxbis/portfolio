@@ -24,3 +24,5 @@ TestResults.xml
 cache
 secret.php
 dbconfig.py
+
+.DS_Store

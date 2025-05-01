@@ -35,7 +35,8 @@ class Symbol extends GenericModel
         'beta' => [
             'label' => 'Beta',
             'input' => 'text',
-            'required' => false
+            'required' => false,
+            'default' => 1,
         ],
         'notes' => [
             'label' => 'Notes',
@@ -83,4 +84,5 @@ class Symbol extends GenericModel
         $stmt = $this->conn->prepare($sql);
         return $stmt->execute([':notes' => $notes, ':symbol' => $symbol]);
     }
+ 
 }

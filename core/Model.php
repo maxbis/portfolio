@@ -59,7 +59,13 @@ abstract class GenericModel
                 }
                 $columns[] = $field;
                 $placeholders[] = '?';
-                $values[] = $_POST[$field];
+                if (empty($_POST[$field]) && isset($config['default'])) {
+                    // If the field is empty and has a default value, use that.
+                    $values[] = $config['default'];
+                } else {
+                    // Otherwise, use the provided value.
+                    $values[] = $_POST[$field];
+                }
             }
         }
 
