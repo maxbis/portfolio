@@ -38,14 +38,18 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
 
             <!-- Grid Layout for First Four Fields -->
             <div class="grid grid-cols-3 gap-4">
+                <!-- date -->
                 <div>
-                    <label for="date">Date:</label>
-                    <input type="date" id="transaction_date" name="date" value="<?= $record['date'] ?? $today ?>">
+                    <label for="date">Date:</label><br>
+                    <input type="date" id="transaction_date" name="date" value="<?= $record['date'] ?? '' ?>"
+                        class="w-24 p-1 text-sm border border-gray-300 rounded-md" style="font-size:14px;" required>
                 </div>
 
+                <!-- broker -->
                 <div>
                     <label class="block text-gray-700 text-sm">Broker:</label>
-                    <select name="broker_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                    <select name="broker_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                        <option value="" disabled selected>-- choose --</option>
                         <?php foreach ($brokers as $broker): ?>
                             <option value="<?= $broker['id'] ?>" <?= isset($record['broker_id']) && $broker['id'] == $record['broker_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($broker['name']) ?>
@@ -54,10 +58,11 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                     </select>
                 </div>
 
-                <!-- ToDo broker drop down -->
+                <!-- Exchange -->
                 <div>
                     <label class="block text-gray-700 text-sm">Exchange:</label>
-                    <select name="exchange_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                    <select name="exchange_id" class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                        <option value="" disabled selected>-- choose --</option>
                         <?php foreach ($exchanges as $exchange): ?>
                             <option value="<?= $exchange['id'] ?>" <?= isset($record['exchange_id']) && $exchange['id'] == $record['exchange_id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($exchange['name']) ?>
@@ -66,12 +71,14 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                     </select>
                 </div>
 
+                <!-- Symbol -->
                 <div>
                     <label class="block text-gray-700 text-sm">Company</label>
                     <?php if (isset($record['symbol'])): ?>
                         <?= $record['symbol'] ?>
                     <?php else: ?>
-                        <select name="symbol" class="w-24 p-1 text-sm border border-gray-300 rounded-md">
+                        <select name="symbol" class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
+                            <option value="" disabled selected>-- choose --</option>
                             <?php foreach ($symbols as $symbol): ?>
                                 <option value="<?= $symbol['symbol'] ?>" <?= (isset($record['symbol']) && $symbol['symbol'] == $record['symbol']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($symbol['name']) ?>
@@ -80,7 +87,6 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                         </select>
                     <?php endif; ?>
                 </div>
-
                 <!-- <div>
                     <label class="block text-gray-700 text-sm">Symbol:</label>
                     <input type="text" name="symbol" value="<?= $record['symbol'] ?? '' ?>"

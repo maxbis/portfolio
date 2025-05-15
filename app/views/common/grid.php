@@ -92,7 +92,7 @@ function renderCell($item, $column)
   if (isset($column['link'])) {
     $link = $column['link'];
     foreach ($item as $key => $val) {
-      $link = str_replace("{" . $key . "}", $val, $link);
+      $link = str_replace("{" . $key . "}", (string)$val, $link);
     }
     $value = "<a href=\"" . $GLOBALS['BASE'] . "$link\">$value</a>";
   }
@@ -124,7 +124,7 @@ function renderCell($item, $column)
 </head>
 
 <body class="bg-gray-100 flex text-sm">
-  <div class="max-w-7xl w-full bg-white p-6 shadow-lg rounded-lg">
+<div class="w-full bg-white p-6 shadow-lg rounded-lg">
 
     <div class="flex items-center space-x-4">
       <img src="<?= $GLOBALS['BASE'] . '/pictures/icon-60x60.png' ?>" alt="Logo" class="h-10 w-auto">
@@ -217,7 +217,10 @@ function renderCell($item, $column)
                   } else {
                     // If a formatter is defined, use it.
                     if (isset($col['formatter']) && ! isset($col['link'])) { // if formatter is defined and no link
-                      $cellValue = eval ('return ' . $col['formatter'] . ';');
+                      $formatterCode = preg_replace_callback('/number_format\s*\(([^,]+),/', function ($matches) {
+                          return 'number_format((float)' . $matches[1] . ',';
+                      }, $col['formatter']);
+                      $cellValue = eval('return ' . $formatterCode . ';');
                     } else { // if no formatter and no link
                       $cellValue = renderCell($item, $col);
                     }
