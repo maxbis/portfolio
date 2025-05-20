@@ -92,9 +92,9 @@ class Portfolio
                     $quoteData = $this->getLatestQuote($symbol);
                     $quoteDataPrev = $this->getLatestQuote($symbol, 1);
                 }
-                $latestPrice = $quoteData['close'];
-                $latestPricePrev = $quoteDataPrev['close'];
-                $quoteDate = $quoteData['quote_date'];
+                $latestPrice = $quoteData['close'] ?? 0;
+                $latestPricePrev = $quoteDataPrev['close'] ?? 0;
+                $quoteDate = $quoteData['quote_date'] ?? null;
 
                 // Get the year start price from the previous year's end quote.
                 $yearStartData = $this->getYearStartQuote($symbol);
@@ -298,9 +298,9 @@ class Portfolio
                 $quoteData     = $this->getLatestQuote($symbol);
                 $quoteDataPrev = $this->getLatestQuote($symbol, 1);
             }
-            $latestPrice     = $quoteData['close'];
-            $latestPricePrev = $quoteDataPrev['close'];
-            $quoteDate       = $quoteData['quote_date'];
+            $latestPrice     = $quoteData['close'] ?? 0;
+            $latestPricePrev = $quoteDataPrev['close'] ?? 0;
+            $quoteDate       = $quoteData['quote_date'] ?? null;
     
             // Year-start price is used as baseline for YTD calculations.
             $yearStartData  = $this->getYearStartQuote($symbol);
