@@ -135,6 +135,14 @@ $columns = [
     'data' => 'cash',
     'aggregate' => 'sum', 
   ],
+    [
+    'name' => 'Div.',
+    'width' => '90px',
+    'align' => 'right',
+    'data' => 'cash',
+    'formatter' => '($item["cash"] > 0 && $item["symbol"] != "EUR" ) ? number_format($item["cash"], 2, ".", " ") : "-"',
+    'aggregate' => 'sum', 
+  ],
   [
     'name' => '% of<br>Portfolio',
     'width' => '',
