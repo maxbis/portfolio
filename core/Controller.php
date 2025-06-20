@@ -44,7 +44,8 @@ class Controller
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->model->insert();
-            header("Location: " . $GLOBALS['BASE'] . "/" . $this->controllerName . "/list");
+            $this->redirectToStoredUrl(); // Redirect to the stored URL
+            #header("Location: " . $GLOBALS['BASE'] . "/" . $this->controllerName . "/list");
             exit;
         }
     }
@@ -67,7 +68,8 @@ class Controller
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->model->update($id);
-            header("Location: " . $GLOBALS['BASE'] . "/" . $this->controllerName . "/list");
+            $this->redirectToStoredUrl(); // Redirect to the stored URL
+            #header("Location: " . $GLOBALS['BASE'] . "/" . $this->controllerName . "/list");
             exit;
         }
     }
@@ -113,11 +115,38 @@ class Controller
         foreach ($data as $line) {
             foreach ($line as $key => $value) {
                 // echo preg_replace('/[\s+,;]/', ' ', $value) . $seperator;
-                echo  "\"". $value ."\"". $seperator;
+                echo "\"" . $value . "\"" . $seperator;
             }
             echo "\n";
         }
     }
 
+    public function getCurrentUrl()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+        $host = $_SERVER['HTTP_HOST'];
+        $requestUri = $_SERVER['REQUEST_URI'];
+        $_SESSION['current_url'] = $protocol . $host . $requestUri;
+        return $protocol . $host . $requestUri;
+    }
+
+    private function redirectToStoredUrl($fallback = '/')
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!empty($_SESSION['current_url'])) {
+            header('Location: ' . $_SESSION['current_url']);
+            exit;
+        } else {
+            // Redirect to fallback URL if session is empty
+            header('Location: ' . $fallback);
+            exit;
+        }
+    }
 
 }

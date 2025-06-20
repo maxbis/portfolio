@@ -12,6 +12,8 @@ class PortfolioController extends Controller {
 
     // Standard list
     public function list($date=null) {
+        $this->getCurrentUrl(); // Get and store the current URL
+
         $records = $this->portfolioModel->getPortfolio($date);
         if (isset($_GET['export']) && $_GET['export']) {
             $this->exportExcel($records);
@@ -23,6 +25,7 @@ class PortfolioController extends Controller {
 
     // aggregated list    
     public function lista($groupBy='symbol') {
+        $this->getCurrentUrl(); // Get and store the current URL
         $records = $this->portfolioModel->getPortfolio();
         $records = $this->portfolioModel->aggregateRecords($records, $groupBy);
         // echo "<pre>";print_r($records);exit;

@@ -131,10 +131,9 @@ $caller = pathinfo(basename(debug_backtrace()[0]['file']), PATHINFO_FILENAME);
                 </div>
 
                 <div>
-                    <small>costs/dividend:</small>
-                    <input type="text" id='cash' name="cash" value="<?= $record['cash'] ?? '' ?>"
+                    <small>Costs/dividend:</small>
+                    <input type="text" id='cash' name="cash" title="Costs are negative and dividends are positive" value="<?= $record['cash'] ?? '' ?>"
                         class="w-24 p-1 text-sm border border-gray-300 rounded-md" required>
-
                 </div>
 
                 <div>

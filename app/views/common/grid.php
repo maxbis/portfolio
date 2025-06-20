@@ -130,7 +130,7 @@ function renderCell($item, $column)
       <img src="<?= $GLOBALS['BASE'] . '/pictures/icon-60x60.png' ?>" alt="Logo" class="h-10 w-auto">
       <h1 class="text-2xl font-semibold"><?= htmlspecialchars($title) ?></h1>
     </div>
-
+ 
     <?php include_once __DIR__ . "/../common/nav.php"; ?>
 
     <?php if (!isset($noCreate)): ?>
@@ -178,8 +178,10 @@ function renderCell($item, $column)
                       <?php endforeach; ?>
                     </select>
                   <?php } elseif ($col['filter'] === 'text') { ?>
+                    <!-- this filters the first word(s) from the header title since it may contian HTML -->
+                    <?php preg_match('/([A-Za-z0-9 ]+)/', $col['name'], $matches); ?> 
                     <input type="text" class="filter-input" data-column="<?= $colIndex ?>"
-                      placeholder="Filter <?= htmlspecialchars($col['name']) ?>"
+                      placeholder="<?= $matches[1] ?>"
                       value="<?= isset($_GET[$col['data']]) ? htmlspecialchars($_GET[$col['data']]) : '' ?>">
                   <?php }
                 endif; ?>

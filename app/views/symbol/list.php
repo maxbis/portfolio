@@ -28,7 +28,7 @@ $columns = [
     'data' => 'name',
     'aggregate' => null,
     'sortable' => 1,
-    'filter' => 'select',
+    'filter' => 'text',
     'align' => 'left',
   ],
   [
