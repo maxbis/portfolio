@@ -133,7 +133,7 @@ class Controller
         return $protocol . $host . $requestUri;
     }
 
-    private function redirectToStoredUrl($fallback = '/')
+    private function redirectToStoredUrl($fallback = '/portfolio/')
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
