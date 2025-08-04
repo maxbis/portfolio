@@ -29,16 +29,16 @@ $columns = [
     'sortable' => 1,
     'filter' => 'text',
   ],
-  [
-    'name' => 'Exch Rate',
-    'width' => '40px',
-    'align' => 'right',
-    'data' => 'exchange_rate',
-    'formatter' => 'number_format($item["exchange_rate"], 3, ".", " ")',
-    'aggregate' => null,
-    'sortable' => 1,
-    'filter' => 'none',  // No filter.
-  ],
+  // [
+  //   'name' => 'Exch Rate',
+  //   'width' => '40px',
+  //   'align' => 'right',
+  //   'data' => 'exchange_rate',
+  //   'formatter' => 'number_format($item["exchange_rate"], 3, ".", " ")',
+  //   'aggregate' => null,
+  //   'sortable' => 1,
+  //   'filter' => 'none',  // No filter.
+  // ],
   [
     'name' => '#<br/>&nbsp;',
     'width' => '60px',
